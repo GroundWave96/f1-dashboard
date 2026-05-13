@@ -1,22 +1,92 @@
+"use client"; // 1. Avisamos ao Next.js que esse componente vai rodar no navegador e terá interatividade
+
+import { useEffect, useState } from "react";
 import { api } from "../../lib/api";
 import { PastRace } from "../../types/f1";
 
-export default async function LastRaceResults() {
-  const response = await api.get("current/last/results.json");
+export default function LastRaceResults() {
+  // 2. Criamos os "Estados" (memória do componente)
+  const [races, setRaces] = useState<PastRace[]>([]);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  // 3. O useEffect faz a busca na API assim que a tela carrega
+  useEffect(() => {
+    async function fetchAllResults() {
+      try {
+        // limit=1000 é vital aqui! A API limita a 30 linhas por padrão. Como são 20 carros por corrida, precisamos de um limite alto para vir o ano todo.
+        const response = await api.get("current/results.json?limit=1000");
+        const allRaces: PastRace[] = response.data.MRData.RaceTable.Races;
+        
+        setRaces(allRaces);
+        // Configura para começar mostrando a corrida mais recente (a última da lista)
+        setCurrentIndex(allRaces.length - 1);
+        setLoading(false);
+      } catch (error) {
+        console.error("Erro ao buscar resultados:", error);
+        setLoading(false);
+      }
+    }
+
+    fetchAllResults();
+  }, []);
+
+  // 4. Mostramos um aviso enquanto os dados não chegam
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center text-gray-400 gap-4">
+        <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+        <p>Carregando histórico de corridas...</p>
+      </div>
+    );
+  }
+
+  // 5. Variáveis para facilitar a vida
+  const currentRace = races[currentIndex];
+  const results = currentRace.Results;
   
-  const race: PastRace = response.data.MRData.RaceTable.Races[0];
-  const results = race.Results;
+  // Verifica se existem corridas antes ou depois para desabilitar os botões
+  const hasPrevious = currentIndex > 0;
+  const hasNext = currentIndex < races.length - 1;
+
+  // 6. Funções dos botões
+  const goToPrevious = () => hasPrevious && setCurrentIndex(currentIndex - 1);
+  const goToNext = () => hasNext && setCurrentIndex(currentIndex + 1);
 
   return (
     <div className="w-full max-w-4xl mx-auto px-2 flex flex-col gap-4">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-white uppercase tracking-wider">
-          Resultados: {race.raceName}
-        </h2>
-        <p className="text-gray-400">Circuito: {race.Circuit.circuitName}</p>
+      
+      {/* Cabeçalho com Navegação */}
+      <div className="flex flex-col sm:flex-row items-center justify-between bg-zinc-900 p-4 rounded-lg border border-zinc-800 shadow-md gap-4">
+        {/* Botão Anterior */}
+        <button 
+          onClick={goToPrevious} 
+          disabled={!hasPrevious}
+          className="px-4 py-2 bg-zinc-800 text-white rounded hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all font-bold w-full sm:w-auto"
+        >
+          &larr; Anterior
+        </button>
+
+        {/* Info da Corrida Atual */}
+        <div className="text-center">
+          <h2 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-wider">
+            {currentRace.raceName}
+          </h2>
+          <p className="text-sm text-gray-400">Rodada {currentRace.round} • {currentRace.Circuit.circuitName}</p>
+        </div>
+
+        {/* Botão Próxima */}
+        <button 
+          onClick={goToNext} 
+          disabled={!hasNext}
+          className="px-4 py-2 bg-zinc-800 text-white rounded hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all font-bold w-full sm:w-auto"
+        >
+          Próxima &rarr;
+        </button>
       </div>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl max-h-[70vh] overflow-y-auto">
+      {/* Tabela com o nosso fix do 'Lapped' intacto */}
+      <div className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl max-h-[65vh] overflow-y-auto">
         <table className="w-full text-left text-sm text-gray-300">
           <thead className="bg-zinc-950 text-gray-400 uppercase sticky top-0 z-10 shadow-md">
             <tr>
@@ -27,7 +97,6 @@ export default async function LastRaceResults() {
               <th className="px-4 py-4 sm:px-6 text-right hidden sm:table-cell">Pts</th>
             </tr>
           </thead>
-          
           <tbody>
             {results.map((row) => (
               <tr key={row.Driver.driverId} className="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors">
@@ -40,11 +109,9 @@ export default async function LastRaceResults() {
                 </td>
                 <td className="px-4 py-4 sm:px-6 hidden sm:table-cell">{row.Constructor.name}</td>
                 
-                {/* Tempo ou Status (ex: +1 Lap, Finished) */}
+                {/* O Fix da volta continua aqui! */}
                 <td className="px-4 py-4 sm:px-6 text-right font-mono text-xs sm:text-sm text-gray-400">
-                {row.status.includes("Lap") 
-                    ? row.status 
-                    : row.Time ? row.Time.time : row.status}
+                  {row.status.includes("Lap") ? row.status : row.Time ? row.Time.time : row.status}
                 </td>
                 
                 <td className="px-4 py-4 sm:px-6 font-bold text-red-500 text-right hidden sm:table-cell">
