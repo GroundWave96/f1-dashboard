@@ -11,14 +11,14 @@ export default async function DriverStandings() {
       <div className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl max-h-[80vh] overflow-y-auto">
         
         <table className="w-full text-left text-sm text-gray-300">
-          <thead className="bg-zinc-950 text-gray-400 uppercase sticky top-0 z-10 shadow-md">
-            <tr>
-              <th className="px-4 py-4 sm:px-6">Pos</th>
-              <th className="px-4 py-4 sm:px-6">Piloto</th>
-              <th className="px-4 py-4 sm:px-6 hidden sm:table-cell">Equipe</th> {/* Esconde no celular para economizar espaço */}
-              <th className="px-4 py-4 sm:px-6 text-right">Pts</th>
-            </tr>
-          </thead>
+            <thead className="bg-zinc-950 text-gray-400 uppercase sticky top-0 z-10 shadow-md">
+                <tr>
+                    <th className="px-4 py-4 sm:px-6">Pos</th>
+                    <th className="px-4 py-4 sm:px-6">Piloto</th>
+                    <th className="px-4 py-4 sm:px-6 hidden sm:table-cell">Equipe</th>
+                    <th className="px-4 py-4 sm:px-6 text-right">Pts</th>
+                </tr>
+            </thead>
           
           <tbody>
             {standings.map((row) => (
