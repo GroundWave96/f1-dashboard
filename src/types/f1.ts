@@ -19,3 +19,23 @@ export interface DriverStanding {
   Driver: Driver;
   Constructors: Constructor[];
 }
+
+export interface Location {
+  locality: string;
+  country: string;
+}
+
+export interface Circuit {
+  circuitId: string;
+  circuitName: string;
+  Location: Location;
+}
+
+export interface Race {
+  season: string;
+  round: string;
+  raceName: string;
+  Circuit: Circuit;
+  date: string;
+  time: string;
+}
