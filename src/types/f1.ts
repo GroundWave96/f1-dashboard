@@ -39,3 +39,20 @@ export interface Race {
   date: string;
   time: string;
 }
+
+export interface RaceResult {
+  position: string;
+  points: string;
+  grid: string;
+  laps: string;
+  status: string;
+  Driver: Driver;
+  Constructor: Constructor;
+  Time?: {
+    time: string;
+  };
+}
+
+export interface PastRace extends Race {
+  Results: RaceResult[];
+}

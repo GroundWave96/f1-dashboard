@@ -1,5 +1,6 @@
 import DriverStandings from "../components/f1/DriverStandings";
 import NextRace from "../components/f1/NextRace";
+import LastRaceResults from "../components/f1/LastRaceResults";
 
 export default function Home() {
   return (
@@ -13,8 +14,8 @@ export default function Home() {
          <DriverStandings />
       </section>
 
-      <section className="h-screen w-full snap-start flex items-center justify-center bg-zinc-950">
-        <h1 className="text-4xl font-bold text-gray-400">3. Resultados Anteriores</h1>
+      <section className="h-screen w-full snap-start flex items-center justify-center bg-zinc-950 p-4">
+        <LastRaceResults />
       </section>
 
     </main>
