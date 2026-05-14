@@ -93,14 +93,22 @@ export default function RaceNavigation({
                 <button
                     onClick={onPrevious}
                     disabled={!hasPrevious}
-                    className="flex-1 sm:flex-none px-4 py-2 bg-zinc-800 text-white rounded hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all font-bold text-sm"
+                    className={`flex-1 sm:flex-none px-4 py-2 rounded transition-all font-bold text-sm ${
+                        hasPrevious 
+                        ? "bg-zinc-800 text-white hover:bg-zinc-700 active:bg-zinc-600" 
+                        : "bg-zinc-800/50 text-zinc-600 cursor-not-allowed"
+                    }`}
                 >
                     &larr; Anterior
                 </button>
                 <button
                     onClick={onNext}
                     disabled={!hasNext}
-                    className="flex-1 sm:flex-none px-4 py-2 bg-zinc-800 text-white rounded hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all font-bold text-sm"
+                    className={`flex-1 sm:flex-none px-4 py-2 rounded transition-all font-bold text-sm ${
+                        hasNext 
+                        ? "bg-zinc-800 text-white hover:bg-zinc-700 active:bg-zinc-600" 
+                        : "bg-zinc-800/50 text-zinc-600 cursor-not-allowed"
+                    }`}
                 >
                     Próxima &rarr;
                 </button>

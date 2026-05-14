@@ -54,7 +54,7 @@ export default function StandingsSection() {
                 <div className="relative bg-zinc-900 p-1 rounded-full border border-zinc-800 flex items-center w-64 h-11">
                     <div 
                         className={`absolute h-9 w-[calc(50%-4px)] bg-red-600 rounded-full shadow-lg shadow-red-900/20 transition-transform duration-300 ease-in-out z-0 ${
-                            view === "drivers" ? "translate-x-0" : "translate-x-[100%]"
+                            view === "drivers" ? "translate-x-0" : "translate-x-full"
                         }`}
                     />
                     
