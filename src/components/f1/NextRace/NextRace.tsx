@@ -38,7 +38,8 @@ export default function NextRace() {
 
   return (
     <div className="w-full max-w-4xl mx-auto px-2">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-8">
+      {/* Mudamos de p-4 para p-6 e aumentamos um pouco o gap */}
+      <div className="bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 max-h-[85dvh] sm:max-h-none my-auto overflow-hidden">
         
         <div className="flex flex-col items-center md:items-start text-center md:text-left flex-1 w-full">
           <RaceInfo race={nextRace} />
