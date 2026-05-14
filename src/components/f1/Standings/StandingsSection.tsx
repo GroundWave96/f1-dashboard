@@ -43,30 +43,30 @@ export default function StandingsSection() {
     }
 
     return (
-        <div className="w-full max-w-4xl mx-auto px-2 flex flex-col gap-6">
-
-            {/* MINI-TÍTULO E SWITCH */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        // Adicionamos h-full e py-4 (padding vertical) para dar o respiro correto nas bordas superior e inferior
+        <div className="w-full max-w-4xl mx-auto px-2 flex flex-col gap-4 sm:gap-6 h-full py-4 sm:py-6">
+            
+            {/* MINI-TÍTULO E SWITCH (Fica fixo no topo) */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
                 <div className="text-center sm:text-left">
                     <span className="text-red-500 font-bold uppercase tracking-widest text-[10px]">Mundial de F1</span>
                     <h2 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-wider">Classificação 2026</h2>
                 </div>
 
-                {/* SWITCH ANIMADO ESTILO PÍLULA */}
                 <div className="relative bg-zinc-900 p-1 rounded-full border border-zinc-800 flex items-center w-64 h-11">
-                    {/* Background Deslizante (A mágica da transição) */}
-                    <div
-                        className={`absolute h-9 w-31 bg-red-600 rounded-full shadow-lg shadow-red-900/20 transition-all duration-300 ease-in-out ${view === "drivers" ? "translate-x-0" : "translate-x-31.5"
-                            }`}
+                    <div 
+                        className={`absolute h-9 w-31 bg-red-600 rounded-full shadow-lg shadow-red-900/20 transition-all duration-300 ease-in-out ${
+                            view === "drivers" ? "translate-x-0" : "translate-x-31.5"
+                        }`}
                     />
-
-                    <button
+                    
+                    <button 
                         onClick={() => setView("drivers")}
                         className={`relative flex-1 text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${view === "drivers" ? "text-white" : "text-gray-500"}`}
                     >
                         Pilotos
                     </button>
-                    <button
+                    <button 
                         onClick={() => setView("constructors")}
                         className={`relative flex-1 text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${view === "constructors" ? "text-white" : "text-gray-500"}`}
                     >
@@ -75,24 +75,24 @@ export default function StandingsSection() {
                 </div>
             </div>
 
-            {/* TABELAS COM TRANSIÇÃO */}
-            <div className="relative overflow-hidden">
+            {/* TABELAS (A Mágica do flex-1 min-h-0) */}
+            <div className="relative flex-1 min-h-0 w-full">
                 {view === "drivers" ? (
-                    <DriverTable
-                        standings={drivers}
-                        onRowClick={(driver, constructorName) => setSelectedDriver({ driver, constructorName })}
+                    <DriverTable 
+                        standings={drivers} 
+                        onRowClick={(driver, constructorName) => setSelectedDriver({driver, constructorName})} 
                     />
                 ) : (
                     <ConstructorTable standings={constructors} />
                 )}
             </div>
-
-            {/* RENDERIZA O MODAL SE TIVER UM PILOTO SELECIONADO */}
+            
+            {/* MODAL */}
             {selectedDriver && (
-                <DriverModal
-                    driver={selectedDriver.driver}
+                <DriverModal 
+                    driver={selectedDriver.driver} 
                     constructorName={selectedDriver.constructorName}
-                    onClose={() => setSelectedDriver(null)}
+                    onClose={() => setSelectedDriver(null)} 
                 />
             )}
         </div>

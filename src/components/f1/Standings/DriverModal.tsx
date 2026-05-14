@@ -94,7 +94,7 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
 
                 {/* Conteúdo Dinâmico */}
                 {loading ? (
-                    <div className="h-[360px] flex flex-col items-center justify-center gap-4">
+                    <div className="h-90 flex flex-col items-center justify-center gap-4">
                         <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
                         <span className="text-sm text-zinc-400 font-medium animate-pulse">Consultando base de dados...</span>
                     </div>
@@ -104,7 +104,7 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
                         {/* Foto flutuante estilo Avatar */}
                         <div className="relative w-32 h-32 mb-5">
                             {/* Efeito de brilho vermelho no fundo da foto */}
-                            <div className="absolute inset-0 bg-gradient-to-tr from-red-600 to-red-400 rounded-full blur-lg opacity-40"></div>
+                            <div className="absolute inset-0 bg-linear-to-tr from-red-600 to-red-400 rounded-full blur-lg opacity-40"></div>
                             <img 
                                 src={imageUrl || `https://ui-avatars.com/api/?name=${driver.givenName}+${driver.familyName}&background=18181b&color=ef4444&size=200`} 
                                 alt={driver.familyName}
