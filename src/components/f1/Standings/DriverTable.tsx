@@ -8,7 +8,7 @@ interface DriverTableProps {
 
 export default function DriverTable({ standings }: DriverTableProps) {
     return (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl max-h-[80dvh] overflow-y-auto overscroll-contain">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl max-h-[65dvh] sm:max-h-[75dvh] overflow-y-auto overscroll-contain pb-2">
             <table className="w-full text-left text-sm text-gray-300">
                 <thead className="bg-zinc-950 text-gray-400 uppercase sticky top-0 z-10 shadow-md">
                     <tr>
