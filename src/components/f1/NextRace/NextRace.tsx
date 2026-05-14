@@ -40,7 +40,7 @@ export default function NextRace() {
     <div className="w-full h-full flex flex-col relative px-4 py-6 sm:p-8">
       
       <header className="w-full max-w-4xl mx-auto flex items-center justify-between shrink-0">
-        <img src="/teams/f1.svg" alt="F1 Logo" className="h-5 sm:h-6 w-auto opacity-90" />
+        <img src="/teams/f1.svg" alt="F1 Logo" className="h-5 sm:h-6 w-auto opacity-90 shrink-0" />
         <span className="text-zinc-500 font-bold text-[10px] sm:text-xs uppercase tracking-widest bg-zinc-900/50 px-3 py-1 rounded-full border border-zinc-800">
           Dashboard
         </span>
