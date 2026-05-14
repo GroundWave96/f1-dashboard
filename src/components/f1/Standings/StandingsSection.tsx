@@ -2,15 +2,17 @@
 
 import React, { useEffect, useState } from "react";
 import { api } from "../../../lib/api";
-import { DriverStanding, ConstructorStanding } from "../../../types/f1";
+import { DriverStanding, ConstructorStanding, Driver } from "../../../types/f1";
 import DriverTable from "./DriverTable";
 import ConstructorTable from "./ConstructorTable";
+import DriverModal from "./DriverModal"; // Importe o modal!
 
 export default function StandingsSection() {
     const [view, setView] = useState<"drivers" | "constructors">("drivers");
     const [drivers, setDrivers] = useState<DriverStanding[]>([]);
     const [constructors, setConstructors] = useState<ConstructorStanding[]>([]);
     const [loading, setLoading] = useState(true);
+    const [selectedDriver, setSelectedDriver] = useState<{ driver: Driver, constructorName: string } | null>(null);
 
     useEffect(() => {
         async function fetchData() {
@@ -19,7 +21,7 @@ export default function StandingsSection() {
                     api.get("current/driverStandings.json"),
                     api.get("current/constructorStandings.json")
                 ]);
-                
+
                 setDrivers(driversRes.data.MRData.StandingsTable.StandingsLists[0]?.DriverStandings || []);
                 setConstructors(constructorsRes.data.MRData.StandingsTable.StandingsLists[0]?.ConstructorStandings || []);
             } catch (error) {
@@ -42,7 +44,7 @@ export default function StandingsSection() {
 
     return (
         <div className="w-full max-w-4xl mx-auto px-2 flex flex-col gap-6">
-            
+
             {/* MINI-TÍTULO E SWITCH */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-center sm:text-left">
@@ -53,19 +55,18 @@ export default function StandingsSection() {
                 {/* SWITCH ANIMADO ESTILO PÍLULA */}
                 <div className="relative bg-zinc-900 p-1 rounded-full border border-zinc-800 flex items-center w-64 h-11">
                     {/* Background Deslizante (A mágica da transição) */}
-                    <div 
-                        className={`absolute h-9 w-31 bg-red-600 rounded-full shadow-lg shadow-red-900/20 transition-all duration-300 ease-in-out ${
-                            view === "drivers" ? "translate-x-0" : "translate-x-31.5"
-                        }`}
+                    <div
+                        className={`absolute h-9 w-31 bg-red-600 rounded-full shadow-lg shadow-red-900/20 transition-all duration-300 ease-in-out ${view === "drivers" ? "translate-x-0" : "translate-x-31.5"
+                            }`}
                     />
-                    
-                    <button 
+
+                    <button
                         onClick={() => setView("drivers")}
                         className={`relative flex-1 text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${view === "drivers" ? "text-white" : "text-gray-500"}`}
                     >
                         Pilotos
                     </button>
-                    <button 
+                    <button
                         onClick={() => setView("constructors")}
                         className={`relative flex-1 text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${view === "constructors" ? "text-white" : "text-gray-500"}`}
                     >
@@ -74,15 +75,26 @@ export default function StandingsSection() {
                 </div>
             </div>
 
-            {/* TABELAS COM TRANSIÇÃO SIMPLES */}
+            {/* TABELAS COM TRANSIÇÃO */}
             <div className="relative overflow-hidden">
                 {view === "drivers" ? (
-                    <DriverTable standings={drivers} />
+                    <DriverTable
+                        standings={drivers}
+                        onRowClick={(driver, constructorName) => setSelectedDriver({ driver, constructorName })}
+                    />
                 ) : (
                     <ConstructorTable standings={constructors} />
                 )}
             </div>
-            
+
+            {/* RENDERIZA O MODAL SE TIVER UM PILOTO SELECIONADO */}
+            {selectedDriver && (
+                <DriverModal
+                    driver={selectedDriver.driver}
+                    constructorName={selectedDriver.constructorName}
+                    onClose={() => setSelectedDriver(null)}
+                />
+            )}
         </div>
     );
 }

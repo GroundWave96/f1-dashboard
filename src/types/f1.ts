@@ -1,9 +1,11 @@
 export interface Driver {
   driverId: string;
-  permanentNumber: string;
+  permanentNumber?: string;
   givenName: string;
   familyName: string;
   nationality: string;
+  dateOfBirth?: string;
+  url?: string;
 }
 
 export interface Constructor {

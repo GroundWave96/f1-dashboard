@@ -4,9 +4,10 @@ import { nationalityToISO, getConstructorLogo } from "../../../lib/f1-utils";
 
 interface DriverTableProps {
     standings: DriverStanding[];
+    onRowClick: (driver: any, constructorName: string) => void;
 }
 
-export default function DriverTable({ standings }: DriverTableProps) {
+export default function DriverTable({ standings, onRowClick }: DriverTableProps) {
     return (
         <div className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl max-h-[65dvh] sm:max-h-[75dvh] overflow-y-auto overscroll-contain pb-2">
             <table className="w-full text-left text-sm text-gray-300">
@@ -20,10 +21,14 @@ export default function DriverTable({ standings }: DriverTableProps) {
                 </thead>
                 <tbody>
                     {standings.map((row) => (
-                        <tr key={row.Driver.driverId} className="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors">
+                        <tr
+                            key={row.Driver.driverId}
+                            onClick={() => onRowClick(row.Driver, row.Constructors[0]?.name || "Sem Equipe")}
+                            className="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors cursor-pointer"
+                        >
                             {/* POSIÇÃO */}
                             <td className="px-4 py-4 sm:px-6 font-bold text-white">{row.position}º</td>
-                            
+
                             {/* PILOTO */}
                             <td className="px-4 py-4 sm:px-6">
                                 <div className="flex items-center gap-3">
@@ -47,7 +52,7 @@ export default function DriverTable({ standings }: DriverTableProps) {
                                     </div>
                                 </div>
                             </td>
-                            
+
                             {/* EQUIPE (Desktop) */}
                             <td className="px-4 py-4 sm:px-6 hidden sm:table-cell">
                                 <div className="flex items-center gap-3">
@@ -59,7 +64,7 @@ export default function DriverTable({ standings }: DriverTableProps) {
                                     <span>{row.Constructors[0]?.name}</span>
                                 </div>
                             </td>
-                            
+
                             {/* PONTOS */}
                             <td className="px-4 py-4 sm:px-6 font-bold text-red-500 text-right">{row.points}</td>
                         </tr>
