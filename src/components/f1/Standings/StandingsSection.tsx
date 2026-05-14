@@ -54,8 +54,8 @@ export default function StandingsSection() {
                 <div className="relative bg-zinc-900 p-1 rounded-full border border-zinc-800 flex items-center w-64 h-11">
                     {/* Background Deslizante (A mágica da transição) */}
                     <div 
-                        className={`absolute h-9 w-[124px] bg-red-600 rounded-full shadow-lg shadow-red-900/20 transition-all duration-300 ease-in-out ${
-                            view === "drivers" ? "translate-x-0" : "translate-x-[126px]"
+                        className={`absolute h-9 w-31 bg-red-600 rounded-full shadow-lg shadow-red-900/20 transition-all duration-300 ease-in-out ${
+                            view === "drivers" ? "translate-x-0" : "translate-x-31.5"
                         }`}
                     />
                     
