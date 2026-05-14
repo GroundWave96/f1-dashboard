@@ -41,6 +41,7 @@ export const getConstructorLogo = (constructorId: string | undefined): string =>
     'williams': 'williams-racing.svg'
   };
 
-  const fileName = logoMap[constructorId] || `${constructorId}.svg`;
-  return `/teams/${fileName}`;
+  const logoFile = logoMap[constructorId];
+  
+  return logoFile ? `/teams/${logoFile}` : '/teams/f1.svg';
 };
