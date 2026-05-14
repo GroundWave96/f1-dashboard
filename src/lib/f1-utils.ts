@@ -1,0 +1,46 @@
+export const nationalityToISO = (nationality: string): string => {
+  const map: Record<string, string> = {
+    'British': 'gb',
+    'Brazilian': 'br',
+    'Dutch': 'nl',
+    'Italian': 'it',
+    'Spanish': 'es',
+    'French': 'fr',
+    'German': 'de',
+    'Argentine': 'ar',
+    'Australian': 'au',
+    'Monegasque': 'mc',
+    'Thai': 'th',
+    'Mexican': 'mx',
+    'American': 'us',
+    'Canadian': 'ca',
+    'Japanese': 'jp',
+    'Danish': 'dk',
+    'Finnish': 'fi',
+    'Chinese': 'cn',
+    'New Zealander': 'nz',
+  };
+  return map[nationality] || 'un';
+};
+
+export const getConstructorLogo = (constructorId: string | undefined): string => {
+  if (!constructorId) return '/teams/f1.svg';
+
+  const logoMap: Record<string, string> = {
+    'alpine': 'alpine.svg',
+    'aston_martin': 'aston-martin.svg',
+    'audi': 'audi.svg',
+    'cadillac': 'cadillac.svg',
+    'ferrari': 'ferrari.svg',
+    'haas': 'haas.svg',
+    'mclaren': 'mclaren.svg',
+    'mercedes': 'mercedes-benz.svg',
+    'rb': 'racing-bulls.svg',
+    'red_bull': 'red-bull.svg',
+    'sauber': 'sauber.svg',
+    'williams': 'williams-racing.svg'
+  };
+
+  const fileName = logoMap[constructorId] || `${constructorId}.svg`;
+  return `/teams/${fileName}`;
+};
