@@ -67,3 +67,10 @@ export interface RaceResult {
 export interface PastRace extends Race {
   Results: RaceResult[];
 }
+
+export interface ConstructorStanding {
+  position: string;
+  points: string;
+  wins: string;
+  Constructor: Constructor;
+}
