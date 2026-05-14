@@ -1,6 +1,6 @@
 import { api } from "../../lib/api";
 import { DriverStanding } from "../../types/f1";
-import { nationalityToISO, getConstructorLogo } from "../../lib/f1-utils"; // Importante!
+import { nationalityToISO, getConstructorLogo } from "../../lib/f1-utils";
 
 export default async function DriverStandings() {
     const response = await api.get("current/driverStandings.json");
@@ -8,7 +8,7 @@ export default async function DriverStandings() {
 
     return (
         <div className="w-full max-w-4xl mx-auto px-2">
-            <div className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl max-h-[80vh] overflow-y-auto">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl max-h-[80dvh] overflow-y-auto overscroll-contain">
                 <table className="w-full text-left text-sm text-gray-300">
                     <thead className="bg-zinc-950 text-gray-400 uppercase sticky top-0 z-10 shadow-md">
                         <tr>
@@ -27,14 +27,12 @@ export default async function DriverStandings() {
                                 {/* 2. PILOTO */}
                                 <td className="px-4 py-4 sm:px-6">
                                     <div className="flex items-center gap-3">
-                                        {/* MOBILE: Logo da Equipe (Escondida no Desktop) */}
                                         <img
                                             src={getConstructorLogo(row.Constructors[0]?.constructorId)}
                                             alt={row.Constructors[0]?.name}
                                             className="w-7 h-7 object-contain aspect-square brightness-110 sm:hidden"
                                         />
                                         
-                                        {/* DESKTOP: Bandeira do Piloto (Escondida no Mobile) */}
                                         <img
                                             src={`https://flagcdn.com/w40/${nationalityToISO(row.Driver.nationality)}.png`}
                                             alt={row.Driver.nationality}
@@ -45,7 +43,6 @@ export default async function DriverStandings() {
                                             <span className="text-sm sm:text-base">
                                                 {row.Driver.givenName} <span className="font-bold uppercase text-white">{row.Driver.familyName}</span>
                                             </span>
-                                            {/* MOBILE: Nome da equipe pequeno e bem formatado (Escondido no Desktop) */}
                                             <span className="text-[11px] text-gray-400 sm:hidden">
                                                 {row.Constructors[0]?.name}
                                             </span>
@@ -53,7 +50,6 @@ export default async function DriverStandings() {
                                     </div>
                                 </td>
                                 
-                                {/* 3. EQUIPE (Visível apenas no Desktop) */}
                                 <td className="px-4 py-4 sm:px-6 hidden sm:table-cell">
                                     <div className="flex items-center gap-3">
                                         <img
@@ -65,7 +61,6 @@ export default async function DriverStandings() {
                                     </div>
                                 </td>
                                 
-                                {/* 4. PONTOS */}
                                 <td className="px-4 py-4 sm:px-6 font-bold text-red-500 text-right">{row.points}</td>
                             </tr>
                         ))}

@@ -16,7 +16,6 @@ export default function NextRace() {
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Busca os dados da próxima corrida
   useEffect(() => {
     async function fetchNextRace() {
       try {
@@ -32,11 +31,9 @@ export default function NextRace() {
     fetchNextRace();
   }, []);
 
-  // Lógica do Cronômetro
   useEffect(() => {
     if (!nextRace) return;
 
-    // Concatena a data e hora para criar o objeto Date do momento da largada
     const raceDateStr = `${nextRace.date}T${nextRace.time || "00:00:00Z"}`;
     const raceDate = new Date(raceDateStr).getTime();
 
@@ -70,7 +67,6 @@ export default function NextRace() {
 
   if (!nextRace) return null;
 
-  // Formatação para horário de Brasília
   const raceDateObj = new Date(`${nextRace.date}T${nextRace.time}`);
   const formattedDate = raceDateObj.toLocaleDateString("pt-BR", {
     weekday: "long",
@@ -83,10 +79,9 @@ export default function NextRace() {
   });
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-2 mb-8">
+    <div className="w-full max-w-4xl mx-auto px-2">
       <div className="bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-8">
         
-        {/* LADO ESQUERDO: Informações e Cronômetro */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left flex-1 w-full">
           <span className="text-red-500 font-bold uppercase tracking-widest text-xs mb-2">
             Próxima Corrida • Rodada {nextRace.round}
@@ -105,7 +100,6 @@ export default function NextRace() {
             <span>{formattedDate} às {formattedTime}</span>
           </div>
 
-          {/* CRONÔMETRO MINIMALISTA */}
           {timeLeft && (
             <div className="flex gap-4 sm:gap-6 justify-center md:justify-start w-full">
               <div className="flex flex-col items-center">
@@ -133,12 +127,11 @@ export default function NextRace() {
           )}
         </div>
 
-        {/* LADO DIREITO: Mapa do Circuito */}
         <div className="w-full md:w-1/2 flex justify-center md:justify-end opacity-80 hover:opacity-100 transition-opacity mt-6 md:mt-0">
           <img 
             src={`/circuits/${nextRace.Circuit.circuitId}.svg`} 
             alt={`Traçado do circuito ${nextRace.Circuit.circuitName}`}
-            className="w-full max-w-[280px] sm:max-w-[350px] drop-shadow-2xl brightness-200"
+            className="w-full max-w-70 sm:max-w-87.5 drop-shadow-2xl brightness-200"
             onError={(e) => (e.currentTarget.style.display = 'none')} 
           />
         </div>

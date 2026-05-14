@@ -10,7 +10,6 @@ export default function LastRaceResults() {
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(true);
 
-    // NOVO ESTADO: Guarda o ID do piloto que está com a linha expandida
     const [expandedDriverId, setExpandedDriverId] = useState<string | null>(null);
 
     useEffect(() => {
@@ -46,17 +45,16 @@ export default function LastRaceResults() {
     const goToPrevious = () => {
         if (hasPrevious) {
             setCurrentIndex(currentIndex - 1);
-            setExpandedDriverId(null); // Fecha a linha ao trocar de corrida
+            setExpandedDriverId(null);
         }
     };
     const goToNext = () => {
         if (hasNext) {
             setCurrentIndex(currentIndex + 1);
-            setExpandedDriverId(null); // Fecha a linha ao trocar de corrida
+            setExpandedDriverId(null);
         }
     };
 
-    // Função que abre/fecha a aba do piloto
     const toggleRow = (driverId: string) => {
         setExpandedDriverId((prev) => (prev === driverId ? null : driverId));
     };
@@ -64,12 +62,9 @@ export default function LastRaceResults() {
     return (
         <div className="w-full max-w-4xl mx-auto px-2 flex flex-col gap-4">
 
-            {/* Navegação */}
-            {/* Cabeçalho com Navegação Ajustada para Mobile e Desktop */}
             <div className="flex flex-col sm:flex-row items-center justify-between bg-zinc-900 p-4 rounded-lg border border-zinc-800 shadow-md gap-4">
 
-                {/* 1. Informações da Corrida - No mobile aparece primeiro (order-first) */}
-                <div className="text-center order-first sm:order-none">
+                <div className="text-center order-first sm:order-0">
                     <h2 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-wider">
                         {currentRace.raceName}
                     </h2>
@@ -78,7 +73,6 @@ export default function LastRaceResults() {
                     </p>
                 </div>
 
-                {/* 2. Container de Botões - No mobile ficam lado a lado abaixo do título */}
                 <div className="flex justify-center w-full sm:w-auto gap-3 mt-2 sm:mt-0">
                     <button
                         onClick={goToPrevious}
@@ -98,15 +92,13 @@ export default function LastRaceResults() {
                 </div>
             </div>
 
-            {/* Tabela */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl max-h-[65vh] overflow-y-auto">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl max-h-[70dvh] overflow-y-auto overscroll-contain">
                 <table className="w-full text-left text-sm text-gray-300">
                     <thead className="bg-zinc-950 text-gray-400 uppercase sticky top-0 z-10 shadow-md">
                         <tr>
                             <th className="px-3 py-4 sm:px-6">Pos</th>
                             <th className="px-3 py-4 sm:px-6">Piloto</th>
                             <th className="px-3 py-4 sm:px-6 hidden sm:table-cell">Equipe</th>
-                            {/* Pontos agora sempre visíveis (removido o hidden) */}
                             <th className="px-3 py-4 sm:px-6 text-center">Pts</th>
                             <th className="px-3 py-4 sm:px-6 text-center">Info</th>
                         </tr>
@@ -122,10 +114,8 @@ export default function LastRaceResults() {
                                         className="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors cursor-pointer"
                                         onClick={() => toggleRow(row.Driver.driverId)}
                                     >
-                                        {/* 1. POSIÇÃO */}
                                         <td className="px-3 py-4 sm:px-6 font-bold text-white">{row.position}º</td>
 
-                                        {/* 2. PILOTO */}
                                         <td className="px-3 py-4 sm:px-6">
                                             <div className="flex items-center gap-3">
                                                 <img
@@ -149,7 +139,6 @@ export default function LastRaceResults() {
                                             </div>
                                         </td>
 
-                                        {/* 3. EQUIPE */}
                                         <td className="px-3 py-4 sm:px-6 hidden sm:table-cell text-gray-400">
                                             <div className="flex items-center gap-3">
                                                 <img
@@ -161,12 +150,10 @@ export default function LastRaceResults() {
                                             </div>
                                         </td>
 
-                                        {/* 4. PONTOS */}
                                         <td className="px-3 py-4 sm:px-6 text-center font-bold text-red-500">
                                             {Number(row.points) > 0 ? `+${row.points}` : row.status}
                                         </td>
 
-                                        {/* 5. SETA DE INFO */}
                                         <td className="px-3 py-4 sm:px-6 text-center">
                                             <div className={`transition-colors ${isPurpleLap ? "text-purple-500" : "text-gray-400"}`}>
                                                 <svg
@@ -181,7 +168,6 @@ export default function LastRaceResults() {
                                         </td>
                                     </tr>
 
-                                    {/* LINHA EXPANDIDA COM TRANSIÇÃO SUAVE (Sempre no DOM) */}
                                     <tr
                                         className={`bg-zinc-950/50 transition-all duration-300 ease-in-out ${isExpanded ? "border-b border-zinc-800 opacity-100" : "opacity-0 invisible"
                                             }`}
