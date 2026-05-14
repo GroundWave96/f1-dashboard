@@ -4,23 +4,23 @@ import "./globals.css";
 
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"], 
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
   variable: "--font-poppins",
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://f1dash.pages.dev/"), 
-  
+  metadataBase: new URL("https://f1dash.pages.dev/"),
+
   title: "F1 Dashboard | Temporada Atual",
   description: "Acompanhe as próximas corridas, classificação de pilotos e resultados da Fórmula 1 em tempo real.",
-  
+
   openGraph: {
     title: "F1 Dashboard | Temporada Atual",
     description: "Acompanhe as próximas corridas, classificação de pilotos e resultados da Fórmula 1.",
     type: "website",
     locale: "pt_BR",
   },
-  
+
   twitter: {
     card: "summary_large_image",
     title: "F1 Dashboard | Temporada Atual",
