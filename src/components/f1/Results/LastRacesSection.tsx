@@ -10,19 +10,15 @@ export default function LastRacesSection() {
     const [races, setRaces] = useState<PastRace[]>([]);
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(true);
-    // Novo estado para controlar a temporada selecionada
     const [season, setSeason] = useState<string>("current"); 
 
-    // O useEffect agora depende da variável 'season'
     useEffect(() => {
         async function fetchAllResults() {
             setLoading(true);
             try {
-                // A API permite passar o ano na URL. Ex: "2021/results.json"
                 const response = await api.get(`${season}/results.json?limit=1000`);
                 const allRaces: PastRace[] = response.data.MRData.RaceTable.Races;
                 setRaces(allRaces);
-                // Sempre que muda de ano, começa mostrando a última corrida daquele ano
                 setCurrentIndex(allRaces.length - 1); 
             } catch (error) {
                 console.error("Erro ao buscar resultados:", error);
@@ -41,7 +37,6 @@ export default function LastRacesSection() {
         if (currentIndex < races.length - 1) setCurrentIndex(currentIndex + 1);
     };
 
-    // Função que será repassada para o menu de navegação
     const handleSeasonChange = (newSeason: string) => {
         setSeason(newSeason);
     };

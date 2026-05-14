@@ -5,7 +5,7 @@ import { api } from "../../../lib/api";
 import { DriverStanding, ConstructorStanding, Driver } from "../../../types/f1";
 import DriverTable from "./DriverTable";
 import ConstructorTable from "./ConstructorTable";
-import DriverModal from "./DriverModal"; // Importe o modal!
+import DriverModal from "./DriverModal";
 
 export default function StandingsSection() {
     const [view, setView] = useState<"drivers" | "constructors">("drivers");
@@ -43,10 +43,8 @@ export default function StandingsSection() {
     }
 
     return (
-        // Adicionamos h-full e py-4 (padding vertical) para dar o respiro correto nas bordas superior e inferior
         <div className="w-full max-w-4xl mx-auto px-2 flex flex-col gap-4 sm:gap-6 h-full py-4 sm:py-6">
             
-            {/* MINI-TÍTULO E SWITCH (Fica fixo no topo) */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
                 <div className="text-center sm:text-left">
                     <span className="text-red-500 font-bold uppercase tracking-widest text-[10px]">Mundial de F1</span>
@@ -75,7 +73,6 @@ export default function StandingsSection() {
                 </div>
             </div>
 
-            {/* TABELAS (A Mágica do flex-1 min-h-0) */}
             <div className="relative flex-1 min-h-0 w-full">
                 {view === "drivers" ? (
                     <DriverTable 
@@ -87,7 +84,6 @@ export default function StandingsSection() {
                 )}
             </div>
             
-            {/* MODAL */}
             {selectedDriver && (
                 <DriverModal 
                     driver={selectedDriver.driver} 

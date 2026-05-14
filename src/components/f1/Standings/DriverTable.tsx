@@ -26,10 +26,8 @@ export default function DriverTable({ standings, onRowClick }: DriverTableProps)
                             onClick={() => onRowClick(row.Driver, row.Constructors[0]?.name || "Sem Equipe")}
                             className="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors cursor-pointer"
                         >
-                            {/* POSIÇÃO */}
                             <td className="px-4 py-4 sm:px-6 font-bold text-white">{row.position}º</td>
 
-                            {/* PILOTO */}
                             <td className="px-4 py-4 sm:px-6">
                                 <div className="flex items-center gap-3">
                                     <img
@@ -53,7 +51,6 @@ export default function DriverTable({ standings, onRowClick }: DriverTableProps)
                                 </div>
                             </td>
 
-                            {/* EQUIPE (Desktop) */}
                             <td className="px-4 py-4 sm:px-6 hidden sm:table-cell">
                                 <div className="flex items-center gap-3">
                                     <img
@@ -65,7 +62,6 @@ export default function DriverTable({ standings, onRowClick }: DriverTableProps)
                                 </div>
                             </td>
 
-                            {/* PONTOS */}
                             <td className="px-4 py-4 sm:px-6 font-bold text-red-500 text-right">{row.points}</td>
                         </tr>
                     ))}

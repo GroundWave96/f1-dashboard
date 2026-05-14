@@ -34,7 +34,6 @@ export default function ResultsTable({ results }: ResultsTableProps) {
 
                         return (
                             <React.Fragment key={row.Driver.driverId}>
-                                {/* LINHA PRINCIPAL */}
                                 <tr
                                     className="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors cursor-pointer"
                                     onClick={() => toggleRow(row.Driver.driverId)}
@@ -79,7 +78,6 @@ export default function ResultsTable({ results }: ResultsTableProps) {
                                         {Number(row.points) > 0 ? `+${row.points}` : row.status}
                                     </td>
 
-                                    {/* ÍCONE DE SETA ANIMADO */}
                                     <td className="px-3 py-4 sm:px-6 text-center">
                                         <div className={`transition-colors ${isPurpleLap ? "text-purple-500" : "text-gray-400"}`}>
                                             <svg
@@ -94,7 +92,6 @@ export default function ResultsTable({ results }: ResultsTableProps) {
                                     </td>
                                 </tr>
 
-                                {/* LINHA DE DETALHES ANIMADA */}
                                 <tr
                                     className={`bg-zinc-950/50 transition-all duration-300 ease-in-out ${isExpanded ? "border-b border-zinc-800 opacity-100" : "opacity-0 invisible"
                                         }`}
