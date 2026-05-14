@@ -51,6 +51,17 @@ export interface RaceResult {
   Time?: {
     time: string;
   };
+  FastestLap?: {
+    rank: string;
+    lap: string;
+    Time: {
+      time: string;
+    };
+    AverageSpeed: {
+      units: string;
+      speed: string;
+    };
+  };
 }
 
 export interface PastRace extends Race {
