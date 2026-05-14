@@ -53,20 +53,20 @@ export default function StandingsSection() {
 
                 <div className="relative bg-zinc-900 p-1 rounded-full border border-zinc-800 flex items-center w-64 h-11">
                     <div 
-                        className={`absolute h-9 w-31 bg-red-600 rounded-full shadow-lg shadow-red-900/20 transition-all duration-300 ease-in-out ${
-                            view === "drivers" ? "translate-x-0" : "translate-x-31.5"
+                        className={`absolute h-9 w-[calc(50%-4px)] bg-red-600 rounded-full shadow-lg shadow-red-900/20 transition-transform duration-300 ease-in-out z-0 ${
+                            view === "drivers" ? "translate-x-0" : "translate-x-[100%]"
                         }`}
                     />
                     
                     <button 
                         onClick={() => setView("drivers")}
-                        className={`relative flex-1 text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${view === "drivers" ? "text-white" : "text-gray-500"}`}
+                        className={`relative z-10 h-full flex-1 flex items-center justify-center text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${view === "drivers" ? "text-white" : "text-gray-500"}`}
                     >
                         Pilotos
                     </button>
                     <button 
                         onClick={() => setView("constructors")}
-                        className={`relative flex-1 text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${view === "constructors" ? "text-white" : "text-gray-500"}`}
+                        className={`relative z-10 h-full flex-1 flex items-center justify-center text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${view === "constructors" ? "text-white" : "text-gray-500"}`}
                     >
                         Equipes
                     </button>
