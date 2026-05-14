@@ -10,16 +10,16 @@ export default function LastRacesSection() {
     const [races, setRaces] = useState<PastRace[]>([]);
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(true);
-    const [season, setSeason] = useState<string>("current"); 
+    const [season, setSeason] = useState<string>("current");
 
     useEffect(() => {
         async function fetchAllResults() {
             setLoading(true);
             try {
                 const response = await api.get(`${season}/results.json?limit=1000`);
-                const allRaces: PastRace[] = response.data.MRData.RaceTable.Races;
+                const allRaces: PastRace[] = response.data.MRData.RaceTable.Races.sort((a: PastRace, b: PastRace) => Number(a.round) - Number(b.round));
                 setRaces(allRaces);
-                setCurrentIndex(allRaces.length - 1); 
+                setCurrentIndex(allRaces.length - 1);
             } catch (error) {
                 console.error("Erro ao buscar resultados:", error);
             } finally {
@@ -52,7 +52,7 @@ export default function LastRacesSection() {
 
     if (races.length === 0) {
         return (
-             <div className="flex flex-col items-center justify-center text-gray-400 gap-4">
+            <div className="flex flex-col items-center justify-center text-gray-400 gap-4">
                 <span>Nenhuma corrida encontrada para esta temporada.</span>
                 <button onClick={() => setSeason("current")} className="text-red-500 underline">Voltar para a atual</button>
             </div>
@@ -65,7 +65,7 @@ export default function LastRacesSection() {
 
     return (
         <div className="w-full max-w-4xl mx-auto px-2">
-            <RaceNavigation 
+            <RaceNavigation
                 currentRace={currentRace}
                 hasPrevious={hasPrevious}
                 hasNext={hasNext}
