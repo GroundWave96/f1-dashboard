@@ -1,6 +1,6 @@
 import React from "react";
 import { ConstructorStanding } from "../../../types/f1";
-import { getConstructorLogo } from "../../../lib/f1-utils";
+import { getConstructorLogo, translateNationality } from "../../../lib/f1-utils";
 
 interface ConstructorTableProps {
     standings: ConstructorStanding[];
@@ -33,8 +33,8 @@ export default function ConstructorTable({ standings }: ConstructorTableProps) {
                                         <span className="text-sm sm:text-base font-bold text-white">
                                             {row.Constructor.name}
                                         </span>
-                                        <span className="text-[11px] text-gray-400 sm:hidden">
-                                            {row.Constructor.nationality}
+                                        <span className="text-[11px] text-gray-400">
+                                            {translateNationality(row.Constructor.nationality)}
                                         </span>
                                     </div>
                                 </div>

@@ -67,7 +67,9 @@ export const translateNationality = (nationality: string): string => {
     'Finnish': 'Finlandês',
     'Chinese': 'Chinês',
     'New Zealander': 'Neozelandês',
-    'Colombian': 'Colombiano'
+    'Colombian': 'Colombiano',
+    'Austrian': 'Austríaco',
+    'Swiss': 'Suíço'
   };
   return map[nationality] || nationality;
 };

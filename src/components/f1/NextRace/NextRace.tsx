@@ -6,6 +6,7 @@ import { PastRace } from "../../../types/f1";
 import RaceInfo from "./RaceInfo";
 import CountdownTimer from "./CountdownTimer";
 import TrackMap from "./TrackMap";
+import Header from "../../layout/Header";
 
 export default function NextRace() {
   const [nextRace, setNextRace] = useState<PastRace | null>(null);
@@ -39,21 +40,7 @@ export default function NextRace() {
   return (
     <div className="w-full h-full flex flex-col relative px-4 py-6 sm:p-8">
       
-      <header className="w-full max-w-4xl mx-auto flex items-center justify-between shrink-0">
-        
-        <div className="h-5 sm:h-6 flex items-center shrink-0">
-          <img 
-            src="/teams/f1.svg" 
-            alt="F1 Logo" 
-            className="h-full w-auto object-contain opacity-90" 
-          />
-        </div>
-
-        <span className="text-zinc-500 font-bold text-[10px] sm:text-xs uppercase tracking-widest bg-zinc-900/50 px-3 py-1 rounded-full border border-zinc-800 shrink-0">
-          Dashboard
-        </span>
-        
-      </header>
+      <Header />
 
       <div className="w-full max-w-4xl mx-auto my-auto">
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 max-h-[85dvh] sm:max-h-none overflow-y-auto sm:overflow-visible">
