@@ -13,6 +13,26 @@ export const dictionaries = {
       hours: "Horas",
       minutes: "Minutos",
       seconds: "Segundos"
+    },
+    standings: {
+      title: "Classificação Mundial",
+      season: "Temporada",
+      drivers: "Pilotos",
+      teams: "Equipes",
+      pos: "Pos",
+      driver: "Piloto",
+      team: "Equipe",
+      wins: "Vitórias",
+      pts: "Pts",
+      loading: "Carregando Dados..."
+    },
+    driverModal: {
+      age: "Idade",
+      nationality: "Nacionalidade",
+      team: "Equipe",
+      biography: "Biografia",
+      loadingBio: "Carregando biografia...",
+      bioNotFound: "Biografia não encontrada para este piloto."
     }
   },
   en: {
@@ -29,6 +49,26 @@ export const dictionaries = {
       hours: "Hours",
       minutes: "Minutes",
       seconds: "Seconds"
+    },
+    standings: {
+      title: "World Standings",
+      season: "Season",
+      drivers: "Drivers",
+      teams: "Teams",
+      pos: "Pos",
+      driver: "Driver",
+      team: "Team",
+      wins: "Wins",
+      pts: "Pts",
+      loading: "Loading Data..."
+    },
+    driverModal: {
+      age: "Age",
+      nationality: "Nationality",
+      team: "Team",
+      biography: "Biography",
+      loadingBio: "Loading biography...",
+      bioNotFound: "Biography not found for this driver."
     }
   }
 };

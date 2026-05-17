@@ -46,7 +46,9 @@ export const getConstructorLogo = (constructorId: string | undefined): string =>
   return logoFile ? `/teams/${logoFile}` : '/teams/f1.svg';
 };
 
-export const translateNationality = (nationality: string): string => {
+export const translateNationality = (nationality: string, lang: 'pt' | 'en'): string => {
+  if (lang === 'en') return nationality;
+
   const map: Record<string, string> = {
     'British': 'Britânico',
     'Brazilian': 'Brasileiro',
@@ -61,7 +63,7 @@ export const translateNationality = (nationality: string): string => {
     'Thai': 'Tailandês',
     'Mexican': 'Mexicano',
     'American': 'Americano',
-    'Canadian': 'Canadiano',
+    'Canadian': 'Canadense',
     'Japanese': 'Japonês',
     'Danish': 'Dinamarquês',
     'Finnish': 'Finlandês',

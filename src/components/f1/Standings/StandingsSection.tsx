@@ -6,6 +6,7 @@ import { DriverStanding, ConstructorStanding, Driver } from "../../../types/f1";
 import DriverTable from "./DriverTable";
 import ConstructorTable from "./ConstructorTable";
 import DriverModal from "./DriverModal";
+import { useLanguage } from "../../../i18n/LanguageContext";
 
 export default function StandingsSection() {
     const [view, setView] = useState<"drivers" | "constructors">("drivers");
@@ -13,6 +14,8 @@ export default function StandingsSection() {
     const [constructors, setConstructors] = useState<ConstructorStanding[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedDriver, setSelectedDriver] = useState<{ driver: Driver, constructorName: string } | null>(null);
+    const { dict } = useLanguage();
+    const currentYear = new Date().getFullYear();
 
     useEffect(() => {
         async function fetchData() {
@@ -37,7 +40,7 @@ export default function StandingsSection() {
         return (
             <div className="flex flex-col items-center justify-center text-gray-400 gap-4">
                 <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
-                <span>Carregando Classificações...</span>
+                <span>{dict.standings.loading}</span>
             </div>
         );
     }
@@ -47,8 +50,8 @@ export default function StandingsSection() {
             
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
                 <div className="text-center sm:text-left">
-                    <span className="text-red-500 font-bold uppercase tracking-widest text-[10px]">Mundial de F1</span>
-                    <h2 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-wider">Classificação 2026</h2>
+                    <span className="text-red-500 font-bold uppercase tracking-widest text-[10px]">{dict.standings.title}</span>
+                    <h2 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-wider">{dict.standings.season} {currentYear}</h2>
                 </div>
 
                 <div className="relative bg-zinc-900 p-1 rounded-full border border-zinc-800 flex items-center w-64 h-11">
@@ -62,13 +65,13 @@ export default function StandingsSection() {
                         onClick={() => setView("drivers")}
                         className={`relative z-10 h-full flex-1 flex items-center justify-center text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${view === "drivers" ? "text-white" : "text-gray-500"}`}
                     >
-                        Pilotos
+                        {dict.standings.drivers}
                     </button>
                     <button 
                         onClick={() => setView("constructors")}
                         className={`relative z-10 h-full flex-1 flex items-center justify-center text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${view === "constructors" ? "text-white" : "text-gray-500"}`}
                     >
-                        Equipes
+                        {dict.standings.teams}
                     </button>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 import React from "react";
 import { DriverStanding } from "../../../types/f1";
 import { nationalityToISO, getConstructorLogo } from "../../../lib/f1-utils";
+import { useLanguage } from "../../../i18n/LanguageContext";
 
 interface DriverTableProps {
     standings: DriverStanding[];
@@ -8,15 +9,17 @@ interface DriverTableProps {
 }
 
 export default function DriverTable({ standings, onRowClick }: DriverTableProps) {
+    const { dict, lang } = useLanguage();
+
     return (
         <div className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl h-fit max-h-full w-full overflow-y-auto overscroll-contain animate-in fade-in duration-500">
             <table className="w-full text-left text-sm text-gray-300">
                 <thead className="bg-zinc-950 text-gray-400 uppercase sticky top-0 z-10 shadow-md">
                     <tr>
-                        <th className="px-4 py-4 sm:px-6">Pos</th>
-                        <th className="px-4 py-4 sm:px-6">Piloto</th>
-                        <th className="px-4 py-4 sm:px-6 hidden sm:table-cell">Equipe</th>
-                        <th className="px-4 py-4 sm:px-6 text-right">Pts</th>
+                        <th className="px-4 py-4 sm:px-6">{dict.standings.pos}</th>
+                        <th className="px-4 py-4 sm:px-6">{dict.standings.driver}</th>
+                        <th className="px-4 py-4 sm:px-6 hidden sm:table-cell">{dict.standings.team}</th>
+                        <th className="px-4 py-4 sm:px-6 text-right">{dict.standings.pts}</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Driver } from "../../../types/f1";
 import { nationalityToISO, translateNationality } from "../../../lib/f1-utils";
+import { useLanguage } from "../../../i18n/LanguageContext";
 
 interface DriverModalProps {
     driver: Driver;
@@ -14,6 +15,7 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [summary, setSummary] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    const { dict, lang } = useLanguage();
 
     const getAge = (dob?: string) => {
         if (!dob) return "--";
@@ -33,12 +35,13 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
             try {
                 const fullName = `${driver.givenName} ${driver.familyName}`;
 
-                let wikiUrl = `https://pt.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(fullName)}`;
+                let wikiUrl = `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(fullName)}`;
                 let res = await fetch(wikiUrl);
                 let data = await res.json();
 
                 if (data.type === "disambiguation" || data.title === "Not found") {
-                    wikiUrl = `https://pt.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(fullName + " (automobilista)")}`;
+                    const disambiguationTerm = lang === 'pt' ? " (automobilista)" : " (racing driver)";
+                    wikiUrl = `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(fullName + disambiguationTerm)}`;
                     res = await fetch(wikiUrl);
                     data = await res.json();
                 }
@@ -58,7 +61,7 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
             }
         }
         fetchWikiData();
-    }, [driver]);
+    }, [driver, lang]);
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -86,7 +89,7 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
                 {loading ? (
                     <div className="h-90 flex flex-col items-center justify-center gap-4">
                         <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
-                        <span className="text-sm text-zinc-400 font-medium animate-pulse">Consultando base de dados...</span>
+                        <span className="text-sm text-zinc-400 font-medium animate-pulse">{dict.driverModal.loadingBio}</span>
                     </div>
                 ) : (
                     <div className="flex flex-col items-center text-center mt-2">
@@ -114,13 +117,13 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
 
                         <div className="flex gap-3 mb-5 w-full justify-center">
                             <div className="bg-zinc-800/50 rounded-lg px-4 py-2 border border-zinc-700/50 w-28">
-                                <span className="block text-[10px] text-zinc-500 uppercase tracking-wider font-bold mb-0.5">Idade</span>
-                                <span className="text-white font-mono">{getAge(driver.dateOfBirth)} anos</span>
+                                <span className="block text-[10px] text-zinc-500 uppercase tracking-wider font-bold mb-0.5">{dict.driverModal.age}</span>
+                                <span className="text-white font-mono">{getAge(driver.dateOfBirth)}</span>
                             </div>
                             <div className="bg-zinc-800/50 rounded-lg px-4 py-2 border border-zinc-700/50 w-36">
-                                <span className="block text-[10px] text-zinc-500 uppercase tracking-wider font-bold mb-0.5">Nacionalidade</span>
+                                <span className="block text-[10px] text-zinc-500 uppercase tracking-wider font-bold mb-0.5">{dict.driverModal.nationality}</span>
                                 <span className="text-white text-sm capitalize truncate block">
-                                    {translateNationality(driver.nationality)}
+                                    {translateNationality(driver.nationality, lang as 'pt' | 'en')}
                                 </span>
                             </div>
                         </div>
@@ -131,7 +134,7 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
                                     {summary}
                                 </p>
                             ) : (
-                                <p className="text-sm text-zinc-500 italic">Informações biográficas detalhadas não encontradas.</p>
+                                <p className="text-sm text-zinc-500 italic">{dict.driverModal.bioNotFound}</p>
                             )}
                         </div>
                     </div>
