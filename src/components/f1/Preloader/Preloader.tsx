@@ -11,7 +11,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
   const [lightsOn, setLightsOn] = useState(0);
   const [phase, setPhase] = useState<"lights" | "go" | "done">("lights");
 
-  // FASE 1: Acender as luzes + Suspense Rápido
+  // FASE 1: Acender as luzes + Suspense
   useEffect(() => {
     if (phase !== "lights") return;
 
@@ -23,12 +23,12 @@ export default function Preloader({ onComplete }: PreloaderProps) {
       } else {
         clearInterval(lightInterval);
         
-        // SUSPENSE AJUSTADO: Entre 0.4s e 0.9s (Rápido e impactante)
+        // Suspense aleatório rápido da F1
         const suspenseTime = 400 + Math.random() * 500;
         
         setTimeout(() => {
-          setPhase("go");
-          setLightsOn(0); // Apaga as luzes
+          setLightsOn(0); // Apaga os LEDs instantaneamente
+          setPhase("go"); // Inicia o momento da largada
         }, suspenseTime);
       }
     }, 500); 
@@ -36,10 +36,12 @@ export default function Preloader({ onComplete }: PreloaderProps) {
     return () => clearInterval(lightInterval);
   }, [phase]);
 
-  // FASE 2: Espera rápida para o fade-out após apagar as luzes
+  // FASE 2: Início Imediato do Fade-out
   useEffect(() => {
     if (phase === "go") {
-      const timeout = setTimeout(() => setPhase("done"), 600);
+      // AJUSTE AQUI: Mudamos de 600ms para apenas 50ms!
+      // Assim que apagar as luzes, a tela preta já começa a derreter (fade-out) mostrando o site.
+      const timeout = setTimeout(() => setPhase("done"), 50);
       return () => clearTimeout(timeout);
     }
   }, [phase]);
@@ -56,12 +58,11 @@ export default function Preloader({ onComplete }: PreloaderProps) {
 
   return (
     <div 
-      className={`fixed inset-0 z-100 flex items-center justify-center bg-zinc-950 transition-opacity duration-500 ease-in-out ${
+      className={`fixed inset-0 z-[100] flex items-center justify-center bg-zinc-950 transition-opacity duration-500 ease-in-out ${
         phase === "done" ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
     >
       <div 
-        // CORREÇÃO DO BUG: O farol fica invisível tanto na fase "go" quanto na fase "done" (phase !== "lights")
         className={`flex w-[90%] max-w-5xl justify-between items-center transition-all duration-300 ${
           phase !== "lights" ? "opacity-0 scale-95" : "opacity-100 scale-100"
         }`}
@@ -73,7 +74,6 @@ export default function Preloader({ onComplete }: PreloaderProps) {
         <div className="w-[16%]"><StartingLight isOn={lightsOn >= 5} /></div>
       </div>
 
-      {/* Micro "flash" cinético da largada */}
       <div 
         className={`absolute inset-0 bg-white pointer-events-none transition-opacity duration-300 ${
           phase === "go" ? "opacity-5" : "opacity-0"
