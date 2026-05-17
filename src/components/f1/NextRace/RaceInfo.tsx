@@ -1,19 +1,28 @@
 import React from "react";
 import { PastRace } from "../../../types/f1";
+import { useLanguage } from "../../../i18n/LanguageContext";
 
 interface RaceInfoProps {
   race: PastRace;
 }
 
 export default function RaceInfo({ race }: RaceInfoProps) {
+  // Extraímos também o "lang" (idioma atual: 'pt' ou 'en') para formatar a data
+  const { dict, lang } = useLanguage();
   const raceDateObj = new Date(`${race.date}T${race.time}`);
   
-  const formattedDate = raceDateObj.toLocaleDateString("pt-BR", {
+  // O JavaScript formata a data automaticamente baseado no idioma (pt-BR ou en-US)
+  const locale = lang === 'pt' ? 'pt-BR' : 'en-US';
+
+  const formattedDate = raceDateObj.toLocaleDateString(locale, {
     weekday: "long",
     day: "2-digit",
     month: "long",
   });
-  const formattedTime = raceDateObj.toLocaleTimeString("pt-BR", {
+  
+  const capitalizedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+
+  const formattedTime = raceDateObj.toLocaleTimeString(locale, {
     hour: "2-digit",
     minute: "2-digit",
   });
@@ -21,7 +30,7 @@ export default function RaceInfo({ race }: RaceInfoProps) {
   return (
     <div className="w-full flex flex-col items-center md:items-start">
       <span className="text-red-500 font-bold uppercase tracking-widest text-[10px] sm:text-xs mb-1 sm:mb-2">
-        Próxima Corrida • Rodada {race.round}
+        {dict.nextRace.title} • {dict.nextRace.round} {race.round}
       </span>
       <h2 className="text-xl sm:text-4xl font-bold text-white uppercase tracking-wider mb-1">
         {race.raceName}
@@ -34,21 +43,21 @@ export default function RaceInfo({ race }: RaceInfoProps) {
         <svg className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
-        <span className="capitalize">{formattedDate} às {formattedTime}</span>
+        <span >{capitalizedDate} {dict.nextRace.at} {formattedTime}</span>
       </div>
 
       <div className="hidden [@media(min-height:750px)]:flex sm:flex flex-col w-full md:max-w-[80%] border-t border-zinc-800/50 pt-4 mb-4">
         <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 text-center md:text-left">
-          Destaques do Fim de Semana
+          {dict.nextRace.weekendHighlights}
         </span>
         <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="bg-zinc-950/30 rounded p-2 border border-zinc-800/30 flex flex-col justify-center items-center">
-                <span className="text-zinc-500 font-bold uppercase text-[9px] mb-0.5">Qualificação</span>
-                <span className="text-white font-mono">Sábado</span>
+                <span className="text-zinc-500 font-bold uppercase text-[9px] mb-0.5">{dict.nextRace.qualifying}</span>
+                <span className="text-white font-mono">{dict.nextRace.saturday}</span>
             </div>
             <div className="bg-zinc-950/30 rounded p-2 border border-zinc-800/30 flex flex-col justify-center items-center">
-                <span className="text-zinc-500 font-bold uppercase text-[9px] mb-0.5">Corrida</span>
-                <span className="text-white font-mono text-center">Domingo</span>
+                <span className="text-zinc-500 font-bold uppercase text-[9px] mb-0.5">{dict.nextRace.race}</span>
+                <span className="text-white font-mono text-center">{dict.nextRace.sunday}</span>
             </div>
         </div>
       </div>

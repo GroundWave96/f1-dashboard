@@ -1,13 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 export default function Header() {
-  const [lang, setLang] = useState<"pt" | "en">("pt");
-
-  const toggleLang = () => {
-    setLang((prev) => (prev === "pt" ? "en" : "pt"));
-  };
+  const { lang, toggleLang } = useLanguage();
 
   return (
     <header className="w-full max-w-4xl mx-auto flex items-center justify-between shrink-0 p-4 sm:p-0">

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useLanguage } from "../../../i18n/LanguageContext";
 
 interface TimeLeft {
   days: number;
@@ -16,6 +17,8 @@ interface CountdownTimerProps {
 
 export default function CountdownTimer({ targetDate, targetTime }: CountdownTimerProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
+  
+  const { dict } = useLanguage();
 
   useEffect(() => {
     const raceDateStr = `${targetDate}T${targetTime || "00:00:00Z"}`;
@@ -47,24 +50,24 @@ export default function CountdownTimer({ targetDate, targetTime }: CountdownTime
     <div className="flex gap-4 sm:gap-6 justify-center md:justify-start w-full">
       <div className="flex flex-col items-center">
         <span className="text-3xl sm:text-5xl font-mono font-bold text-white">{String(timeLeft.days).padStart(2, '0')}</span>
-        <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1">Dias</span>
+        <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1">{dict.nextRace.days}</span>
       </div>
       <span className="text-2xl sm:text-4xl text-zinc-700 font-light mt-1">:</span>
       
       <div className="flex flex-col items-center">
         <span className="text-3xl sm:text-5xl font-mono font-bold text-white">{String(timeLeft.hours).padStart(2, '0')}</span>
-        <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1">Horas</span>
+        <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1">{dict.nextRace.hours}</span>
       </div>
       <span className="text-2xl sm:text-4xl text-zinc-700 font-light mt-1">:</span>
       
       <div className="flex flex-col items-center">
         <span className="text-3xl sm:text-5xl font-mono font-bold text-white">{String(timeLeft.minutes).padStart(2, '0')}</span>
-        <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1">Minutos</span>
+        <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1">{dict.nextRace.minutes}</span>
       </div>
       <span className="text-2xl sm:text-4xl text-zinc-700 font-light mt-1">:</span>
       <div className="flex flex-col items-center">
         <span className="text-3xl sm:text-5xl font-mono font-bold text-red-500">{String(timeLeft.seconds).padStart(2, '0')}</span>
-        <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1">Segundos</span>
+        <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1">{dict.nextRace.seconds}</span>
       </div>
     </div>
   );
