@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Driver } from "../../../types/f1";
-import { nationalityToISO } from "../../../lib/f1-utils";
+import { nationalityToISO, translateNationality } from "../../../lib/f1-utils";
 
 interface DriverModalProps {
     driver: Driver;
@@ -32,7 +32,7 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
             setLoading(true);
             try {
                 const fullName = `${driver.givenName} ${driver.familyName}`;
-                
+
                 let wikiUrl = `https://pt.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(fullName)}`;
                 let res = await fetch(wikiUrl);
                 let data = await res.json();
@@ -46,7 +46,7 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
                 if (data.thumbnail && data.thumbnail.source) {
                     setImageUrl(data.thumbnail.source);
                 }
-                
+
                 if (data.extract) {
                     const sentences = data.extract.split('. ');
                     setSummary(sentences.slice(0, 3).join('. ') + '.');
@@ -62,21 +62,21 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            
-            <div 
+
+            <div
                 className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
                 onClick={onClose}
             ></div>
 
             <div className="relative w-full max-w-sm bg-zinc-900/80 backdrop-blur-xl border border-zinc-700/50 rounded-3xl shadow-2xl p-6 pt-8 overflow-hidden animate-in zoom-in-95 duration-200">
-                
+
                 {driver.permanentNumber && (
                     <div className="absolute top-4 left-4 bg-white text-zinc-950 font-black italic text-xl px-3 py-0.5 rounded shadow-lg border border-white/20 transform -skew-x-12 z-10">
                         #{driver.permanentNumber}
                     </div>
                 )}
 
-                <button 
+                <button
                     onClick={onClose}
                     className="absolute top-4 right-4 text-zinc-400 hover:text-white bg-zinc-800/80 hover:bg-red-500 rounded-full p-2 transition-all z-10"
                 >
@@ -90,11 +90,11 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
                     </div>
                 ) : (
                     <div className="flex flex-col items-center text-center mt-2">
-                        
+
                         <div className="relative w-32 h-32 mb-5">
                             <div className="absolute inset-0 bg-linear-to-tr from-red-600 to-red-400 rounded-full blur-lg opacity-40"></div>
-                            <img 
-                                src={imageUrl || `https://ui-avatars.com/api/?name=${driver.givenName}+${driver.familyName}&background=18181b&color=ef4444&size=200`} 
+                            <img
+                                src={imageUrl || `https://ui-avatars.com/api/?name=${driver.givenName}+${driver.familyName}&background=18181b&color=ef4444&size=200`}
                                 alt={driver.familyName}
                                 className="relative w-full h-full object-cover rounded-full border-2 border-zinc-600 shadow-2xl"
                             />
@@ -119,7 +119,9 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
                             </div>
                             <div className="bg-zinc-800/50 rounded-lg px-4 py-2 border border-zinc-700/50 w-36">
                                 <span className="block text-[10px] text-zinc-500 uppercase tracking-wider font-bold mb-0.5">Nacionalidade</span>
-                                <span className="text-white text-sm capitalize truncate block">{driver.nationality}</span>
+                                <span className="text-white text-sm capitalize truncate block">
+                                    {translateNationality(driver.nationality)}
+                                </span>
                             </div>
                         </div>
 

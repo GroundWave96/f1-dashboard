@@ -45,3 +45,29 @@ export const getConstructorLogo = (constructorId: string | undefined): string =>
   
   return logoFile ? `/teams/${logoFile}` : '/teams/f1.svg';
 };
+
+export const translateNationality = (nationality: string): string => {
+  const map: Record<string, string> = {
+    'British': 'Britânico',
+    'Brazilian': 'Brasileiro',
+    'Dutch': 'Holandês',
+    'Italian': 'Italiano',
+    'Spanish': 'Espanhol',
+    'French': 'Francês',
+    'German': 'Alemão',
+    'Argentine': 'Argentino',
+    'Australian': 'Australiano',
+    'Monegasque': 'Monegasco',
+    'Thai': 'Tailandês',
+    'Mexican': 'Mexicano',
+    'American': 'Americano',
+    'Canadian': 'Canadiano',
+    'Japanese': 'Japonês',
+    'Danish': 'Dinamarquês',
+    'Finnish': 'Finlandês',
+    'Chinese': 'Chinês',
+    'New Zealander': 'Neozelandês',
+    'Colombian': 'Colombiano'
+  };
+  return map[nationality] || nationality;
+};
