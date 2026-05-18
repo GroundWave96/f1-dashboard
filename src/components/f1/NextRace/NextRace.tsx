@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { api } from "../../../lib/api";
-import { PastRace } from "../../../types/f1"; 
+import { PastRace } from "../../../types/f1";
 import RaceInfo from "./RaceInfo";
 import CountdownTimer from "./CountdownTimer";
 import TrackMap from "./TrackMap";
@@ -27,6 +27,13 @@ export default function NextRace() {
     fetchNextRace();
   }, []);
 
+  const handleScrollDown = () => {
+    const sections = document.querySelectorAll("main > section");
+    if (sections.length > 1) {
+      sections[1].scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center text-gray-400 py-10 h-full w-full">
@@ -39,22 +46,41 @@ export default function NextRace() {
 
   return (
     <div className="w-full h-full flex flex-col relative px-4 py-6 sm:p-8">
-      
+
       <Header />
 
       <div className="w-full max-w-4xl mx-auto my-auto">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 max-h-[85dvh] sm:max-h-none overflow-y-auto sm:overflow-visible">
-          
+        <div className="bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 max-h-[85dvh] sm:max-h-none overflow-y-auto sm:overflow-visible relative">
+
           <div className="flex flex-col items-center md:items-start text-center md:text-left flex-1 w-full">
             <RaceInfo race={nextRace} />
             <CountdownTimer targetDate={nextRace.date} targetTime={nextRace.time} />
           </div>
 
-          <TrackMap circuitId={nextRace.Circuit.circuitId}/>
+          <TrackMap circuitId={nextRace.Circuit.circuitId} />
+
+          <div 
+            onClick={handleScrollDown}
+            className="absolute bottom-4 right-4 flex lg:hidden flex-col items-center text-zinc-500/60 cursor-pointer hover:text-zinc-400 transition-colors z-10"
+          >
+            {/* O viewBox mais alto (32) permite empilhar as 3 setas confortavelmente */}
+            <svg className="w-5 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 32">
+              <path className="animate-chevron" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 4l6 6 6-6" />
+              <path className="animate-chevron animation-delay-150" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 12l6 6 6-6" />
+              <path className="animate-chevron animation-delay-300" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 20l6 6 6-6" />
+            </svg>
+          </div>
 
         </div>
       </div>
-      
+
+      <div onClick={handleScrollDown} className="hidden lg:flex absolute bottom-8 right-8 flex-col items-center gap-2 text-zinc-500 cursor-pointer hover:text-zinc-400 transition-colors z-10">
+        {/* <span className="text-[10px] uppercase tracking-widest font-bold">Scroll</span> */}
+        <div className="flex items-center justify-center w-6 h-10 border-2 border-zinc-500/50 rounded-full relative">
+          <div className="w-1.5 bg-[#FB2C36] rounded-full absolute animate-scroll-mouse" />
+        </div>
+      </div>
+
     </div>
   );
 }

@@ -16,3 +16,45 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #3f3f46;
 }
+
+@layer utilities {
+  .animate-scroll-mouse {
+    animation: scroll-mouse 2.5s cubic-bezier(0.15, 0.41, 0.69, 0.94) infinite;
+  }
+}
+
+@keyframes scroll-mouse {
+  0% { top: 6px; height: 6px; opacity: 1; }
+  20% { top: 6px; height: 18px; opacity: 1; }
+  40% { top: 22px; height: 6px; opacity: 1; }
+  60% { top: 22px; height: 6px; opacity: 0; }
+  65% { top: 6px; height: 6px; opacity: 0; }
+  100% { top: 6px; height: 6px; opacity: 1; }
+}
+
+@layer utilities {
+  .animate-chevron {
+    animation: chevron-fade 1.5s infinite ease-out;
+  }
+  .animation-delay-150 {
+    animation-delay: 150ms;
+  }
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+}
+
+@keyframes chevron-fade {
+  0% { 
+    opacity: 0; 
+    transform: translateY(-4px); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+  100% { 
+    opacity: 0; 
+    transform: translateY(4px); 
+  }
+}
