@@ -6,12 +6,14 @@ import { PastRace } from "../../../types/f1";
 import RaceNavigation from "./RaceNavigation";
 import ResultsTable from "./ResultsTable";
 import Footer from "../../layout/Footer";
+import { useLanguage } from "../../../i18n/LanguageContext";
 
 export default function LastRacesSection() {
     const [races, setRaces] = useState<PastRace[]>([]);
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(true);
     const [season, setSeason] = useState<string>("current");
+    const { dict } = useLanguage();
 
     useEffect(() => {
         async function fetchAllResults() {
@@ -46,7 +48,7 @@ export default function LastRacesSection() {
         return (
             <div className="flex flex-col items-center justify-center text-gray-400 gap-4">
                 <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
-                <span>Carregando resultados da temporada {season === "current" ? new Date().getFullYear() : season}...</span>
+                <span>{dict.results.loading} {season === "current" ? new Date().getFullYear() : season}...</span>
             </div>
         );
     }
@@ -54,8 +56,8 @@ export default function LastRacesSection() {
     if (races.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center text-gray-400 gap-4">
-                <span>Nenhuma corrida encontrada para esta temporada.</span>
-                <button onClick={() => setSeason("current")} className="text-red-500 underline">Voltar para a atual</button>
+                <span>{dict.results.noRaces}</span>
+                <button onClick={() => setSeason("current")} className="text-red-500 underline">{dict.results.backToCurrent}</button>
             </div>
         );
     }

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { RaceResult } from "../../../types/f1";
 import { nationalityToISO, getConstructorLogo } from "../../../lib/f1-utils";
+import { useLanguage } from "../../../i18n/LanguageContext";
 
 interface ResultsTableProps {
     results: RaceResult[];
@@ -10,7 +11,7 @@ interface ResultsTableProps {
 
 export default function ResultsTable({ results }: ResultsTableProps) {
     const [expandedDriverId, setExpandedDriverId] = useState<string | null>(null);
-
+    const { dict } = useLanguage();
     const toggleRow = (driverId: string) => {
         setExpandedDriverId((prev) => (prev === driverId ? null : driverId));
     };
@@ -20,11 +21,11 @@ export default function ResultsTable({ results }: ResultsTableProps) {
             <table className="w-full text-left text-sm text-gray-300">
                 <thead className="bg-zinc-950 text-gray-400 uppercase sticky top-0 z-10 shadow-md">
                     <tr>
-                        <th className="px-3 py-4 sm:px-6">Pos</th>
-                        <th className="px-3 py-4 sm:px-6">Piloto</th>
-                        <th className="px-3 py-4 sm:px-6 hidden sm:table-cell">Equipe</th>
-                        <th className="px-3 py-4 sm:px-6 text-center">Pts</th>
-                        <th className="px-3 py-4 sm:px-6 text-center">Info</th>
+                        <th className="px-3 py-4 sm:px-6">{dict.results.pos}</th>
+                        <th className="px-3 py-4 sm:px-6">{dict.results.driver}</th>
+                        <th className="px-3 py-4 sm:px-6 hidden sm:table-cell">{dict.results.team}</th>
+                        <th className="px-3 py-4 sm:px-6 text-center">{dict.results.pts}</th>
+                        <th className="px-3 py-4 sm:px-6 text-center">{dict.results.timeStatus}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -103,30 +104,30 @@ export default function ResultsTable({ results }: ResultsTableProps) {
                                                 <div className="flex flex-col sm:flex-row gap-6 sm:gap-12 justify-center items-center text-sm px-4 sm:px-6">
 
                                                     <div className="flex flex-col items-center">
-                                                        <span className="text-gray-500 uppercase text-xs font-bold mb-1">Largada</span>
+                                                        <span className="text-gray-500 uppercase text-xs font-bold mb-1">{dict.results.start}</span>
                                                         <span className="font-mono text-gray-300 font-bold">P{row.grid}</span>
                                                         {(() => {
                                                             const grid = parseInt(row.grid);
                                                             const pos = parseInt(row.position);
-                                                            if (grid === 0) return <span className="text-xs text-purple-400 mt-1">Pit Lane</span>;
+                                                            if (grid === 0) return <span className="text-xs text-purple-400 mt-1">{dict.results.pitLane}</span>;
                                                             const diff = grid - pos;
-                                                            if (diff > 0) return <span className="text-xs text-green-500 font-bold mt-1">+{diff} posições</span>;
-                                                            if (diff < 0) return <span className="text-xs text-red-500 font-bold mt-1">{diff} posições</span>;
-                                                            return <span className="text-xs text-gray-500 mt-1">Manteve posição</span>;
+                                                            if (diff > 0) return <span className="text-xs text-green-500 font-bold mt-1">+{diff} {dict.results.positions}</span>;
+                                                            if (diff < 0) return <span className="text-xs text-red-500 font-bold mt-1">{diff} {dict.results.positions}</span>;
+                                                            return <span className="text-xs text-gray-500 mt-1">{dict.results.keptPosition}</span>;
                                                         })()}
                                                     </div>
 
                                                     <div className="flex flex-col items-center">
-                                                        <span className="text-gray-500 uppercase text-xs font-bold mb-1">Tempo Total / Gap</span>
+                                                        <span className="text-gray-500 uppercase text-xs font-bold mb-1">{dict.results.totalTime}</span>
                                                         <span className="font-mono text-gray-300">
                                                             {row.status.includes("Lap") ? row.status : row.Time ? row.Time.time : row.status}
                                                         </span>
-                                                        <span className="text-xs text-gray-500 mt-1">{row.laps} Voltas</span>
+                                                        <span className="text-xs text-gray-500 mt-1">{row.laps} {dict.results.laps}</span>
                                                     </div>
 
                                                     {row.FastestLap && (
                                                         <div className="flex flex-col items-center text-center">
-                                                            <span className="text-gray-500 uppercase text-xs font-bold mb-1">Melhor Volta</span>
+                                                            <span className="text-gray-500 uppercase text-xs font-bold mb-1">{dict.results.fastestLap}</span>
                                                             <div className="flex items-center gap-2">
                                                                 <span className={`font-mono font-bold ${isPurpleLap ? "text-purple-400" : "text-white"}`}>
                                                                     {row.FastestLap.Time.time}
@@ -138,7 +139,7 @@ export default function ResultsTable({ results }: ResultsTableProps) {
                                                                 )}
                                                             </div>
                                                             {row.FastestLap.AverageSpeed && (
-                                                                <span className="text-xs text-gray-500 mt-1">Volta {row.FastestLap.lap} • {row.FastestLap.AverageSpeed.speed} km/h</span>
+                                                                <span className="text-xs text-gray-500 mt-1">{dict.results.lap} {row.FastestLap.lap} • {row.FastestLap.AverageSpeed.speed} km/h</span>
                                                             )}
                                                         </div>
                                                     )}

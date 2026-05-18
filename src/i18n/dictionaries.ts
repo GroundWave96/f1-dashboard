@@ -33,6 +33,30 @@ export const dictionaries = {
       biography: "Biografia",
       loadingBio: "Carregando biografia...",
       bioNotFound: "Biografia não encontrada para este piloto."
+    },
+    results: {
+      title: "Resultados da Temporada",
+      round: "Rodada",
+      fastestLap: "Melhor Volta",
+      pos: "Pos",
+      driver: "Piloto",
+      team: "Equipe",
+      timeStatus: "Tempo / Status",
+      pts: "Pts",
+      loading: "Carregando resultados da temporada",
+      noRaces: "Nenhuma corrida encontrada para esta temporada.",
+      backToCurrent: "Voltar para a atual",
+      currentSeason: "Temporada Atual",
+      current: "Atual",
+      previous: "Anterior",
+      next: "Próxima",
+      start: "Largada",
+      positions: "posições",
+      pitLane: "Pit Lane",
+      keptPosition: "Manteve posição",
+      totalTime: "Tempo Total / Gap",
+      laps: "Voltas",
+      lap: "Volta"
     }
   },
   en: {
@@ -69,6 +93,30 @@ export const dictionaries = {
       biography: "Biography",
       loadingBio: "Loading biography...",
       bioNotFound: "Biography not found for this driver."
+    },
+    results: {
+      title: "Season Results",
+      round: "Round",
+      fastestLap: "Fastest Lap",
+      pos: "Pos",
+      driver: "Driver",
+      team: "Team",
+      timeStatus: "Time / Status",
+      pts: "Pts",
+      loading: "Loading results for season",
+      noRaces: "No races found for this season.",
+      backToCurrent: "Back to current",
+      currentSeason: "Current Season",
+      current: "Current",
+      previous: "Previous",
+      next: "Next",
+      start: "Start",
+      positions: "positions",
+      pitLane: "Pit Lane",
+      keptPosition: "Kept position",
+      totalTime: "Total Time / Gap",
+      laps: "Laps",
+      lap: "Lap"
     }
   }
 };

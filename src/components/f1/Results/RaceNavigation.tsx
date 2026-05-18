@@ -1,5 +1,6 @@
 import React from "react";
 import { PastRace } from "../../../types/f1";
+import { useLanguage } from "../../../i18n/LanguageContext";
 
 interface RaceNavigationProps {
     currentRace: PastRace;
@@ -20,8 +21,11 @@ export default function RaceNavigation({
     selectedSeason,
     onSeasonChange
 }: RaceNavigationProps) {
+    const { dict, lang } = useLanguage();
+    const locale = lang === 'pt' ? 'pt-BR' : 'en-US';
+    
     const raceDateObj = new Date(`${currentRace.date}T${currentRace.time || "00:00:00Z"}`);
-    const formattedDate = raceDateObj.toLocaleDateString("pt-BR", {
+    const formattedDate = raceDateObj.toLocaleDateString(locale, {
         day: "2-digit",
         month: "long",
         year: "numeric"
@@ -36,7 +40,7 @@ export default function RaceNavigation({
             <div className="w-full sm:w-auto">
                 <div className="flex justify-between items-center sm:items-start mb-1">
                     <span className="text-red-500 font-bold uppercase tracking-widest text-xs">
-                        Rodada {currentRace.round} • {formattedDate}
+                        {dict.results.round} {currentRace.round} • {formattedDate}
                     </span>
 
                     <div className="sm:hidden relative">
@@ -48,7 +52,7 @@ export default function RaceNavigation({
                             onChange={(e) => onSeasonChange(e.target.value)}
                             className="appearance-none bg-zinc-800 text-white text-xs font-bold py-1 px-3 pr-6 rounded-full border border-zinc-700 outline-none focus:border-red-500 cursor-pointer"
                         >
-                            <option value="current">Atual</option>
+                            <option value="current">{dict.results.current}</option>
                             {years.map(year => (
                                 <option key={year} value={year.toString()}>{year}</option>
                             ))}
@@ -77,7 +81,7 @@ export default function RaceNavigation({
                             onChange={(e) => onSeasonChange(e.target.value)}
                             className="appearance-none bg-zinc-800 text-white text-xs font-bold py-1 px-3 pr-6 rounded-full border border-zinc-700 outline-none focus:border-red-500 cursor-pointer transition-colors hover:bg-zinc-700"
                         >
-                            <option value="current">Temporada Atual</option>
+                            <option value="current">{dict.results.currentSeason}</option>
                             {years.map(year => (
                                 <option key={year} value={year.toString()}>{year}</option>
                             ))}
@@ -99,7 +103,7 @@ export default function RaceNavigation({
                         : "bg-zinc-800/50 text-zinc-600 cursor-not-allowed"
                     }`}
                 >
-                    &larr; Anterior
+                    &larr; {dict.results.previous}
                 </button>
                 <button
                     onClick={onNext}
@@ -110,7 +114,7 @@ export default function RaceNavigation({
                         : "bg-zinc-800/50 text-zinc-600 cursor-not-allowed"
                     }`}
                 >
-                    Próxima &rarr;
+                    {dict.results.next} &rarr;
                 </button>
             </div>
         </div>
