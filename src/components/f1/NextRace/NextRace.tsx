@@ -50,7 +50,7 @@ export default function NextRace() {
             <CountdownTimer targetDate={nextRace.date} targetTime={nextRace.time} />
           </div>
 
-          <TrackMap circuitId={nextRace.Circuit.circuitId} circuitName={nextRace.Circuit.circuitName} />
+          <TrackMap circuitId={nextRace.Circuit.circuitId}/>
 
         </div>
       </div>
