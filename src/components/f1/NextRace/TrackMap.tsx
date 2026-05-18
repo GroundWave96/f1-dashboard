@@ -42,7 +42,7 @@ export default function TrackMap({ circuitId }: TrackMapProps) {
                     d={trackPath} 
                     fill="none" 
                     stroke="#ffffff" 
-                    strokeWidth="16" 
+                    strokeWidth="22" 
                     strokeLinejoin="round" 
                     strokeOpacity="0.8" 
                 />
