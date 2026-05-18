@@ -55,7 +55,7 @@ export default function TrackMap({ circuitId }: TrackMapProps) {
                     strokeLinejoin="round" 
                 />
 
-                <circle r="8" fill="#ef4444" className="drop-shadow-[0_0_12px_rgba(239,68,68,1)]">
+                <circle r="8" fill="#FB2C36" className="drop-shadow-[0_0_12px_#FB2C36]">
                     <animateMotion dur="3.3s" repeatCount="indefinite" path={trackPath} />
                 </circle>
 
