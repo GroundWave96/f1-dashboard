@@ -59,11 +59,7 @@ export default function NextRace() {
 
           <TrackMap circuitId={nextRace.Circuit.circuitId} />
 
-          <div 
-            onClick={handleScrollDown}
-            className="absolute bottom-4 right-4 flex lg:hidden flex-col items-center text-zinc-500/60 cursor-pointer hover:text-zinc-400 transition-colors z-10"
-          >
-            {/* O viewBox mais alto (32) permite empilhar as 3 setas confortavelmente */}
+          <div onClick={handleScrollDown} className="absolute bottom-4 right-4 flex lg:hidden flex-col items-center text-zinc-500/60 cursor-pointer hover:text-zinc-400 transition-colors z-10">
             <svg className="w-5 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 32">
               <path className="animate-chevron" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 4l6 6 6-6" />
               <path className="animate-chevron animation-delay-150" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 12l6 6 6-6" />
@@ -75,7 +71,6 @@ export default function NextRace() {
       </div>
 
       <div onClick={handleScrollDown} className="hidden lg:flex absolute bottom-8 right-8 flex-col items-center gap-2 text-zinc-500 cursor-pointer hover:text-zinc-400 transition-colors z-10">
-        {/* <span className="text-[10px] uppercase tracking-widest font-bold">Scroll</span> */}
         <div className="flex items-center justify-center w-6 h-10 border-2 border-zinc-500/50 rounded-full relative">
           <div className="w-1.5 bg-[#FB2C36] rounded-full absolute animate-scroll-mouse" />
         </div>
