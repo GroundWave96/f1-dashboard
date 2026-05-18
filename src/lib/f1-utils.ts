@@ -38,7 +38,11 @@ export const getConstructorLogo = (constructorId: string | undefined): string =>
     'rb': 'racing-bulls.svg',
     'red_bull': 'red-bull.svg',
     'sauber': 'sauber.svg',
-    'williams': 'williams-racing.svg'
+    'williams': 'williams-racing.svg',
+    'alfa': 'alfa-romeo.svg',
+    'alphatauri': 'alphatauri.svg',
+    'renault': 'renault.svg',
+    'toro_rosso': 'toro-rosso.svg'
   };
 
   const logoFile = logoMap[constructorId];
