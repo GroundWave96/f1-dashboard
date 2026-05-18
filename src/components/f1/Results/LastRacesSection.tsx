@@ -46,7 +46,7 @@ export default function LastRacesSection() {
 
     if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center text-gray-400 gap-4">
+            <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 gap-4">
                 <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
                 <span>{dict.results.loading} {season === "current" ? new Date().getFullYear() : season}...</span>
             </div>
@@ -55,7 +55,7 @@ export default function LastRacesSection() {
 
     if (races.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center text-gray-400 gap-4">
+            <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 gap-4">
                 <span>{dict.results.noRaces}</span>
                 <button onClick={() => setSeason("current")} className="text-red-500 underline">{dict.results.backToCurrent}</button>
             </div>
