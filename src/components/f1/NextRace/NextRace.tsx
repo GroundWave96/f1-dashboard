@@ -7,6 +7,7 @@ import RaceInfo from "./RaceInfo";
 import CountdownTimer from "./CountdownTimer";
 import TrackMap from "./TrackMap";
 import Header from "../../layout/Header";
+import Spinner from "../../ui/Spinner";
 
 export default function NextRace() {
   const [nextRace, setNextRace] = useState<PastRace | null>(null);
@@ -37,7 +38,7 @@ export default function NextRace() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center text-gray-400 py-10 h-full w-full">
-        <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+        <Spinner />
       </div>
     );
   }

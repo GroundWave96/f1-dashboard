@@ -1,11 +1,12 @@
 import React from "react";
-import { DriverStanding } from "../../../types/f1";
+import Image from "next/image";
+import { DriverStanding, Driver } from "../../../types/f1";
 import { nationalityToISO, getConstructorLogo } from "../../../lib/f1-utils";
 import { useLanguage } from "../../../i18n/LanguageContext";
 
 interface DriverTableProps {
     standings: DriverStanding[];
-    onRowClick: (driver: any, constructorName: string) => void;
+    onRowClick: (driver: Driver, constructorName: string) => void;
 }
 
 export default function DriverTable({ standings, onRowClick }: DriverTableProps) {
@@ -33,15 +34,18 @@ export default function DriverTable({ standings, onRowClick }: DriverTableProps)
 
                             <td className="px-4 py-4 sm:px-6">
                                 <div className="flex items-center gap-3">
-                                    <img
+                                    <Image
                                         src={getConstructorLogo(row.Constructors[0]?.constructorId)}
-                                        alt={row.Constructors[0]?.name}
-                                        className="w-7 h-7 object-contain aspect-square brightness-110 sm:hidden"
+                                        alt={row.Constructors[0]?.name || "Team Logo"}
+                                        width={28}
+                                        height={28}
+                                        className="object-contain aspect-square brightness-110 sm:hidden"
                                     />
                                     <img
                                         src={`https://flagcdn.com/w40/${nationalityToISO(row.Driver.nationality)}.png`}
                                         alt={row.Driver.nationality}
                                         className="hidden sm:block w-5 h-auto rounded-sm shadow-sm"
+                                        loading="lazy"
                                     />
                                     <div className="flex flex-col">
                                         <span className="text-sm sm:text-base">
@@ -56,10 +60,12 @@ export default function DriverTable({ standings, onRowClick }: DriverTableProps)
 
                             <td className="px-4 py-4 sm:px-6 hidden sm:table-cell">
                                 <div className="flex items-center gap-3">
-                                    <img
+                                    <Image
                                         src={getConstructorLogo(row.Constructors[0]?.constructorId)}
-                                        alt={row.Constructors[0]?.name}
-                                        className="w-8 h-8 object-contain aspect-square brightness-110"
+                                        alt={row.Constructors[0]?.name || "Team Logo"}
+                                        width={32}
+                                        height={32}
+                                        className="object-contain aspect-square brightness-110"
                                     />
                                     <span>{row.Constructors[0]?.name}</span>
                                 </div>

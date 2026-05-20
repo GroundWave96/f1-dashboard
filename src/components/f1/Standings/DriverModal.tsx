@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { Driver } from "../../../types/f1";
 import { nationalityToISO, translateNationality } from "../../../lib/f1-utils";
 import { useLanguage } from "../../../i18n/LanguageContext";
+import Spinner from "../../ui/Spinner";
 
 interface DriverModalProps {
     driver: Driver;
@@ -88,7 +90,7 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
 
                 {loading ? (
                     <div className="h-90 flex flex-col items-center justify-center gap-4">
-                        <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                        <Spinner />
                         <span className="text-sm text-zinc-400 font-medium animate-pulse">{dict.driverModal.loadingBio}</span>
                     </div>
                 ) : (
@@ -96,15 +98,19 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
 
                         <div className="relative w-32 h-32 mb-5">
                             <div className="absolute inset-0 bg-linear-to-tr from-red-600 to-red-400 rounded-full blur-lg opacity-40"></div>
-                            <img
+                            <Image
                                 src={imageUrl || `https://ui-avatars.com/api/?name=${driver.givenName}+${driver.familyName}&background=18181b&color=ef4444&size=200`}
                                 alt={driver.familyName}
+                                width={128}
+                                height={128}
                                 className="relative w-full h-full object-cover rounded-full border-2 border-zinc-600 shadow-2xl"
+                                unoptimized
                             />
                             <img
                                 src={`https://flagcdn.com/w40/${nationalityToISO(driver.nationality)}.png`}
                                 alt={driver.nationality}
                                 className="absolute bottom-0 right-1 w-8 h-auto rounded-sm border border-zinc-800 shadow-lg"
+                                loading="lazy"
                             />
                         </div>
 

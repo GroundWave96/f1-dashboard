@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { RaceResult } from "../../../types/f1";
 import { nationalityToISO, getConstructorLogo } from "../../../lib/f1-utils";
 import { useLanguage } from "../../../i18n/LanguageContext";
@@ -43,15 +44,18 @@ export default function ResultsTable({ results }: ResultsTableProps) {
 
                                     <td className="px-3 py-4 sm:px-6">
                                         <div className="flex items-center gap-3">
-                                            <img
+                                            <Image
                                                 src={getConstructorLogo(row.Constructor.constructorId)}
                                                 alt={row.Constructor.name}
+                                                width={24}
+                                                height={24}
                                                 className="w-6 h-6 object-contain aspect-square brightness-110 sm:hidden"
                                             />
                                             <img
                                                 src={`https://flagcdn.com/w40/${nationalityToISO(row.Driver.nationality)}.png`}
                                                 alt={row.Driver.nationality}
                                                 className="hidden sm:block w-5 h-auto rounded-sm shadow-sm"
+                                                loading="lazy"
                                             />
                                             <div className="flex flex-col">
                                                 <span className="text-sm sm:text-base">
@@ -66,9 +70,11 @@ export default function ResultsTable({ results }: ResultsTableProps) {
 
                                     <td className="px-3 py-4 sm:px-6 hidden sm:table-cell text-gray-400">
                                         <div className="flex items-center gap-3">
-                                            <img
+                                            <Image
                                                 src={getConstructorLogo(row.Constructor.constructorId)}
                                                 alt={row.Constructor.name}
+                                                width={24}
+                                                height={24}
                                                 className="w-6 h-6 object-contain aspect-square brightness-110"
                                             />
                                             <span>{row.Constructor.name}</span>

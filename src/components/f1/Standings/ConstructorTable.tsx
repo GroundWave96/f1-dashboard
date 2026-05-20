@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { ConstructorStanding } from "../../../types/f1";
 import { getConstructorLogo, translateNationality } from "../../../lib/f1-utils";
 import { useLanguage } from "../../../i18n/LanguageContext";
@@ -27,9 +28,11 @@ export default function ConstructorTable({ standings }: ConstructorTableProps) {
                             <td className="px-4 py-4 sm:px-6 font-bold text-white">{row.position}º</td>
                             <td className="px-4 py-4 sm:px-6">
                                 <div className="flex items-center gap-3">
-                                    <img
+                                    <Image
                                         src={getConstructorLogo(row.Constructor.constructorId)}
                                         alt={row.Constructor.name}
+                                        width={32}
+                                        height={32}
                                         className="w-8 h-8 object-contain aspect-square brightness-110"
                                     />
                                     <div className="flex flex-col">

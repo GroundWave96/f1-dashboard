@@ -7,6 +7,7 @@ import RaceNavigation from "./RaceNavigation";
 import ResultsTable from "./ResultsTable";
 import Footer from "../../layout/Footer";
 import { useLanguage } from "../../../i18n/LanguageContext";
+import Spinner from "../../ui/Spinner";
 
 export default function LastRacesSection() {
     const [races, setRaces] = useState<PastRace[]>([]);
@@ -47,7 +48,7 @@ export default function LastRacesSection() {
     if (loading) {
         return (
             <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 gap-4">
-                <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                <Spinner />
                 <span>{dict.results.loading} {season === "current" ? new Date().getFullYear() : season}...</span>
             </div>
         );
@@ -68,7 +69,7 @@ export default function LastRacesSection() {
 
     return (
         <div className="w-full max-w-4xl mx-auto px-2 flex flex-col h-full py-4 sm:py-6">
-            
+
             <div className="shrink-0">
                 <RaceNavigation
                     currentRace={currentRace}
