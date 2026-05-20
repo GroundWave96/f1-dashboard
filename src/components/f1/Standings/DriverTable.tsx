@@ -27,7 +27,7 @@ export default function DriverTable({ standings, onRowClick }: DriverTableProps)
                     {standings.map((row) => (
                         <tr
                             key={row.Driver.driverId}
-                            onClick={() => onRowClick(row.Driver, row.Constructors[0]?.name || "Sem Equipe")}
+                            onClick={() => onRowClick(row.Driver, row.Constructors[0]?.name || dict.standings.noTeam)}
                             className="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors cursor-pointer"
                         >
                             <td className="px-4 py-4 sm:px-6 font-bold text-white">{row.position}º</td>

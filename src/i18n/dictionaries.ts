@@ -24,7 +24,15 @@ export const dictionaries = {
       team: "Equipe",
       wins: "Vitórias",
       pts: "Pts",
-      loading: "Carregando Dados..."
+      loading: "Carregando Dados...",
+      noTeam: "Sem Equipe"
+    },
+    errors: {
+      connectionTitle: "Erro de Conexão",
+      nextRaceMsg: "Não foi possível carregar a próxima corrida. Tente recarregar a página.",
+      standingsMsg: "Não foi possível carregar a classificação. Tente recarregar a página.",
+      resultsMsg: "Não foi possível carregar os resultados da temporada.",
+      tryAgain: "Tentar Novamente"
     },
     driverModal: {
       age: "Idade",
@@ -57,6 +65,9 @@ export const dictionaries = {
       totalTime: "Tempo Total / Gap",
       laps: "Voltas",
       lap: "Volta"
+    },
+    footer: {
+      portfolioTitle: "Ver Portfólio de Gabriel Pimentel"
     }
   },
   en: {
@@ -84,7 +95,15 @@ export const dictionaries = {
       team: "Team",
       wins: "Wins",
       pts: "Pts",
-      loading: "Loading Data..."
+      loading: "Loading Data...",
+      noTeam: "No Team"
+    },
+    errors: {
+      connectionTitle: "Connection Error",
+      nextRaceMsg: "Could not load the next race. Please try refreshing the page.",
+      standingsMsg: "Could not load the standings. Please try refreshing the page.",
+      resultsMsg: "Could not load the season results.",
+      tryAgain: "Try Again"
     },
     driverModal: {
       age: "Age",
@@ -117,6 +136,9 @@ export const dictionaries = {
       totalTime: "Total Time / Gap",
       laps: "Laps",
       lap: "Lap"
+    },
+    footer: {
+      portfolioTitle: "View Gabriel Pimentel's Portfolio"
     }
   }
 };

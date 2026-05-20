@@ -8,10 +8,13 @@ import CountdownTimer from "./CountdownTimer";
 import TrackMap from "./TrackMap";
 import Header from "../../layout/Header";
 import Spinner from "../../ui/Spinner";
+import { useLanguage } from "../../../i18n/LanguageContext";
 
 export default function NextRace() {
+  const { dict } = useLanguage();
   const [nextRace, setNextRace] = useState<PastRace | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
     async function fetchNextRace() {
@@ -21,6 +24,7 @@ export default function NextRace() {
         setNextRace(race);
       } catch (error) {
         console.error("Erro ao buscar próxima corrida:", error);
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -39,6 +43,20 @@ export default function NextRace() {
     return (
       <div className="flex flex-col items-center justify-center text-gray-400 py-10 h-full w-full">
         <Spinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center text-red-500 gap-2 h-full w-full">
+        <svg className="w-12 h-12 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span className="font-bold uppercase tracking-wider text-sm">{dict.errors.connectionTitle}</span>
+        <span className="text-zinc-500 text-xs text-center px-4">
+          {dict.errors.nextRaceMsg}
+        </span>
       </div>
     );
   }

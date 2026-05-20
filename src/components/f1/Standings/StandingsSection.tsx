@@ -14,6 +14,7 @@ export default function StandingsSection() {
     const [drivers, setDrivers] = useState<DriverStanding[]>([]);
     const [constructors, setConstructors] = useState<ConstructorStanding[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
     const [selectedDriver, setSelectedDriver] = useState<{ driver: Driver, constructorName: string } | null>(null);
     const { dict } = useLanguage();
     const currentYear = new Date().getFullYear();
@@ -30,6 +31,7 @@ export default function StandingsSection() {
                 setConstructors(constructorsRes.data.MRData.StandingsTable.StandingsLists[0]?.ConstructorStandings || []);
             } catch (error) {
                 console.error("Erro ao buscar classificações:", error);
+                setError(true);
             } finally {
                 setLoading(false);
             }
@@ -42,6 +44,20 @@ export default function StandingsSection() {
             <div className="flex flex-col items-center justify-center text-gray-400 gap-4">
                 <Spinner />
                 <span>{dict.standings.loading}</span>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center text-red-500 gap-2 h-full">
+                <svg className="w-12 h-12 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="font-bold uppercase tracking-wider text-sm">{dict.errors.connectionTitle}</span>
+                <span className="text-zinc-500 text-xs text-center px-4">
+                    {dict.errors.standingsMsg}
+                </span>
             </div>
         );
     }
