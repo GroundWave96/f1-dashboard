@@ -7,11 +7,8 @@ interface RaceInfoProps {
 }
 
 export default function RaceInfo({ race }: RaceInfoProps) {
-  // Extraímos também o "lang" (idioma atual: 'pt' ou 'en') para formatar a data
   const { dict, lang } = useLanguage();
   const raceDateObj = new Date(`${race.date}T${race.time}`);
-  
-  // O JavaScript formata a data automaticamente baseado no idioma (pt-BR ou en-US)
   const locale = lang === 'pt' ? 'pt-BR' : 'en-US';
 
   const formattedDate = raceDateObj.toLocaleDateString(locale, {
@@ -21,11 +18,18 @@ export default function RaceInfo({ race }: RaceInfoProps) {
   });
   
   const capitalizedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
-
   const formattedTime = raceDateObj.toLocaleTimeString(locale, {
     hour: "2-digit",
     minute: "2-digit",
   });
+
+  const formatSession = (session?: { date: string; time: string }) => {
+    if (!session || !session.time) return "--";
+    const sessionDate = new Date(`${session.date}T${session.time}`);
+    const day = sessionDate.toLocaleDateString(locale, { weekday: "short" }).replace(".", "");
+    const time = sessionDate.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
+    return `${day.charAt(0).toUpperCase() + day.slice(1)} ${dict.nextRace.at} ${time}`;
+  };
 
   return (
     <div className="w-full flex flex-col items-center md:items-start">
@@ -52,12 +56,20 @@ export default function RaceInfo({ race }: RaceInfoProps) {
         </span>
         <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="bg-zinc-950/30 rounded p-2 border border-zinc-800/30 flex flex-col justify-center items-center">
-                <span className="text-zinc-500 font-bold uppercase text-[9px] mb-0.5">{dict.nextRace.qualifying}</span>
-                <span className="text-white font-mono">{dict.nextRace.saturday}</span>
+                <span className="text-zinc-500 font-bold uppercase text-[9px] mb-0.5">
+                    {race.Sprint ? dict.nextRace.sprint : dict.nextRace.fp1}
+                </span>
+                <span className="text-white font-mono text-center">
+                    {formatSession(race.Sprint || race.FirstPractice)}
+                </span>
             </div>
             <div className="bg-zinc-950/30 rounded p-2 border border-zinc-800/30 flex flex-col justify-center items-center">
-                <span className="text-zinc-500 font-bold uppercase text-[9px] mb-0.5">{dict.nextRace.race}</span>
-                <span className="text-white font-mono text-center">{dict.nextRace.sunday}</span>
+                <span className="text-zinc-500 font-bold uppercase text-[9px] mb-0.5">
+                    {dict.nextRace.qualifying}
+                </span>
+                <span className="text-white font-mono text-center">
+                    {formatSession(race.Qualifying)}
+                </span>
             </div>
         </div>
       </div>

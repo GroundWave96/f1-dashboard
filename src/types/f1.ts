@@ -33,6 +33,11 @@ export interface Circuit {
   Location: Location;
 }
 
+export interface Session {
+  date: string;
+  time: string;
+}
+
 export interface Race {
   season: string;
   round: string;
@@ -40,6 +45,9 @@ export interface Race {
   Circuit: Circuit;
   date: string;
   time: string;
+  FirstPractice?: Session;
+  Qualifying?: Session;
+  Sprint?: Session;
 }
 
 export interface RaceResult {

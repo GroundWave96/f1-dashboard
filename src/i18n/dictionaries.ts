@@ -12,7 +12,9 @@ export const dictionaries = {
       days: "Dias",
       hours: "Horas",
       minutes: "Minutos",
-      seconds: "Segundos"
+      seconds: "Segundos",
+      fp1: "Treino Livre 1",
+      sprint: "Sprint"
     },
     standings: {
       title: "Classificação Mundial",
@@ -83,7 +85,9 @@ export const dictionaries = {
       days: "Days",
       hours: "Hours",
       minutes: "Minutes",
-      seconds: "Seconds"
+      seconds: "Seconds",
+      fp1: "Free Practice 1",
+      sprint: "Sprint"
     },
     standings: {
       title: "World Standings",
