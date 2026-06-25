@@ -11,6 +11,13 @@ interface ConstructorTableProps {
 export default function ConstructorTable({ standings }: ConstructorTableProps) {
     const { dict, lang } = useLanguage();
 
+    const getPositionStyle = (pos: string) => {
+        if (pos === "1") return "text-yellow-400 font-black drop-shadow-[0_0_8px_rgba(250,204,21,0.6)] text-base sm:text-lg";
+        if (pos === "2") return "text-slate-300 font-black drop-shadow-[0_0_8px_rgba(203,213,225,0.5)] text-base sm:text-lg";
+        if (pos === "3") return "text-amber-600 font-black drop-shadow-[0_0_8px_rgba(217,119,6,0.5)] text-base sm:text-lg";
+        return "text-white font-bold";
+    };
+
     return (
         <div className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl h-fit max-h-full w-full overflow-y-auto overscroll-contain animate-in fade-in duration-500">
             <table className="w-full text-left text-sm text-gray-300">
@@ -25,7 +32,9 @@ export default function ConstructorTable({ standings }: ConstructorTableProps) {
                 <tbody>
                     {standings.map((row) => (
                         <tr key={row.Constructor.constructorId} className="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors">
-                            <td className="px-4 py-4 sm:px-6 font-bold text-white">{row.position}º</td>
+                            <td className="px-4 py-4 sm:px-6">
+                                <span className={getPositionStyle(row.position)}>{row.position}º</span>
+                            </td>
                             <td className="px-4 py-4 sm:px-6">
                                 <div className="flex items-center gap-3">
                                     <Image
