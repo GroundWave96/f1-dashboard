@@ -17,6 +17,13 @@
   background: #3f3f46;
 }
 
+html {
+  /* Impede que o navegador altere o tamanho da fonte com base na acessibilidade do sistema */
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 @layer utilities {
   .animate-scroll-mouse {
     animation: scroll-mouse 2.5s cubic-bezier(0.15, 0.41, 0.69, 0.94) infinite;
