@@ -2,7 +2,7 @@
 
 import { useState, UIEvent } from "react";
 import Preloader from "../components/ui/Preloader/Preloader";
-import ScrollProgress from "../components/ui/ScrollProgress";
+import SideNavigation from "../components/layout/SideNavigation";
 import NextRace from "../components/f1/NextRace/NextRace";
 import StandingsSection from "../components/f1/Standings/StandingsSection";
 import CalendarSection from "../components/f1/Calendar/CalendarSection";
@@ -22,16 +22,15 @@ export default function Home() {
 
   return (
     <>
-      <ScrollProgress progress={scrollProgress} />
-
       {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
 
       <main 
-        onScroll={handleScroll}
         className={`h-dvh w-full snap-y snap-mandatory bg-zinc-950 text-white font-sans ${
-          isLoading ? "overflow-hidden" : "overflow-y-auto"
+          isLoading ? "overflow-hidden" : "overflow-y-auto custom-scrollbar"
         }`}
       >
+        <SideNavigation />
+
         <section className="h-dvh w-full snap-start relative">
           <NextRace />
         </section>
