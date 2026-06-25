@@ -46,11 +46,11 @@ export default function CalendarSection() {
     return `${capitalizedDay} ${dict.nextRace.at} ${time}`;
   };
 
-  const getRaceStatus = (raceDateStr: string, raceTimeStr: string) => {
-    const raceDate = new Date(`${raceDateStr}T${raceTimeStr || "00:00:00Z"}`);
+  const getRaceStatus = (raceItem: Race) => {
+    const raceDate = new Date(`${raceItem.date}T${raceItem.time || "00:00:00Z"}`);
     if (raceDate < now) return { label: dict.calendar.completed, color: "text-zinc-500", dot: "bg-zinc-600" };
-    // Checa se é a corrida mais próxima no futuro
-    const isNext = races.find(r => new Date(`${r.date}T${r.time || "00:00:00Z"}`) >= now)?.round === raceDateStr;
+    const nextRace = races.find(r => new Date(`${r.date}T${r.time || "00:00:00Z"}`) >= now);
+    const isNext = nextRace?.round === raceItem.round;
     if (isNext) return { label: dict.calendar.next, color: "text-red-500 font-bold", dot: "bg-red-500 animate-pulse" };
     return { label: dict.calendar.upcoming, color: "text-zinc-400", dot: "bg-zinc-400" };
   };
@@ -82,7 +82,7 @@ export default function CalendarSection() {
         <div className="flex flex-col gap-3">
           {races.map((race) => {
             const isExpanded = expandedId === race.round;
-            const status = getRaceStatus(race.date, race.time);
+            const status = getRaceStatus(race);
 
             return (
               <div 
@@ -95,8 +95,10 @@ export default function CalendarSection() {
                   className="w-full flex items-center justify-between p-4 hover:bg-zinc-800/50 transition-colors"
                 >
                   <div className="flex items-center gap-4">
-                    <span className="text-zinc-500 font-mono font-bold text-sm sm:text-base w-6 text-left">
-                      {race.round.padStart(2, '0')}
+                    <span className={`font-mono font-bold text-sm sm:text-base w-6 text-left 
+                        ${status.label === dict.calendar.completed ? "text-zinc-600" : 
+                        status.label === dict.calendar.next ? "text-red-500" : "text-zinc-400"}`}>
+                        {race.round.padStart(2, '0')}
                     </span>
                     <img
                         src={`https://flagcdn.com/w40/${countryToISO(race.Circuit.Location.country)}.png`}
