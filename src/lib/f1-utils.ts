@@ -79,3 +79,32 @@ export const translateNationality = (nationality: string, lang: 'pt' | 'en'): st
   };
   return map[nationality] || nationality;
 };
+
+export const countryToISO = (country: string): string => {
+  const map: Record<string, string> = {
+    'Australia': 'au', 
+    'Bahrain': 'bh', 
+    'Saudi Arabia': 'sa', 
+    'Japan': 'jp', 
+    'China': 'cn',
+    'USA': 'us', 
+    'United States': 'us', 
+    'Italy': 'it', 
+    'Monaco': 'mc', 
+    'Canada': 'ca',
+    'Spain': 'es', 
+    'Austria': 'at', 
+    'UK': 'gb', 
+    'Hungary': 'hu', 
+    'Belgium': 'be',
+    'Netherlands': 'nl', 
+    'Azerbaijan': 'az', 
+    'Singapore': 'sg', 
+    'Brazil': 'br',
+    'Mexico': 'mx', 
+    'Qatar': 'qa', 
+    'UAE': 'ae', 
+    'Saudi': 'sa'
+  };
+  return map[country] || 'un';
+};

@@ -46,8 +46,11 @@ export interface Race {
   date: string;
   time: string;
   FirstPractice?: Session;
+  SecondPractice?: Session;
+  ThirdPractice?: Session;
   Qualifying?: Session;
   Sprint?: Session;
+  SprintShootout?: Session;
 }
 
 export interface RaceResult {

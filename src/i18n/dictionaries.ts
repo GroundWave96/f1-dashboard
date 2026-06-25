@@ -68,6 +68,19 @@ export const dictionaries = {
       laps: "Voltas",
       lap: "Volta"
     },
+    calendar: {
+      title: "Calendário da Temporada",
+      completed: "Concluído",
+      upcoming: "Em Breve",
+      next: "Próxima",
+      fp1: "Treino Livre 1",
+      fp2: "Treino Livre 2",
+      fp3: "Treino Livre 3",
+      qualifying: "Qualificação",
+      sprintShootout: "Classif. Sprint",
+      sprint: "Sprint",
+      race: "Corrida"
+    },
     footer: {
       portfolioTitle: "Ver Portfólio de Gabriel Pimentel"
     }
@@ -141,10 +154,23 @@ export const dictionaries = {
       laps: "Laps",
       lap: "Lap"
     },
+    calendar: {
+      title: "Season Calendar",
+      completed: "Completed",
+      upcoming: "Upcoming",
+      next: "Next",
+      fp1: "Free Practice 1",
+      fp2: "Free Practice 2",
+      fp3: "Free Practice 3",
+      qualifying: "Qualifying",
+      sprintShootout: "Sprint Shootout",
+      sprint: "Sprint",
+      race: "Race"
+    },
     footer: {
       portfolioTitle: "View Gabriel Pimentel's Portfolio"
     }
   }
-};
+}; 
 
 export type Language = keyof typeof dictionaries;

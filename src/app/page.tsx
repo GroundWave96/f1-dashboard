@@ -5,6 +5,7 @@ import Preloader from "../components/ui/Preloader/Preloader";
 import ScrollProgress from "../components/ui/ScrollProgress";
 import NextRace from "../components/f1/NextRace/NextRace";
 import StandingsSection from "../components/f1/Standings/StandingsSection";
+import CalendarSection from "../components/f1/Calendar/CalendarSection";
 import LastRacesSection from "../components/f1/Results/LastRacesSection";
 
 export default function Home() {
@@ -37,6 +38,10 @@ export default function Home() {
 
         <section className="h-dvh w-full snap-start relative">
           <StandingsSection />
+        </section>
+
+        <section className="h-dvh w-full snap-start relative">
+          <CalendarSection />
         </section>
 
         <section className="h-dvh w-full snap-start relative">
