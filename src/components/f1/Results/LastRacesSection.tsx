@@ -186,6 +186,34 @@ export default function LastRacesSection() {
                 </div>
             </div>
 
+            {/* NOVOS BOTÕES EXCLUSIVOS PARA MOBILE */}
+            {viewMode === "races" && (
+                <div className="flex sm:hidden justify-between w-full max-w-sm mx-auto gap-3 px-2 mb-4">
+                    <button
+                        onClick={goToPrevious}
+                        disabled={!hasPrevious}
+                        className={`flex-1 px-4 py-2 rounded transition-all font-bold text-sm ${
+                            hasPrevious 
+                            ? "bg-zinc-800 text-white hover:bg-zinc-700 active:bg-zinc-600" 
+                            : "bg-zinc-800/50 text-zinc-600 cursor-not-allowed"
+                        }`}
+                    >
+                        &larr; {dict.results.previous}
+                    </button>
+                    <button
+                        onClick={goToNext}
+                        disabled={!hasNext}
+                        className={`flex-1 px-4 py-2 rounded transition-all font-bold text-sm ${
+                            hasNext 
+                            ? "bg-zinc-800 text-white hover:bg-zinc-700 active:bg-zinc-600" 
+                            : "bg-zinc-800/50 text-zinc-600 cursor-not-allowed"
+                        }`}
+                    >
+                        {dict.results.next} &rarr;
+                    </button>
+                </div>
+            )}
+
             <div className="relative flex-1 min-h-0 w-full mb-3 sm:mb-4">
                 {viewMode === "races" && <ResultsTable results={currentRace.Results} />}
                 {viewMode === "drivers" && (
@@ -194,7 +222,6 @@ export default function LastRacesSection() {
                         onRowClick={(driver, constructorName) => setSelectedDriver({ driver, constructorName })} 
                     /> 
                 )}
-                {/* Carrega e renderiza a tabela de construtores */}
                 {viewMode === "constructors" && <ConstructorTable standings={constructorStandings} />}
             </div>
             

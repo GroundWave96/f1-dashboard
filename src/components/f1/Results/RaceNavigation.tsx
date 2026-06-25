@@ -104,7 +104,7 @@ export default function RaceNavigation({
             </div>
             
             {!isStandings && (
-                <div className="flex justify-between sm:justify-center w-full sm:w-auto gap-3 mt-2 sm:mt-0">
+                <div className="hidden sm:flex justify-between sm:justify-center w-full sm:w-auto gap-3 mt-2 sm:mt-0">
                     <button
                         onClick={onPrevious}
                         disabled={!hasPrevious}

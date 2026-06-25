@@ -60,7 +60,7 @@ export default function SideNavigation() {
     <>
       {/* A Nova Barra Vermelha Superior Fluida */}
       <div 
-        className="fixed top-0 left-0 h-1 bg-red-600 z-[100] drop-shadow-[0_0_8px_rgba(220,38,38,0.8)]"
+        className="fixed top-0 left-0 h-1 bg-red-600 z-100 drop-shadow-[0_0_8px_rgba(220,38,38,0.8)]"
         style={{ width: `${scrollProgress}%` }}
       />
 
