@@ -2,26 +2,34 @@
 
 import React, { useEffect, useState } from "react";
 import { api } from "../../../lib/api";
-import { PastRace } from "../../../types/f1";
+import { PastRace, DriverStanding, Driver } from "../../../types/f1";
 import RaceNavigation from "./RaceNavigation";
 import ResultsTable from "./ResultsTable";
 import Footer from "../../layout/Footer";
 import { useLanguage } from "../../../i18n/LanguageContext";
 import Spinner from "../../ui/Spinner";
+import DriverTable from "../Standings/DriverTable"; 
+import DriverModal from "../Standings/DriverModal";
 
 export default function LastRacesSection() {
     const [races, setRaces] = useState<PastRace[]>([]);
+    const [standings, setStandings] = useState<DriverStanding[]>([]); // Novo estado para os campeões
+    const [viewMode, setViewMode] = useState<"races" | "standings">("races"); // Controle do que mostrar
+    const [selectedDriver, setSelectedDriver] = useState<{ driver: Driver, constructorName: string } | null>(null);
+
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<boolean>(false);
     const [season, setSeason] = useState<string>("current");
+    
     const { dict } = useLanguage();
 
     useEffect(() => {
-        async function fetchAllResults() {
+        async function fetchSeasonData() {
             setLoading(true);
             setError(false);
             try {
+                // 1. Busca os Resultados das Corridas (Lógica de paginação que já tínhamos)
                 const allRacesMap: Record<string, PastRace> = {};
                 let offset = 0;
                 const limit = 100;
@@ -30,7 +38,6 @@ export default function LastRacesSection() {
                 while (offset < total) {
                     const response = await api.get(`${season}/results.json?limit=${limit}&offset=${offset}`);
                     const data = response.data.MRData;
-                    
                     total = parseInt(data.total);
                     const fetchedRaces = data.RaceTable.Races;
                     
@@ -44,7 +51,6 @@ export default function LastRacesSection() {
                             allRacesMap[race.round] = race;
                         }
                     }
-                    
                     offset += limit;
                 }
 
@@ -52,16 +58,24 @@ export default function LastRacesSection() {
                     (a: PastRace, b: PastRace) => Number(a.round) - Number(b.round)
                 );
 
+                // 2. Busca a Classificação da Temporada (Nova requisição)
+                const standingsRes = await api.get(`${season}/driverStandings.json`);
+                const seasonStandings = standingsRes.data.MRData.StandingsTable.StandingsLists[0]?.DriverStandings || [];
+
                 setRaces(allRaces);
+                setStandings(seasonStandings);
                 setCurrentIndex(allRaces.length - 1);
+                setViewMode("races"); // Sempre reseta para ver as corridas ao mudar de ano
+
             } catch (error) {
-                console.error("Erro ao buscar resultados:", error);
+                console.error("Erro ao buscar dados da temporada:", error);
                 setError(true);
             } finally {
                 setLoading(false);
             }
         }
-        fetchAllResults();
+        
+        fetchSeasonData();
     }, [season]);
 
     const goToPrevious = () => {
@@ -120,7 +134,6 @@ export default function LastRacesSection() {
 
     return (
         <div className="w-full max-w-4xl mx-auto px-2 flex flex-col h-full py-4 sm:py-6">
-
             <div className="shrink-0">
                 <RaceNavigation
                     currentRace={currentRace}
@@ -130,15 +143,53 @@ export default function LastRacesSection() {
                     onNext={goToNext}
                     selectedSeason={season}
                     onSeasonChange={handleSeasonChange}
+                    viewMode={viewMode} // <- É só adicionar esta linha!
                 />
             </div>
 
-            <div className="relative flex-1 min-h-0 w-full mb-3 sm:mb-4">
-                <ResultsTable results={currentRace.Results} />
+            {/* Novo Toggle para alternar entre Corridas e Campeões */}
+            <div className="flex justify-center mb-4">
+                <div className="relative bg-zinc-900 p-1 rounded-full border border-zinc-800 flex items-center w-64 h-11">
+                    <div
+                        className={`absolute h-9 w-[calc(50%-4px)] bg-zinc-700 rounded-full shadow-lg transition-transform duration-300 ease-in-out z-0 ${
+                            viewMode === "races" ? "translate-x-0" : "translate-x-full"
+                        }`}
+                    />
+                    <button
+                        onClick={() => setViewMode("races")}
+                        className={`relative z-10 h-full flex-1 flex items-center justify-center text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${viewMode === "races" ? "text-white" : "text-gray-500"}`}
+                    >
+                        {dict.results.racesTab}
+                    </button>
+                    <button
+                        onClick={() => setViewMode("standings")}
+                        className={`relative z-10 h-full flex-1 flex items-center justify-center text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${viewMode === "standings" ? "text-white" : "text-gray-500"}`}
+                    >
+                        {dict.results.standingsTab}
+                    </button>
+                </div>
             </div>
 
-            <Footer />
+            <div className="relative flex-1 min-h-0 w-full mb-3 sm:mb-4">
+                {viewMode === "races" ? (
+                    <ResultsTable results={currentRace.Results} />
+                ) : (
+                    <DriverTable 
+                        standings={standings} 
+                        onRowClick={(driver, constructorName) => setSelectedDriver({ driver, constructorName })} 
+                    />
+                )}
+            </div>
+            
+            {selectedDriver && (
+                <DriverModal
+                    driver={selectedDriver.driver}
+                    constructorName={selectedDriver.constructorName}
+                    onClose={() => setSelectedDriver(null)}
+                />
+            )}
 
+            <Footer />
         </div>
     );
 }

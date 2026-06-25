@@ -66,7 +66,9 @@ export const dictionaries = {
       keptPosition: "Manteve posição",
       totalTime: "Tempo Total / Gap",
       laps: "Voltas",
-      lap: "Volta"
+      lap: "Volta",
+      racesTab: "Corridas",
+      standingsTab: "Classificação"
     },
     calendar: {
       title: "Calendário da Temporada",
@@ -152,7 +154,9 @@ export const dictionaries = {
       keptPosition: "Kept position",
       totalTime: "Total Time / Gap",
       laps: "Laps",
-      lap: "Lap"
+      lap: "Lap",
+      racesTab: "Races",
+      standingsTab: "Standings"
     },
     calendar: {
       title: "Season Calendar",

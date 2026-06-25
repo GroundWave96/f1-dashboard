@@ -10,6 +10,7 @@ interface RaceNavigationProps {
     onNext: () => void;
     selectedSeason: string;
     onSeasonChange: (season: string) => void;
+    viewMode?: "races" | "standings"; // Nova propriedade adicionada
 }
 
 export default function RaceNavigation({
@@ -19,11 +20,12 @@ export default function RaceNavigation({
     onPrevious,
     onNext,
     selectedSeason,
-    onSeasonChange
+    onSeasonChange,
+    viewMode = "races" // Valor padrão
 }: RaceNavigationProps) {
     const { dict, lang } = useLanguage();
     const locale = lang === 'pt' ? 'pt-BR' : 'en-US';
-    
+         
     const raceDateObj = new Date(`${currentRace.date}T${currentRace.time || "00:00:00Z"}`);
     const formattedDate = raceDateObj.toLocaleDateString(locale, {
         day: "2-digit",
@@ -34,15 +36,20 @@ export default function RaceNavigation({
     const currentYear = new Date().getFullYear();
     const years = Array.from(new Array(currentYear - 1950 + 1), (val, index) => currentYear - index);
 
+    const isStandings = viewMode === "standings";
+
     return (
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-6">
-
             <div className="w-full sm:w-auto">
                 <div className="flex justify-between items-center sm:items-start mb-1">
                     <span className="text-red-500 font-bold uppercase tracking-widest text-xs">
-                        {dict.results.round} {currentRace.round} • {formattedDate}
+                        {/* Altera o subtítulo dependendo da aba */}
+                        {isStandings 
+                            ? `${dict.standings.season} ${selectedSeason === "current" ? currentYear : selectedSeason}`
+                            : `${dict.results.round} ${currentRace.round} • ${formattedDate}`
+                        }
                     </span>
-
+                    
                     <div className="sm:hidden relative">
                         <select
                             id="season-mobile"
@@ -62,16 +69,18 @@ export default function RaceNavigation({
                         </div>
                     </div>
                 </div>
-
+                
                 <h2 className="text-2xl font-bold text-white uppercase tracking-wider">
-                    {currentRace.raceName}
+                    {/* Altera o título principal dependendo da aba */}
+                    {isStandings ? dict.standings.title : currentRace.raceName}
                 </h2>
-
+                
                 <div className="flex items-center justify-between sm:justify-start gap-4">
                     <p className="text-gray-400 text-sm">
-                        {currentRace.Circuit.circuitName}
+                        {/* Altera a descrição dependendo da aba */}
+                        {isStandings ? dict.standings.drivers : currentRace.Circuit.circuitName}
                     </p>
-
+                    
                     <div className="hidden sm:block relative">
                         <select
                             id="season-desktop"
@@ -92,31 +101,34 @@ export default function RaceNavigation({
                     </div>
                 </div>
             </div>
-
-            <div className="flex justify-between sm:justify-center w-full sm:w-auto gap-3 mt-2 sm:mt-0">
-                <button
-                    onClick={onPrevious}
-                    disabled={!hasPrevious}
-                    className={`flex-1 sm:flex-none px-4 py-2 rounded transition-all font-bold text-sm ${
-                        hasPrevious 
-                        ? "bg-zinc-800 text-white hover:bg-zinc-700 active:bg-zinc-600" 
-                        : "bg-zinc-800/50 text-zinc-600 cursor-not-allowed"
-                    }`}
-                >
-                    &larr; {dict.results.previous}
-                </button>
-                <button
-                    onClick={onNext}
-                    disabled={!hasNext}
-                    className={`flex-1 sm:flex-none px-4 py-2 rounded transition-all font-bold text-sm ${
-                        hasNext 
-                        ? "bg-zinc-800 text-white hover:bg-zinc-700 active:bg-zinc-600" 
-                        : "bg-zinc-800/50 text-zinc-600 cursor-not-allowed"
-                    }`}
-                >
-                    {dict.results.next} &rarr;
-                </button>
-            </div>
+            
+            {/* Esconde os botões de Anterior/Próxima se estiver na aba de Classificação */}
+            {!isStandings && (
+                <div className="flex justify-between sm:justify-center w-full sm:w-auto gap-3 mt-2 sm:mt-0">
+                    <button
+                        onClick={onPrevious}
+                        disabled={!hasPrevious}
+                        className={`flex-1 sm:flex-none px-4 py-2 rounded transition-all font-bold text-sm ${
+                            hasPrevious 
+                            ? "bg-zinc-800 text-white hover:bg-zinc-700 active:bg-zinc-600" 
+                            : "bg-zinc-800/50 text-zinc-600 cursor-not-allowed"
+                        }`}
+                    >
+                        &larr; {dict.results.previous}
+                    </button>
+                    <button
+                        onClick={onNext}
+                        disabled={!hasNext}
+                        className={`flex-1 sm:flex-none px-4 py-2 rounded transition-all font-bold text-sm ${
+                            hasNext 
+                            ? "bg-zinc-800 text-white hover:bg-zinc-700 active:bg-zinc-600" 
+                            : "bg-zinc-800/50 text-zinc-600 cursor-not-allowed"
+                        }`}
+                    >
+                        {dict.results.next} &rarr;
+                    </button>
+                </div>
+            )}
         </div>
     );
 }
