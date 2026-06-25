@@ -22,8 +22,36 @@ export default function LastRacesSection() {
             setLoading(true);
             setError(false);
             try {
-                const response = await api.get(`${season}/results.json?limit=1000`);
-                const allRaces: PastRace[] = response.data.MRData.RaceTable.Races.sort((a: PastRace, b: PastRace) => Number(a.round) - Number(b.round));
+                const allRacesMap: Record<string, PastRace> = {};
+                let offset = 0;
+                const limit = 100;
+                let total = 1;
+                
+                while (offset < total) {
+                    const response = await api.get(`${season}/results.json?limit=${limit}&offset=${offset}`);
+                    const data = response.data.MRData;
+                    
+                    total = parseInt(data.total);
+                    const fetchedRaces = data.RaceTable.Races;
+                    
+                    for (const race of fetchedRaces) {
+                        if (allRacesMap[race.round]) {
+                            allRacesMap[race.round].Results = [
+                                ...allRacesMap[race.round].Results,
+                                ...race.Results
+                            ];
+                        } else {
+                            allRacesMap[race.round] = race;
+                        }
+                    }
+                    
+                    offset += limit;
+                }
+
+                const allRaces = Object.values(allRacesMap).sort(
+                    (a: PastRace, b: PastRace) => Number(a.round) - Number(b.round)
+                );
+
                 setRaces(allRaces);
                 setCurrentIndex(allRaces.length - 1);
             } catch (error) {
