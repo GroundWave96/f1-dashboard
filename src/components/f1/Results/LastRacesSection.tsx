@@ -159,30 +159,38 @@ export default function LastRacesSection() {
 
             {/* Toggle de 3 opções: Corridas | Pilotos | Equipes */}
             <div className="flex justify-center mb-4 px-2">
-                <div className="relative bg-zinc-900 p-1 rounded-full border border-zinc-800 flex items-center w-full max-w-sm h-11">
-                    <div
-                        className={`absolute h-9 w-[calc(33.33%-4px)] bg-zinc-700 rounded-full shadow-lg transition-transform duration-300 ease-in-out z-0 ${
-                            viewMode === "races" ? "translate-x-0" : viewMode === "drivers" ? "translate-x-full" : "translate-x-[200%]"
-                        }`}
-                    />
-                    <button
-                        onClick={() => setViewMode("races")}
-                        className={`relative z-10 h-full flex-1 flex items-center justify-center text-[10px] sm:text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${viewMode === "races" ? "text-white" : "text-gray-500"}`}
-                    >
-                        {dict.results.racesTab}
-                    </button>
-                    <button
-                        onClick={() => setViewMode("drivers")}
-                        className={`relative z-10 h-full flex-1 flex items-center justify-center text-[10px] sm:text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${viewMode === "drivers" ? "text-white" : "text-gray-500"}`}
-                    >
-                        {dict.standings.drivers}
-                    </button>
-                    <button
-                        onClick={() => setViewMode("constructors")}
-                        className={`relative z-10 h-full flex-1 flex items-center justify-center text-[10px] sm:text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${viewMode === "constructors" ? "text-white" : "text-gray-500"}`}
-                    >
-                        {dict.standings.teams}
-                    </button>
+                {/* Retiramos o flex daqui e deixamos apenas o padding */}
+                <div className="bg-zinc-900 p-1 rounded-full border border-zinc-800 w-full max-w-sm h-11">
+                    
+                    {/* NOVA DIV INTERNA: Ela é o limite exato para os botões */}
+                    <div className="relative flex items-center w-full h-full">
+                        
+                        {/* Fundo Deslizante agora usa top-0, bottom-0 e exatos 1/3 de largura */}
+                        <div
+                            className={`absolute top-0 bottom-0 left-0 w-1/3 bg-zinc-700 rounded-full shadow-lg transition-transform duration-300 ease-in-out z-0 ${
+                                viewMode === "races" ? "translate-x-0" : viewMode === "drivers" ? "translate-x-full" : "translate-x-[200%]"
+                            }`}
+                        />
+                        
+                        <button
+                            onClick={() => setViewMode("races")}
+                            className={`relative z-10 h-full flex-1 flex items-center justify-center text-[10px] sm:text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${viewMode === "races" ? "text-white" : "text-gray-500"}`}
+                        >
+                            {dict.results.racesTab}
+                        </button>
+                        <button
+                            onClick={() => setViewMode("drivers")}
+                            className={`relative z-10 h-full flex-1 flex items-center justify-center text-[10px] sm:text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${viewMode === "drivers" ? "text-white" : "text-gray-500"}`}
+                        >
+                            {dict.standings.drivers}
+                        </button>
+                        <button
+                            onClick={() => setViewMode("constructors")}
+                            className={`relative z-10 h-full flex-1 flex items-center justify-center text-[10px] sm:text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${viewMode === "constructors" ? "text-white" : "text-gray-500"}`}
+                        >
+                            {dict.standings.teams}
+                        </button>
+                    </div>
                 </div>
             </div>
 
