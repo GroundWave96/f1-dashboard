@@ -10,7 +10,7 @@ interface RaceNavigationProps {
     onNext: () => void;
     selectedSeason: string;
     onSeasonChange: (season: string) => void;
-    viewMode?: "races" | "standings"; // Nova propriedade adicionada
+    viewMode?: "races" | "drivers" | "constructors"; // Agora temos 3 modos
 }
 
 export default function RaceNavigation({
@@ -21,7 +21,7 @@ export default function RaceNavigation({
     onNext,
     selectedSeason,
     onSeasonChange,
-    viewMode = "races" // Valor padrão
+    viewMode = "races"
 }: RaceNavigationProps) {
     const { dict, lang } = useLanguage();
     const locale = lang === 'pt' ? 'pt-BR' : 'en-US';
@@ -36,14 +36,14 @@ export default function RaceNavigation({
     const currentYear = new Date().getFullYear();
     const years = Array.from(new Array(currentYear - 1950 + 1), (val, index) => currentYear - index);
 
-    const isStandings = viewMode === "standings";
+    // É classificação se não for a aba de corridas
+    const isStandings = viewMode !== "races";
 
     return (
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-6">
             <div className="w-full sm:w-auto">
                 <div className="flex justify-between items-center sm:items-start mb-1">
                     <span className="text-red-500 font-bold uppercase tracking-widest text-xs">
-                        {/* Altera o subtítulo dependendo da aba */}
                         {isStandings 
                             ? `${dict.standings.season} ${selectedSeason === "current" ? currentYear : selectedSeason}`
                             : `${dict.results.round} ${currentRace.round} • ${formattedDate}`
@@ -71,14 +71,15 @@ export default function RaceNavigation({
                 </div>
                 
                 <h2 className="text-2xl font-bold text-white uppercase tracking-wider">
-                    {/* Altera o título principal dependendo da aba */}
                     {isStandings ? dict.standings.title : currentRace.raceName}
                 </h2>
                 
                 <div className="flex items-center justify-between sm:justify-start gap-4">
                     <p className="text-gray-400 text-sm">
-                        {/* Altera a descrição dependendo da aba */}
-                        {isStandings ? dict.standings.drivers : currentRace.Circuit.circuitName}
+                        {/* Se for tabela, mostra "Pilotos" ou "Equipes". Se for corrida, mostra o nome do circuito */}
+                        {isStandings 
+                            ? (viewMode === "drivers" ? dict.standings.drivers : dict.standings.teams) 
+                            : currentRace.Circuit.circuitName}
                     </p>
                     
                     <div className="hidden sm:block relative">
@@ -102,7 +103,6 @@ export default function RaceNavigation({
                 </div>
             </div>
             
-            {/* Esconde os botões de Anterior/Próxima se estiver na aba de Classificação */}
             {!isStandings && (
                 <div className="flex justify-between sm:justify-center w-full sm:w-auto gap-3 mt-2 sm:mt-0">
                     <button

@@ -2,21 +2,25 @@
 
 import React, { useEffect, useState } from "react";
 import { api } from "../../../lib/api";
-import { PastRace, DriverStanding, Driver } from "../../../types/f1";
+import { PastRace, DriverStanding, ConstructorStanding, Driver } from "../../../types/f1";
 import RaceNavigation from "./RaceNavigation";
 import ResultsTable from "./ResultsTable";
 import Footer from "../../layout/Footer";
 import { useLanguage } from "../../../i18n/LanguageContext";
 import Spinner from "../../ui/Spinner";
 import DriverTable from "../Standings/DriverTable"; 
+import ConstructorTable from "../Standings/ConstructorTable"; // <-- Importe a tabela de Equipes
 import DriverModal from "../Standings/DriverModal";
 
 export default function LastRacesSection() {
     const [races, setRaces] = useState<PastRace[]>([]);
-    const [standings, setStandings] = useState<DriverStanding[]>([]); // Novo estado para os campeões
-    const [viewMode, setViewMode] = useState<"races" | "standings">("races"); // Controle do que mostrar
+    const [standings, setStandings] = useState<DriverStanding[]>([]);
+    const [constructorStandings, setConstructorStandings] = useState<ConstructorStanding[]>([]); // Estado das Equipes
+    
+    // Agora o ViewMode aceita 3 opções
+    const [viewMode, setViewMode] = useState<"races" | "drivers" | "constructors">("races");
+    
     const [selectedDriver, setSelectedDriver] = useState<{ driver: Driver, constructorName: string } | null>(null);
-
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<boolean>(false);
@@ -29,7 +33,6 @@ export default function LastRacesSection() {
             setLoading(true);
             setError(false);
             try {
-                // 1. Busca os Resultados das Corridas (Lógica de paginação que já tínhamos)
                 const allRacesMap: Record<string, PastRace> = {};
                 let offset = 0;
                 const limit = 100;
@@ -58,14 +61,21 @@ export default function LastRacesSection() {
                     (a: PastRace, b: PastRace) => Number(a.round) - Number(b.round)
                 );
 
-                // 2. Busca a Classificação da Temporada (Nova requisição)
-                const standingsRes = await api.get(`${season}/driverStandings.json`);
+                // Executa as duas consultas de classificação simultaneamente para economizar tempo
+                const [standingsRes, constructorsRes] = await Promise.all([
+                    api.get(`${season}/driverStandings.json`),
+                    api.get(`${season}/constructorStandings.json`)
+                ]);
+                
                 const seasonStandings = standingsRes.data.MRData.StandingsTable.StandingsLists[0]?.DriverStandings || [];
+                const seasonConstructors = constructorsRes.data.MRData.StandingsTable.StandingsLists[0]?.ConstructorStandings || [];
 
                 setRaces(allRaces);
                 setStandings(seasonStandings);
+                setConstructorStandings(seasonConstructors);
+                
                 setCurrentIndex(allRaces.length - 1);
-                setViewMode("races"); // Sempre reseta para ver as corridas ao mudar de ano
+                setViewMode("races"); 
 
             } catch (error) {
                 console.error("Erro ao buscar dados da temporada:", error);
@@ -143,42 +153,49 @@ export default function LastRacesSection() {
                     onNext={goToNext}
                     selectedSeason={season}
                     onSeasonChange={handleSeasonChange}
-                    viewMode={viewMode} // <- É só adicionar esta linha!
+                    viewMode={viewMode}
                 />
             </div>
 
-            {/* Novo Toggle para alternar entre Corridas e Campeões */}
-            <div className="flex justify-center mb-4">
-                <div className="relative bg-zinc-900 p-1 rounded-full border border-zinc-800 flex items-center w-64 h-11">
+            {/* Toggle de 3 opções: Corridas | Pilotos | Equipes */}
+            <div className="flex justify-center mb-4 px-2">
+                <div className="relative bg-zinc-900 p-1 rounded-full border border-zinc-800 flex items-center w-full max-w-sm h-11">
                     <div
-                        className={`absolute h-9 w-[calc(50%-4px)] bg-zinc-700 rounded-full shadow-lg transition-transform duration-300 ease-in-out z-0 ${
-                            viewMode === "races" ? "translate-x-0" : "translate-x-full"
+                        className={`absolute h-9 w-[calc(33.33%-4px)] bg-zinc-700 rounded-full shadow-lg transition-transform duration-300 ease-in-out z-0 ${
+                            viewMode === "races" ? "translate-x-0" : viewMode === "drivers" ? "translate-x-full" : "translate-x-[200%]"
                         }`}
                     />
                     <button
                         onClick={() => setViewMode("races")}
-                        className={`relative z-10 h-full flex-1 flex items-center justify-center text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${viewMode === "races" ? "text-white" : "text-gray-500"}`}
+                        className={`relative z-10 h-full flex-1 flex items-center justify-center text-[10px] sm:text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${viewMode === "races" ? "text-white" : "text-gray-500"}`}
                     >
                         {dict.results.racesTab}
                     </button>
                     <button
-                        onClick={() => setViewMode("standings")}
-                        className={`relative z-10 h-full flex-1 flex items-center justify-center text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${viewMode === "standings" ? "text-white" : "text-gray-500"}`}
+                        onClick={() => setViewMode("drivers")}
+                        className={`relative z-10 h-full flex-1 flex items-center justify-center text-[10px] sm:text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${viewMode === "drivers" ? "text-white" : "text-gray-500"}`}
                     >
-                        {dict.results.standingsTab}
+                        {dict.standings.drivers}
+                    </button>
+                    <button
+                        onClick={() => setViewMode("constructors")}
+                        className={`relative z-10 h-full flex-1 flex items-center justify-center text-[10px] sm:text-xs font-bold uppercase tracking-tight transition-colors duration-300 ${viewMode === "constructors" ? "text-white" : "text-gray-500"}`}
+                    >
+                        {dict.standings.teams}
                     </button>
                 </div>
             </div>
 
             <div className="relative flex-1 min-h-0 w-full mb-3 sm:mb-4">
-                {viewMode === "races" ? (
-                    <ResultsTable results={currentRace.Results} />
-                ) : (
+                {viewMode === "races" && <ResultsTable results={currentRace.Results} />}
+                {viewMode === "drivers" && (
                     <DriverTable 
                         standings={standings} 
                         onRowClick={(driver, constructorName) => setSelectedDriver({ driver, constructorName })} 
-                    />
+                    /> 
                 )}
+                {/* Carrega e renderiza a tabela de construtores */}
+                {viewMode === "constructors" && <ConstructorTable standings={constructorStandings} />}
             </div>
             
             {selectedDriver && (
@@ -188,7 +205,7 @@ export default function LastRacesSection() {
                     onClose={() => setSelectedDriver(null)}
                 />
             )}
-
+            
             <Footer />
         </div>
     );
