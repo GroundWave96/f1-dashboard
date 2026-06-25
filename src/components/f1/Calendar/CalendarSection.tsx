@@ -42,7 +42,8 @@ export default function CalendarSection() {
     const dateObj = new Date(`${dateStr}T${timeStr}`);
     const day = dateObj.toLocaleDateString(locale, { weekday: "short", day: "2-digit", month: "short" }).replace(".", "");
     const time = dateObj.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
-    return `${day} ${dict.nextRace.at} ${time}`;
+    const capitalizedDay = day.charAt(0).toUpperCase() + day.slice(1);
+    return `${capitalizedDay} ${dict.nextRace.at} ${time}`;
   };
 
   const getRaceStatus = (raceDateStr: string, raceTimeStr: string) => {
@@ -134,7 +135,7 @@ export default function CalendarSection() {
                     {race.FirstPractice && (
                       <div className="flex justify-between border-b border-zinc-800/50 pb-2">
                         <span className="text-xs text-zinc-400 font-bold uppercase tracking-wider">{dict.calendar.fp1}</span>
-                        <span className="text-xs text-zinc-200 font-mono capitalize">{formatDateTime(race.FirstPractice.date, race.FirstPractice.time)}</span>
+                        <span className="text-xs text-zinc-200 font-mono">{formatDateTime(race.FirstPractice.date, race.FirstPractice.time)}</span>
                       </div>
                     )}
                     
@@ -143,7 +144,7 @@ export default function CalendarSection() {
                         <span className="text-xs text-zinc-400 font-bold uppercase tracking-wider">
                           {race.SprintShootout ? dict.calendar.sprintShootout : dict.calendar.fp2}
                         </span>
-                        <span className="text-xs text-zinc-200 font-mono capitalize">
+                        <span className="text-xs text-zinc-200 font-mono">
                           {formatDateTime(race.SprintShootout?.date || race.SecondPractice?.date, race.SprintShootout?.time || race.SecondPractice?.time)}
                         </span>
                       </div>
@@ -154,7 +155,7 @@ export default function CalendarSection() {
                         <span className="text-xs text-zinc-400 font-bold uppercase tracking-wider">
                           {race.Sprint ? dict.calendar.sprint : dict.calendar.fp3}
                         </span>
-                        <span className="text-xs text-zinc-200 font-mono capitalize">
+                        <span className="text-xs text-zinc-200 font-mono">
                           {formatDateTime(race.Sprint?.date || race.ThirdPractice?.date, race.Sprint?.time || race.ThirdPractice?.time)}
                         </span>
                       </div>
@@ -162,12 +163,12 @@ export default function CalendarSection() {
 
                     <div className="flex justify-between border-b border-zinc-800/50 pb-2">
                       <span className="text-xs text-red-400 font-bold uppercase tracking-wider">{dict.calendar.qualifying}</span>
-                      <span className="text-xs text-zinc-200 font-mono capitalize">{formatDateTime(race.Qualifying?.date, race.Qualifying?.time)}</span>
+                      <span className="text-xs text-zinc-200 font-mono">{formatDateTime(race.Qualifying?.date, race.Qualifying?.time)}</span>
                     </div>
 
                     <div className="flex justify-between sm:col-span-2 bg-red-950/20 border border-red-900/30 rounded p-3 mt-1">
                       <span className="text-sm text-red-500 font-black uppercase tracking-widest">{dict.calendar.race}</span>
-                      <span className="text-sm text-white font-mono font-bold capitalize">{formatDateTime(race.date, race.time)}</span>
+                      <span className="text-sm text-white font-mono font-bold">{formatDateTime(race.date, race.time)}</span>
                     </div>
 
                   </div>
