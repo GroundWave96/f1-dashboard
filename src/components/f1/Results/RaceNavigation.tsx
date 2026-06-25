@@ -34,7 +34,7 @@ export default function RaceNavigation({
     });
 
     const currentYear = new Date().getFullYear();
-    const years = Array.from(new Array(currentYear - 1950 + 1), (val, index) => currentYear - index);
+    const years = Array.from(new Array(currentYear - 1950), (val, index) => (currentYear - 1) - index);
 
     // É classificação se não for a aba de corridas
     const isStandings = viewMode !== "races";
