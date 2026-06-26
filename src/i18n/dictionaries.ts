@@ -37,7 +37,8 @@ export const dictionaries = {
       tryAgain: "Tentar Novamente"
     },
     driverModal: {
-      age: "Idade",
+      dob: "Nascimento",
+      readMore: "Ler artigo completo",
       nationality: "Nacionalidade",
       team: "Equipe",
       biography: "Biografia",
@@ -132,7 +133,8 @@ export const dictionaries = {
       tryAgain: "Try Again"
     },
     driverModal: {
-      age: "Age",
+      dob: "Born",
+      readMore: "Read full article",
       nationality: "Nationality",
       team: "Team",
       biography: "Biography",

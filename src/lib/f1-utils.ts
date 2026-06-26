@@ -58,6 +58,7 @@ export const getConstructorLogo = (constructorId: string | undefined): string =>
     'ags': 'ags.svg',
     'jaguar': 'jaguar.svg',
     'minardi': 'minardi.svg',
+    'maserati': 'maserati.svg',
   };
 
   const logoFile = logoMap[constructorId];
