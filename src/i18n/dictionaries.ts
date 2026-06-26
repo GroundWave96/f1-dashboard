@@ -85,7 +85,13 @@ export const dictionaries = {
     },
     footer: {
       portfolioTitle: "Ver Portfólio de Gabriel Pimentel"
-    }
+    },
+    about: {
+      title: "Sobre o Projeto",
+      desc1: "Desenvolvido por ",
+      desc2: " como um projeto de estudo e portfólio. Os dados estatísticos e históricos das corridas são consumidos utilizando a API pública Ergast (via Jolpi).",
+      tech: "Tecnologias utilizadas:"
+    },
   },
   en: {
     nextRace: {
@@ -173,7 +179,13 @@ export const dictionaries = {
     },
     footer: {
       portfolioTitle: "View Gabriel Pimentel's Portfolio"
-    }
+    },
+    about: {
+      title: "About the Project",
+      desc1: "Developed by ",
+      desc2: " as a study and portfolio project. Racing statistics and historical data are sourced using the public Ergast API (via Jolpi).",
+      tech: "Technologies used:"
+    },
   }
 }; 
 
