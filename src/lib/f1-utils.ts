@@ -42,7 +42,22 @@ export const getConstructorLogo = (constructorId: string | undefined): string =>
     'alfa': 'alfa-romeo.svg',
     'alphatauri': 'alphatauri.svg',
     'renault': 'renault.svg',
-    'toro_rosso': 'toro-rosso.svg'
+    'toro_rosso': 'toro-rosso.svg',
+    'force_india': 'force-india.svg',
+    'caterham': 'caterham.svg',
+    'hrt': 'hrt.svg',
+    'toyota': 'toyota.svg',
+    'bmw_sauber': 'bmw-sauber.svg',
+    'honda': 'honda.svg',
+    'jordan': 'jordan.svg',
+    'tyrrell': 'tyrrell.svg',
+    'team_lotus': 'team-lotus.svg',
+    'lotus_racing': 'team-lotus.svg',
+    'lotus_f1': 'lotus-f1.svg',
+    'dallara': 'dallara.svg',
+    'ags': 'ags.svg',
+    'jaguar': 'jaguar.svg',
+    'minardi': 'minardi.svg',
   };
 
   const logoFile = logoMap[constructorId];
