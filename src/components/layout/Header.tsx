@@ -8,7 +8,6 @@ export default function Header() {
   const { lang, toggleLang, dict } = useLanguage();
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   
-  // Referências para saber onde o usuário clicou
   const aboutRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -17,12 +16,10 @@ export default function Header() {
 
     const mainContainer = document.querySelector("main");
     
-    // Se o usuário der scroll na tela, fecha a janela
     const handleScroll = () => {
       setIsAboutOpen(false);
     };
 
-    // Se o usuário clicar fora do botão e fora da janela, fecha a janela
     const handleClickOutside = (e: MouseEvent) => {
       if (
         aboutRef.current && 
@@ -62,7 +59,6 @@ export default function Header() {
 
       <div className="shrink-0 flex items-center gap-3 sm:gap-4">
         
-        {/* BOTÃO DE INFORMAÇÃO */}
         <div className="relative">
             <button
               ref={buttonRef}
@@ -70,7 +66,6 @@ export default function Header() {
               className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-700 flex items-center justify-center text-zinc-400 hover:text-white hover:border-zinc-500 hover:bg-zinc-800 transition-colors focus:outline-none"
               aria-label="Sobre o projeto"
             >
-              {/* Ícone "i" MAIOR (w-5 h-5 ao invés de w-4 h-4) */}
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -78,10 +73,8 @@ export default function Header() {
 
             {isAboutOpen && (
               <>
-                {/* Overlay Escuro: SÓ aparece no Mobile e fica atrás do modal */}
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 sm:hidden" />
                 
-                {/* CONTAINER RESPONSIVO: No mobile é um Pop-up centrado. No desktop é um balãozinho. */}
                 <div 
                   ref={aboutRef}
                   className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm sm:absolute sm:top-full sm:left-auto sm:right-0 sm:-translate-x-0 sm:translate-y-0 sm:mt-3 sm:w-80 bg-zinc-900 border border-zinc-700 shadow-2xl rounded-xl p-5 z-50 animate-in fade-in zoom-in-95 sm:slide-in-from-top-2 sm:zoom-in-100 duration-200"
@@ -95,7 +88,6 @@ export default function Header() {
                     </button>
                   </div>
                   
-                  {/* TEXTO COM SEU NOME EM DESTAQUE E LINKADO */}
                   <p className="text-zinc-400 text-xs leading-relaxed mb-4">
                     {dict.about?.desc1 || "Desenvolvido por "}
                     <a 
@@ -125,13 +117,11 @@ export default function Header() {
             )}
         </div>
 
-        {/* BOTÃO DE IDIOMA */}
         <button
           onClick={toggleLang}
           aria-label="Mudar idioma"
           className="relative w-18 h-7 rounded-full cursor-pointer focus:outline-none"
         >
-          {/* ... Código do botão de idioma mantido idêntico ao seu ... */}
           <div className="absolute inset-0 rounded-full overflow-hidden border border-zinc-700 bg-zinc-950 shadow-[inset_0_4px_10px_rgba(0,0,0,1)]">
             <div className={`absolute top-0 bottom-0 left-0 w-12 transition-transform duration-300 ease-in-out ${lang === "pt" ? "translate-x-0" : "-translate-x-full"}`}>
               <Image src="https://flagcdn.com/w80/br.png" alt="PT-BR" fill sizes="48px" className="object-cover object-center opacity-85" />

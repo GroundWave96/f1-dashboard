@@ -42,7 +42,8 @@ export const dictionaries = {
       team: "Equipe",
       biography: "Biografia",
       loadingBio: "Carregando biografia...",
-      bioNotFound: "Biografia não encontrada para este piloto."
+      bioNotFound: "Biografia não encontrada para este piloto.",
+      bioNotFoundTeam: "Biografia não encontrada para esta equipe."
     },
     results: {
       title: "Resultados da Temporada",
@@ -136,7 +137,8 @@ export const dictionaries = {
       team: "Team",
       biography: "Biography",
       loadingBio: "Loading biography...",
-      bioNotFound: "Biography not found for this driver."
+      bioNotFound: "Biography not found for this driver.",
+      bioNotFoundTeam: "Biography not found for this team."
     },
     results: {
       title: "Season Results",

@@ -2,12 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import { api } from "../../../lib/api";
-import { DriverStanding, ConstructorStanding, Driver } from "../../../types/f1";
+import { DriverStanding, ConstructorStanding, Driver, Constructor } from "../../../types/f1";
 import DriverTable from "./DriverTable";
 import ConstructorTable from "./ConstructorTable";
 import DriverModal from "./DriverModal";
 import { useLanguage } from "../../../i18n/LanguageContext";
 import Spinner from "../../ui/Spinner";
+import ConstructorModal from "./ConstructorModal";
 
 export default function StandingsSection() {
     const [view, setView] = useState<"drivers" | "constructors">("drivers");
@@ -16,8 +17,10 @@ export default function StandingsSection() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [selectedDriver, setSelectedDriver] = useState<{ driver: Driver, constructorName: string } | null>(null);
+    const [selectedConstructor, setSelectedConstructor] = useState<Constructor | null>(null);
     const { dict } = useLanguage();
     const currentYear = new Date().getFullYear();
+    
 
     useEffect(() => {
         async function fetchData() {
@@ -99,7 +102,7 @@ export default function StandingsSection() {
                         onRowClick={(driver, constructorName) => setSelectedDriver({ driver, constructorName })}
                     />
                 ) : (
-                    <ConstructorTable standings={constructors} />
+                    <ConstructorTable onRowClick={setSelectedConstructor} standings={constructors} />
                 )}
             </div>
 
@@ -108,6 +111,12 @@ export default function StandingsSection() {
                     driver={selectedDriver.driver}
                     constructorName={selectedDriver.constructorName}
                     onClose={() => setSelectedDriver(null)}
+                />
+            )}
+            {selectedConstructor && (
+                <ConstructorModal
+                    constructorData={selectedConstructor}
+                    onClose={() => setSelectedConstructor(null)}
                 />
             )}
         </div>

@@ -1,14 +1,15 @@
 import React from "react";
 import Image from "next/image";
-import { ConstructorStanding } from "../../../types/f1";
+import { ConstructorStanding, Constructor } from "../../../types/f1";
 import { getConstructorLogo, translateNationality } from "../../../lib/f1-utils";
 import { useLanguage } from "../../../i18n/LanguageContext";
 
 interface ConstructorTableProps {
     standings: ConstructorStanding[];
+    onRowClick: (constructorData: Constructor) => void;
 }
 
-export default function ConstructorTable({ standings }: ConstructorTableProps) {
+export default function ConstructorTable({ standings, onRowClick }: ConstructorTableProps) {
     const { dict, lang } = useLanguage();
 
     const getPositionStyle = (pos: string) => {
@@ -31,7 +32,11 @@ export default function ConstructorTable({ standings }: ConstructorTableProps) {
                 </thead>
                 <tbody>
                     {standings.map((row) => (
-                        <tr key={row.Constructor.constructorId} className="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors">
+                        <tr 
+                            key={row.Constructor.constructorId} 
+                            onClick={() => onRowClick(row.Constructor)}
+                            className="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors cursor-pointer"
+                        >
                             <td className="px-4 py-4 sm:px-6">
                                 <span className={getPositionStyle(row.position)}>{row.position}º</span>
                             </td>

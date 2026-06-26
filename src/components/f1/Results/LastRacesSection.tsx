@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { api } from "../../../lib/api";
-import { PastRace, DriverStanding, ConstructorStanding, Driver } from "../../../types/f1";
+import { PastRace, DriverStanding, ConstructorStanding, Driver , Constructor } from "../../../types/f1";
 import RaceNavigation from "./RaceNavigation";
 import ResultsTable from "./ResultsTable";
 import Footer from "../../layout/Footer";
@@ -11,6 +11,7 @@ import Spinner from "../../ui/Spinner";
 import DriverTable from "../Standings/DriverTable"; 
 import ConstructorTable from "../Standings/ConstructorTable";
 import DriverModal from "../Standings/DriverModal";
+import ConstructorModal from "../Standings/ConstructorModal";
 
 export default function LastRacesSection() {
     const [races, setRaces] = useState<PastRace[]>([]);
@@ -18,10 +19,12 @@ export default function LastRacesSection() {
     const [constructorStandings, setConstructorStandings] = useState<ConstructorStanding[]>([]);
     const [viewMode, setViewMode] = useState<"races" | "drivers" | "constructors">("races");
     const [selectedDriver, setSelectedDriver] = useState<{ driver: Driver, constructorName: string } | null>(null);
+    const [selectedConstructor, setSelectedConstructor] = useState<Constructor | null>(null);
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<boolean>(false);
     const [season, setSeason] = useState<string>("current");
+    
     
     const { dict } = useLanguage();
 
@@ -221,7 +224,7 @@ export default function LastRacesSection() {
                         onRowClick={(driver, constructorName) => setSelectedDriver({ driver, constructorName })} 
                     /> 
                 )}
-                {viewMode === "constructors" && <ConstructorTable standings={constructorStandings} />}
+                {viewMode === "constructors" && <ConstructorTable onRowClick={setSelectedConstructor} standings={constructorStandings} />}
             </div>
             
             {selectedDriver && (
@@ -231,7 +234,12 @@ export default function LastRacesSection() {
                     onClose={() => setSelectedDriver(null)}
                 />
             )}
-            
+            {selectedConstructor && (
+                <ConstructorModal
+                    constructorData={selectedConstructor}
+                    onClose={() => setSelectedConstructor(null)}
+                />
+            )}
             <Footer />
         </div>
     );
