@@ -9,17 +9,14 @@ import Footer from "../../layout/Footer";
 import { useLanguage } from "../../../i18n/LanguageContext";
 import Spinner from "../../ui/Spinner";
 import DriverTable from "../Standings/DriverTable"; 
-import ConstructorTable from "../Standings/ConstructorTable"; // <-- Importe a tabela de Equipes
+import ConstructorTable from "../Standings/ConstructorTable";
 import DriverModal from "../Standings/DriverModal";
 
 export default function LastRacesSection() {
     const [races, setRaces] = useState<PastRace[]>([]);
     const [standings, setStandings] = useState<DriverStanding[]>([]);
-    const [constructorStandings, setConstructorStandings] = useState<ConstructorStanding[]>([]); // Estado das Equipes
-    
-    // Agora o ViewMode aceita 3 opções
+    const [constructorStandings, setConstructorStandings] = useState<ConstructorStanding[]>([]);
     const [viewMode, setViewMode] = useState<"races" | "drivers" | "constructors">("races");
-    
     const [selectedDriver, setSelectedDriver] = useState<{ driver: Driver, constructorName: string } | null>(null);
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(true);
@@ -61,7 +58,6 @@ export default function LastRacesSection() {
                     (a: PastRace, b: PastRace) => Number(a.round) - Number(b.round)
                 );
 
-                // Executa as duas consultas de classificação simultaneamente para economizar tempo
                 const [standingsRes, constructorsRes] = await Promise.all([
                     api.get(`${season}/driverStandings.json`),
                     api.get(`${season}/constructorStandings.json`)
@@ -157,15 +153,11 @@ export default function LastRacesSection() {
                 />
             </div>
 
-            {/* Toggle de 3 opções: Corridas | Pilotos | Equipes */}
             <div className="flex justify-center mb-4 px-2">
-                {/* Retiramos o flex daqui e deixamos apenas o padding */}
                 <div className="bg-zinc-900 p-1 rounded-full border border-zinc-800 w-full max-w-sm h-11">
                     
-                    {/* NOVA DIV INTERNA: Ela é o limite exato para os botões */}
                     <div className="relative flex items-center w-full h-full">
                         
-                        {/* Fundo Deslizante agora usa top-0, bottom-0 e exatos 1/3 de largura */}
                         <div
                             className={`absolute top-0 bottom-0 left-0 w-1/3 bg-zinc-700 rounded-full shadow-lg transition-transform duration-300 ease-in-out z-0 ${
                                 viewMode === "races" ? "translate-x-0" : viewMode === "drivers" ? "translate-x-full" : "translate-x-[200%]"
@@ -194,7 +186,6 @@ export default function LastRacesSection() {
                 </div>
             </div>
 
-            {/* NOVOS BOTÕES EXCLUSIVOS PARA MOBILE */}
             {viewMode === "races" && (
                 <div className="flex sm:hidden justify-between w-full max-w-sm mx-auto gap-3 px-2 mb-4">
                     <button

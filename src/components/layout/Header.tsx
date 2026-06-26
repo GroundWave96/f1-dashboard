@@ -30,9 +30,7 @@ export default function Header() {
         >
           <div className="absolute inset-0 rounded-full overflow-hidden border border-zinc-700 bg-zinc-950 shadow-[inset_0_4px_10px_rgba(0,0,0,1)]">
 
-            {/* Container do Switch (PT-BR) */}
             <div className={`absolute top-0 bottom-0 left-0 w-12 transition-transform duration-300 ease-in-out ${lang === "pt" ? "translate-x-0" : "-translate-x-full"}`}>
-              {/* Substitua a tag img por esta Image com fill: */}
               <Image
                 src="https://flagcdn.com/w80/br.png"
                 alt="PT-BR"
@@ -43,9 +41,7 @@ export default function Header() {
               <div className="absolute inset-0 shadow-[inset_0_0_16px_rgba(0,0,0,1)]" />
             </div>
 
-            {/* Container do Switch (EN-US) */}
             <div className={`absolute top-0 bottom-0 right-0 w-12 transition-transform duration-300 ease-in-out ${lang === "en" ? "translate-x-0" : "translate-x-full"}`}>
-              {/* Substitua a tag img por esta Image com fill: */}
               <Image
                 src="https://flagcdn.com/w80/us.png"
                 alt="EN-US"

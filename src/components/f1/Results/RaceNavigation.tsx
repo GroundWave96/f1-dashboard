@@ -10,7 +10,7 @@ interface RaceNavigationProps {
     onNext: () => void;
     selectedSeason: string;
     onSeasonChange: (season: string) => void;
-    viewMode?: "races" | "drivers" | "constructors"; // Agora temos 3 modos
+    viewMode?: "races" | "drivers" | "constructors";
 }
 
 export default function RaceNavigation({
@@ -36,7 +36,6 @@ export default function RaceNavigation({
     const currentYear = new Date().getFullYear();
     const years = Array.from(new Array(currentYear - 1950), (val, index) => (currentYear - 1) - index);
 
-    // É classificação se não for a aba de corridas
     const isStandings = viewMode !== "races";
 
     return (
@@ -76,7 +75,6 @@ export default function RaceNavigation({
                 
                 <div className="flex items-center justify-between sm:justify-start gap-4">
                     <p className="text-gray-400 text-sm">
-                        {/* Se for tabela, mostra "Pilotos" ou "Equipes". Se for corrida, mostra o nome do circuito */}
                         {isStandings 
                             ? (viewMode === "drivers" ? dict.standings.drivers : dict.standings.teams) 
                             : currentRace.Circuit.circuitName}

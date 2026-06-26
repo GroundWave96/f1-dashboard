@@ -6,7 +6,7 @@ import { useLanguage } from "../../i18n/LanguageContext";
 export default function SideNavigation() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [scrollProgress, setScrollProgress] = useState(0); // Estado fluido para a barra vermelha
+  const [scrollProgress, setScrollProgress] = useState(0);
   
   const { dict } = useLanguage();
 
@@ -18,29 +18,22 @@ export default function SideNavigation() {
   ];
 
   useEffect(() => {
-    // Pegamos exatamente o container que tem o scroll ativo
     const mainContainer = document.querySelector("main");
     if (!mainContainer) return;
 
     const handleScroll = () => {
       const scrollTop = mainContainer.scrollTop;
       const scrollHeight = mainContainer.scrollHeight - mainContainer.clientHeight;
-      
-      // 1. Calcula a porcentagem exata do scroll para a Barra Vermelha
       const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
       setScrollProgress(progress);
-
-      // 2. Calcula qual seção está mais visível para acender a bolinha correta instantaneamente
       const sectionHeight = mainContainer.clientHeight;
       const currentIndex = Math.round(scrollTop / sectionHeight);
       
       setActiveIndex(currentIndex);
     };
 
-    // Roda uma vez para inicializar a barra em 0%
     handleScroll();
 
-    // Adiciona o leitor de scroll contínuo
     mainContainer.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
@@ -53,18 +46,16 @@ export default function SideNavigation() {
     if (sections[index]) {
       sections[index].scrollIntoView({ behavior: "smooth" });
     }
-    setHoveredIndex(null); // Esconde o texto no momento exato do clique
+    setHoveredIndex(null);
   };
 
   return (
     <>
-      {/* A Nova Barra Vermelha Superior Fluida */}
       <div 
         className="fixed top-0 left-0 h-1 bg-red-600 z-100 drop-shadow-[0_0_8px_rgba(220,38,38,0.8)]"
         style={{ width: `${scrollProgress}%` }}
       />
 
-      {/* A Navegação Lateral (Bolinhas) */}
       <div className="hidden lg:flex fixed right-6 top-1/2 -translate-y-1/2 flex-col gap-4 z-50">
         {sectionsList.map((label, index) => (
           <div 

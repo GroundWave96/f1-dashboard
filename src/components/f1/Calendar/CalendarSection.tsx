@@ -89,7 +89,6 @@ export default function CalendarSection() {
                 key={race.round} 
                 className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out"
               >
-                {/* Cabeçalho do Card (Clicável) */}
                 <button 
                   onClick={() => toggleExpand(race.round)}
                   className="w-full flex items-center justify-between p-4 hover:bg-zinc-800/50 transition-colors"
@@ -129,11 +128,9 @@ export default function CalendarSection() {
                   </div>
                 </button>
 
-                {/* Conteúdo Expandido (Cronograma) */}
                 <div className={`transition-all duration-300 ease-in-out bg-zinc-950/50 ${isExpanded ? "max-h-96 opacity-100 border-t border-zinc-800" : "max-h-0 opacity-0"}`}>
                   <div className="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     
-                    {/* Linhas de Treino / Sprint */}
                     {race.FirstPractice && (
                       <div className="flex justify-between border-b border-zinc-800/50 pb-2">
                         <span className="text-xs text-zinc-400 font-bold uppercase tracking-wider">{dict.calendar.fp1}</span>

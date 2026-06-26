@@ -1,7 +1,7 @@
 import React from "react";
 
 interface SpinnerProps {
-  className?: string; // Permite adicionar classes extras (como margens) no futuro, se precisar
+  className?: string;
 }
 
 export default function Spinner({ className = "" }: SpinnerProps) {

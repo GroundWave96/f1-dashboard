@@ -47,27 +47,32 @@ export default function CountdownTimer({ targetDate, targetTime }: CountdownTime
   if (!timeLeft) return null;
 
   return (
-    <div className="flex gap-4 sm:gap-6 justify-center md:justify-start w-full">
-      <div className="flex flex-col items-center">
-        <span className="text-3xl sm:text-5xl font-mono font-bold text-white">{String(timeLeft.days).padStart(2, '0')}</span>
-        <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1">{dict.nextRace.days}</span>
-      </div>
-      <span className="text-2xl sm:text-4xl text-zinc-700 font-light mt-1">:</span>
+    <div className="flex justify-between sm:justify-start items-start w-full sm:gap-6 max-w-full overflow-hidden px-1 sm:px-0">
       
-      <div className="flex flex-col items-center">
-        <span className="text-3xl sm:text-5xl font-mono font-bold text-white">{String(timeLeft.hours).padStart(2, '0')}</span>
-        <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1">{dict.nextRace.hours}</span>
+      <div className="flex flex-col items-center flex-1 sm:flex-none">
+        <span className="text-2xl sm:text-5xl font-mono font-bold text-white tracking-tighter">{String(timeLeft.days).padStart(2, '0')}</span>
+        <span className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1 truncate w-full text-center">{dict.nextRace.days}</span>
       </div>
-      <span className="text-2xl sm:text-4xl text-zinc-700 font-light mt-1">:</span>
       
-      <div className="flex flex-col items-center">
-        <span className="text-3xl sm:text-5xl font-mono font-bold text-white">{String(timeLeft.minutes).padStart(2, '0')}</span>
-        <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1">{dict.nextRace.minutes}</span>
+      <span className="text-xl sm:text-4xl text-zinc-700 font-light mt-0.5 sm:mt-1 shrink-0">:</span>
+      
+      <div className="flex flex-col items-center flex-1 sm:flex-none">
+        <span className="text-2xl sm:text-5xl font-mono font-bold text-white tracking-tighter">{String(timeLeft.hours).padStart(2, '0')}</span>
+        <span className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1 truncate w-full text-center">{dict.nextRace.hours}</span>
       </div>
-      <span className="text-2xl sm:text-4xl text-zinc-700 font-light mt-1">:</span>
-      <div className="flex flex-col items-center">
-        <span className="text-3xl sm:text-5xl font-mono font-bold text-red-500">{String(timeLeft.seconds).padStart(2, '0')}</span>
-        <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1">{dict.nextRace.seconds}</span>
+      
+      <span className="text-xl sm:text-4xl text-zinc-700 font-light mt-0.5 sm:mt-1 shrink-0">:</span>
+      
+      <div className="flex flex-col items-center flex-1 sm:flex-none">
+        <span className="text-2xl sm:text-5xl font-mono font-bold text-white tracking-tighter">{String(timeLeft.minutes).padStart(2, '0')}</span>
+        <span className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1 truncate w-full text-center">{dict.nextRace.minutes}</span>
+      </div>
+      
+      <span className="text-xl sm:text-4xl text-zinc-700 font-light mt-0.5 sm:mt-1 shrink-0">:</span>
+      
+      <div className="flex flex-col items-center flex-1 sm:flex-none">
+        <span className="text-2xl sm:text-5xl font-mono font-bold text-red-500 tracking-tighter">{String(timeLeft.seconds).padStart(2, '0')}</span>
+        <span className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1 truncate w-full text-center">{dict.nextRace.seconds}</span>
       </div>
     </div>
   );
