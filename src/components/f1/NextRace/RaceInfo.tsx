@@ -84,8 +84,12 @@ export default function RaceInfo({ race }: RaceInfoProps) {
     const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000); 
 
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    
+    const isPureIOSSafari = isIOS && 
+                            /Safari/i.test(navigator.userAgent) && 
+                            !/CriOS|FxiOS|EdgiOS|OPiOS|Brave/i.test(navigator.userAgent);
 
-    if (isIOS) {
+    if (isPureIOSSafari) {
         const formatICSDate = (date: Date) => date.toISOString().replace(/-|:|\.\d+/g, "").substring(0, 15) + "Z";
         const icsContent = [
             "BEGIN:VCALENDAR",
@@ -105,7 +109,6 @@ export default function RaceInfo({ race }: RaceInfoProps) {
         const url = window.URL.createObjectURL(blob);
         
         window.location.assign(url);
-        
         setTimeout(() => window.URL.revokeObjectURL(url), 2000);
         
     } else {
