@@ -83,9 +83,9 @@ export default function RaceInfo({ race }: RaceInfoProps) {
     const startDate = new Date(`${race.date}T${race.time}`);
     const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000); 
 
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-    if (isMobile) {
+    if (isIOS) {
         const formatICSDate = (date: Date) => date.toISOString().replace(/-|:|\.\d+/g, "").substring(0, 15) + "Z";
         const icsContent = [
             "BEGIN:VCALENDAR",
@@ -103,13 +103,11 @@ export default function RaceInfo({ race }: RaceInfoProps) {
 
         const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
         const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `F1_${race.raceName.replace(/\s+/g, '_')}.ics`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+        
+        window.location.assign(url);
+        
+        setTimeout(() => window.URL.revokeObjectURL(url), 2000);
+        
     } else {
         const formatGoogleDate = (date: Date) => date.toISOString().replace(/-|:|\.\d+/g, "").substring(0, 15) + "Z";
         const title = encodeURIComponent(`🏎️ F1: ${race.raceName}`);
@@ -118,6 +116,7 @@ export default function RaceInfo({ race }: RaceInfoProps) {
         const dates = `${formatGoogleDate(startDate)}/${formatGoogleDate(endDate)}`;
         
         const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${details}&location=${location}`;
+        
         window.open(googleCalendarUrl, '_blank', 'noopener,noreferrer');
     }
   };
