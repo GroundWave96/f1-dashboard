@@ -14,7 +14,9 @@ export const dictionaries = {
       minutes: "Minutos",
       seconds: "Segundos",
       fp1: "Treino Livre 1",
-      sprint: "Sprint"
+      sprint: "Sprint",
+      addToCalendarTooltip: "Clique para adicionar à sua agenda!",
+      calendarDesc: "Corrida de Fórmula 1. Adicionado via F1Dash.",
     },
     standings: {
       title: "Classificação Mundial",
@@ -110,7 +112,9 @@ export const dictionaries = {
       minutes: "Minutes",
       seconds: "Seconds",
       fp1: "Free Practice 1",
-      sprint: "Sprint"
+      sprint: "Sprint",
+      addToCalendarTooltip: "Click to add to your calendar!",
+      calendarDesc: "Formula 1 race. Added via F1Dash.",
     },
     standings: {
       title: "World Standings",

@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect, useRef } from "react";
 import { PastRace } from "../../../types/f1";
 import { useLanguage } from "../../../i18n/LanguageContext";
 
@@ -8,9 +10,54 @@ interface RaceInfoProps {
 
 export default function RaceInfo({ race }: RaceInfoProps) {
   const { dict, lang } = useLanguage();
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        } else {
+          setIsVisible(false);
+          setShowTooltip(false);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    let showTimer: NodeJS.Timeout;
+    let hideTimer: NodeJS.Timeout;
+
+    if (isVisible) {
+      showTimer = setTimeout(() => {
+        setShowTooltip(true);
+        
+        hideTimer = setTimeout(() => {
+          setShowTooltip(false);
+        }, 5000);
+        
+      }, 3000);
+    }
+
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(hideTimer);
+    };
+  }, [isVisible]);
+
   const raceDateObj = new Date(`${race.date}T${race.time}`);
   const locale = lang === 'pt' ? 'pt-BR' : 'en-US';
-
+  
   const formattedDate = raceDateObj.toLocaleDateString(locale, {
     weekday: "long",
     day: "2-digit",
@@ -31,23 +78,83 @@ export default function RaceInfo({ race }: RaceInfoProps) {
     return `${day.charAt(0).toUpperCase() + day.slice(1)} ${dict.nextRace.at} ${time}`;
   };
 
+  const handleAddToCalendar = () => {
+    setShowTooltip(false); 
+    const startDate = new Date(`${race.date}T${race.time}`);
+    const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000); 
+
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+        const formatICSDate = (date: Date) => date.toISOString().replace(/-|:|\.\d+/g, "").substring(0, 15) + "Z";
+        const icsContent = [
+            "BEGIN:VCALENDAR",
+            "VERSION:2.0",
+            "PRODID:-//F1Dash//Gabriel Pimentel//PT",
+            "BEGIN:VEVENT",
+            `DTSTART:${formatICSDate(startDate)}`,
+            `DTEND:${formatICSDate(endDate)}`,
+            `SUMMARY:🏎️ F1: ${race.raceName}`,
+            `DESCRIPTION:${dict.nextRace.calendarDesc || "Corrida gerada via F1Dash."}`,
+            `LOCATION:${race.Circuit.circuitName}, ${race.Circuit.Location.locality}, ${race.Circuit.Location.country}`,
+            "END:VEVENT",
+            "END:VCALENDAR"
+        ].join("\n");
+
+        const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `F1_${race.raceName.replace(/\s+/g, '_')}.ics`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+    } else {
+        const formatGoogleDate = (date: Date) => date.toISOString().replace(/-|:|\.\d+/g, "").substring(0, 15) + "Z";
+        const title = encodeURIComponent(`🏎️ F1: ${race.raceName}`);
+        const details = encodeURIComponent(dict.nextRace.calendarDesc || "Corrida gerada via F1Dash.");
+        const location = encodeURIComponent(`${race.Circuit.circuitName}, ${race.Circuit.Location.locality}, ${race.Circuit.Location.country}`);
+        const dates = `${formatGoogleDate(startDate)}/${formatGoogleDate(endDate)}`;
+        
+        const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${details}&location=${location}`;
+        window.open(googleCalendarUrl, '_blank', 'noopener,noreferrer');
+    }
+  };
+
   return (
-    <div className="w-full flex flex-col items-center md:items-start">
+    <div ref={containerRef} className="w-full flex flex-col items-center md:items-start relative">
       <span className="text-red-500 font-bold uppercase tracking-widest text-[10px] sm:text-xs mb-1 sm:mb-2">
         {dict.nextRace.title} • {dict.nextRace.round} {race.round}
       </span>
-      <h2 className="text-xl sm:text-4xl font-bold text-white uppercase tracking-wider mb-1">
+      <h2 className="text-xl sm:text-4xl font-bold text-white uppercase tracking-wider mb-1 text-center md:text-left">
         {race.raceName}
       </h2>
-      <p className="text-gray-400 text-xs sm:text-base mb-3 sm:mb-6">
+      <p className="text-gray-400 text-xs sm:text-base mb-3 sm:mb-6 text-center md:text-left">
         {race.Circuit.circuitName} • {race.Circuit.Location.locality}, {race.Circuit.Location.country}
       </p>
 
-      <div className="flex items-center gap-2 sm:gap-3 text-zinc-300 font-medium mb-4 sm:mb-6 bg-zinc-950/50 py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg border border-zinc-800/50 text-xs sm:text-base">
-        <svg className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-        <span >{capitalizedDate} {dict.nextRace.at} {formattedTime}</span>
+      <div className="relative mb-4 sm:mb-6">
+        <button 
+          onClick={handleAddToCalendar}
+          className="flex items-center gap-2 sm:gap-3 text-zinc-300 font-medium bg-zinc-950/50 hover:bg-zinc-800/80 hover:text-white transition-all py-2 px-4 sm:py-2 sm:px-4 rounded-lg border border-zinc-800/50 hover:border-red-500/50 text-sm sm:text-base cursor-pointer shadow-lg"
+          aria-label="Adicionar corrida à agenda"
+        >
+          <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <span>{capitalizedDate} {dict.nextRace.at} {formattedTime}</span>
+        </button>
+
+        {showTooltip && (
+          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-5 sm:top-1/2 sm:-translate-y-1/2 sm:mt-0 sm:left-auto sm:right-full sm:mr-3 sm:translate-x-0 bg-zinc-800 text-white text-[10px] sm:text-xs font-bold tracking-wider py-2 px-3 rounded-lg shadow-xl whitespace-nowrap pointer-events-none animate-bounce z-20 border border-zinc-700/50">
+            {dict.nextRace.addToCalendarTooltip || "💡 Clique para adicionar à sua agenda!"}
+            
+            <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-zinc-800 border-t border-l border-zinc-700/50 rotate-45 sm:hidden"></div>
+            
+            <div className="hidden sm:block absolute top-1/2 -translate-y-1/2 -right-1.5 w-3 h-3 bg-zinc-800 border-t border-r border-zinc-700/50 rotate-45"></div>
+          </div>
+        )}
       </div>
 
       <div className="hidden [@media(min-height:750px)]:flex sm:flex flex-col w-full md:max-w-[80%] border-t border-zinc-800/50 pt-4 mb-4">

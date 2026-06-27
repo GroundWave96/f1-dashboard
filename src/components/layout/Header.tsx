@@ -77,7 +77,7 @@ export default function Header() {
                 
                 <div 
                   ref={aboutRef}
-                  className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm sm:absolute sm:top-full sm:left-auto sm:right-0 sm:-translate-x-0 sm:translate-y-0 sm:mt-3 sm:w-80 bg-zinc-900 border border-zinc-700 shadow-2xl rounded-xl p-5 z-50 animate-in fade-in zoom-in-95 sm:slide-in-from-top-2 sm:zoom-in-100 duration-200"
+                  className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm sm:absolute sm:top-full sm:left-auto sm:right-0 sm:translate-x-0 sm:translate-y-0 sm:mt-3 sm:w-80 bg-zinc-900 border border-zinc-700 shadow-2xl rounded-xl p-5 z-50 animate-in fade-in zoom-in-95 sm:slide-in-from-top-2 sm:zoom-in-100 duration-200"
                 >
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="text-white font-bold uppercase tracking-wider text-sm">
