@@ -87,5 +87,5 @@ Este projeto foi construído seguindo princípios de **Clean Code**:
 ## 👤 Autor
 
 **Gabriel Henrique Ferreira Pimentel**
-- 🌐 [Portifólio](https://gabrielpimentel.vercel.app/)
+- 🌐 [Portifólio](https://gabrielpimentel.pages.dev/)
 - 💼 [LinkedIn](https://www.linkedin.com/in/gabrielhfpimentel/)

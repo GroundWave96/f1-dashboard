@@ -91,7 +91,7 @@ export default function Header() {
                   <p className="text-zinc-400 text-xs leading-relaxed mb-4">
                     {dict.about?.desc1 || "Desenvolvido por "}
                     <a 
-                      href="https://gabrielpimentel.vercel.app/" 
+                      href="https://gabrielpimentel.pages.dev/" 
                       target="_blank" 
                       rel="noopener noreferrer" 
                       className="text-red-500 hover:text-red-400 font-bold transition-colors"
