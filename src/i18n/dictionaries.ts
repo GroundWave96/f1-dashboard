@@ -17,6 +17,8 @@ export const dictionaries = {
       sprint: "Sprint",
       addToCalendarTooltip: "Clique para adicionar à sua agenda!",
       calendarDesc: "Corrida de Fórmula 1. Adicionado via F1Dash.",
+      seasonOver: "Temporada encerrada",
+      seasonOverMsg: "Não há mais corridas programadas nesta temporada. Até a próxima!",
     },
     standings: {
       title: "Classificação Mundial",
@@ -46,7 +48,8 @@ export const dictionaries = {
       biography: "Biografia",
       loadingBio: "Carregando biografia...",
       bioNotFound: "Biografia não encontrada para este piloto.",
-      bioNotFoundTeam: "Biografia não encontrada para esta equipe."
+      bioNotFoundTeam: "Biografia não encontrada para esta equipe.",
+      close: "Fechar"
     },
     results: {
       title: "Resultados da Temporada",
@@ -60,7 +63,9 @@ export const dictionaries = {
       loading: "Carregando resultados da temporada",
       noRaces: "Nenhuma corrida encontrada para esta temporada.",
       backToCurrent: "Voltar para a atual",
+      previousSeason: "Ver temporada anterior",
       currentSeason: "Temporada Atual",
+      selectSeason: "Selecionar temporada",
       current: "Atual",
       previous: "Anterior",
       next: "Próxima",
@@ -115,6 +120,8 @@ export const dictionaries = {
       sprint: "Sprint",
       addToCalendarTooltip: "Click to add to your calendar!",
       calendarDesc: "Formula 1 race. Added via F1Dash.",
+      seasonOver: "Season over",
+      seasonOverMsg: "There are no more races scheduled this season. See you next year!",
     },
     standings: {
       title: "World Standings",
@@ -144,7 +151,8 @@ export const dictionaries = {
       biography: "Biography",
       loadingBio: "Loading biography...",
       bioNotFound: "Biography not found for this driver.",
-      bioNotFoundTeam: "Biography not found for this team."
+      bioNotFoundTeam: "Biography not found for this team.",
+      close: "Close"
     },
     results: {
       title: "Season Results",
@@ -158,7 +166,9 @@ export const dictionaries = {
       loading: "Loading results for season",
       noRaces: "No races found for this season.",
       backToCurrent: "Back to current",
+      previousSeason: "View previous season",
       currentSeason: "Current Season",
+      selectSeason: "Select season",
       current: "Current",
       previous: "Previous",
       next: "Next",
@@ -181,7 +191,7 @@ export const dictionaries = {
       fp2: "Free Practice 2",
       fp3: "Free Practice 3",
       qualifying: "Qualifying",
-      sprintShootout: "Sprint Shootout",
+      sprintShootout: "Sprint Qualifying",
       sprint: "Sprint",
       race: "Race"
     },

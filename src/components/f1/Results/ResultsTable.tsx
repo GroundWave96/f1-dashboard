@@ -11,7 +11,7 @@ interface ResultsTableProps {
 }
 
 export default function ResultsTable({ results }: ResultsTableProps) {
-    const [expandedDriverId, setExpandedDriverId] = useState<string | null>(null);
+    const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
     const { dict } = useLanguage();
     const getPositionStyle = (pos: string) => {
         if (pos === "1") return "text-yellow-400 font-black drop-shadow-[0_0_8px_rgba(250,204,21,0.6)] text-base sm:text-lg";
@@ -19,8 +19,8 @@ export default function ResultsTable({ results }: ResultsTableProps) {
         if (pos === "3") return "text-amber-600 font-black drop-shadow-[0_0_8px_rgba(217,119,6,0.5)] text-base sm:text-lg";
         return "text-white font-bold";
     };
-    const toggleRow = (driverId: string) => {
-        setExpandedDriverId((prev) => (prev === driverId ? null : driverId));
+    const toggleRow = (rowId: string) => {
+        setExpandedRowId((prev) => (prev === rowId ? null : rowId));
     };
 
     return (
@@ -37,14 +37,16 @@ export default function ResultsTable({ results }: ResultsTableProps) {
                 </thead>
                 <tbody>
                     {results.map((row) => {
-                        const isExpanded = expandedDriverId === row.Driver.driverId;
+                        // Nos anos 50 o mesmo piloto podia aparecer mais de uma vez na corrida (carro compartilhado)
+                        const rowId = `${row.position}-${row.Driver.driverId}`;
+                        const isExpanded = expandedRowId === rowId;
                         const isPurpleLap = row.FastestLap?.rank === "1";
 
                         return (
-                            <React.Fragment key={row.Driver.driverId}>
+                            <React.Fragment key={rowId}>
                                 <tr
                                     className="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors cursor-pointer"
-                                    onClick={() => toggleRow(row.Driver.driverId)}
+                                    onClick={() => toggleRow(rowId)}
                                 >
                                     <td className="px-3 py-4 sm:px-6">
                                         <span className={getPositionStyle(row.position)}>{row.position}º</span>

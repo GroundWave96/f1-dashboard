@@ -12,6 +12,7 @@ export interface Constructor {
   constructorId: string;
   name: string;
   nationality: string;
+  url?: string;
 }
 
 export interface DriverStanding {
@@ -50,6 +51,7 @@ export interface Race {
   ThirdPractice?: Session;
   Qualifying?: Session;
   Sprint?: Session;
+  SprintQualifying?: Session;
   SprintShootout?: Session;
 }
 

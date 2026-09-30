@@ -24,11 +24,13 @@ export default function LastRacesSection() {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<boolean>(false);
     const [season, setSeason] = useState<string>("current");
-    
-    
+    const [reloadKey, setReloadKey] = useState(0);
+
     const { dict } = useLanguage();
 
     useEffect(() => {
+        let cancelled = false;
+
         async function fetchSeasonData() {
             setLoading(true);
             setError(false);
@@ -39,6 +41,7 @@ export default function LastRacesSection() {
                 let total = 1;
                 
                 while (offset < total) {
+                    if (cancelled) return;
                     const response = await api.get(`${season}/results.json?limit=${limit}&offset=${offset}`);
                     const data = response.data.MRData;
                     total = parseInt(data.total);
@@ -62,10 +65,11 @@ export default function LastRacesSection() {
                 );
 
                 const [standingsRes, constructorsRes] = await Promise.all([
-                    api.get(`${season}/driverStandings.json`),
-                    api.get(`${season}/constructorStandings.json`)
+                    api.get(`${season}/driverStandings.json?limit=100`),
+                    api.get(`${season}/constructorStandings.json?limit=100`)
                 ]);
-                
+                if (cancelled) return;
+
                 const seasonStandings = standingsRes.data.MRData.StandingsTable.StandingsLists[0]?.DriverStandings || [];
                 const seasonConstructors = constructorsRes.data.MRData.StandingsTable.StandingsLists[0]?.ConstructorStandings || [];
 
@@ -77,15 +81,20 @@ export default function LastRacesSection() {
                 setViewMode("races"); 
 
             } catch (error) {
+                if (cancelled) return;
                 console.error("Erro ao buscar dados da temporada:", error);
                 setError(true);
             } finally {
-                setLoading(false);
+                if (!cancelled) setLoading(false);
             }
         }
         
         fetchSeasonData();
-    }, [season]);
+
+        return () => {
+            cancelled = true;
+        };
+    }, [season, reloadKey]);
 
     const goToPrevious = () => {
         if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
@@ -119,7 +128,7 @@ export default function LastRacesSection() {
                     {dict.errors.resultsMsg}
                 </span>
                 <button
-                    onClick={() => setSeason("current")}
+                    onClick={() => setReloadKey((key) => key + 1)}
                     className="px-4 py-2 bg-zinc-800 text-white rounded hover:bg-zinc-700 font-bold text-sm transition-colors"
                 >
                     {dict.errors.tryAgain}
@@ -132,7 +141,11 @@ export default function LastRacesSection() {
         return (
             <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 gap-4">
                 <span>{dict.results.noRaces}</span>
-                <button onClick={() => setSeason("current")} className="text-red-500 underline">{dict.results.backToCurrent}</button>
+                {season === "current" ? (
+                    <button onClick={() => setSeason(String(new Date().getFullYear() - 1))} className="text-red-500 underline">{dict.results.previousSeason}</button>
+                ) : (
+                    <button onClick={() => setSeason("current")} className="text-red-500 underline">{dict.results.backToCurrent}</button>
+                )}
             </div>
         );
     }
@@ -217,7 +230,7 @@ export default function LastRacesSection() {
             )}
 
             <div className="relative flex-1 min-h-0 w-full mb-3 sm:mb-4">
-                {viewMode === "races" && <ResultsTable results={currentRace.Results} />}
+                {viewMode === "races" && <ResultsTable key={`${currentRace.season}-${currentRace.round}`} results={currentRace.Results} />}
                 {viewMode === "drivers" && (
                     <DriverTable 
                         standings={standings} 

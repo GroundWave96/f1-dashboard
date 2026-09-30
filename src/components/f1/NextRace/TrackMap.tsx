@@ -6,25 +6,36 @@ interface TrackMapProps {
     circuitId: string;
 }
 
+// circuitIds da API cujo arquivo em /public/circuits tem outro nome
+const circuitFileAliases: Record<string, string> = {
+    albert_park: "albert-park",
+    madring: "madrid",
+};
+
 export default function TrackMap({ circuitId }: TrackMapProps) {
     const [trackPath, setTrackPath] = useState<string | null>(null);
+    const [notFound, setNotFound] = useState(false);
 
     useEffect(() => {
         async function fetchSvg() {
             try {
-                const res = await fetch(`/circuits/${circuitId}.svg`);
+                const fileName = circuitFileAliases[circuitId] ?? circuitId;
+                const res = await fetch(`/circuits/${fileName}.svg`);
+                if (!res.ok) throw new Error(`SVG do circuito "${circuitId}" não encontrado`);
                 const text = await res.text();
                 
                 const match = text.match(/d="([^"]+)"/);
-                if (match && match[1]) {
-                    setTrackPath(match[1]);
-                }
+                if (!match || !match[1]) throw new Error(`Traçado do circuito "${circuitId}" não encontrado`);
+                setTrackPath(match[1]);
             } catch (error) {
                 console.error("Erro ao extrair o traçado da pista:", error);
+                setNotFound(true);
             }
         }
         fetchSvg();
     }, [circuitId]);
+
+    if (notFound) return null;
 
     if (!trackPath) {
         return (

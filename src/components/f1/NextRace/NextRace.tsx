@@ -20,8 +20,7 @@ export default function NextRace() {
     async function fetchNextRace() {
       try {
         const response = await api.get("current/next.json");
-        const race = response.data.MRData.RaceTable.Races[0];
-        setNextRace(race);
+        setNextRace(response.data.MRData.RaceTable.Races[0] ?? null);
       } catch (error) {
         console.error("Erro ao buscar próxima corrida:", error);
         setError(true);
@@ -39,29 +38,42 @@ export default function NextRace() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center text-gray-400 py-10 h-full w-full">
-        <Spinner />
+  const renderStatus = (content: React.ReactNode) => (
+    <div className="w-full h-full flex flex-col relative px-4 py-6 sm:p-8">
+      <Header />
+      <div className="flex-1 flex flex-col items-center justify-center gap-2">
+        {content}
       </div>
-    );
+    </div>
+  );
+
+  if (loading) {
+    return renderStatus(<Spinner />);
   }
 
   if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center text-red-500 gap-2 h-full w-full">
-        <svg className="w-12 h-12 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    return renderStatus(
+      <>
+        <svg className="w-12 h-12 mb-2 opacity-50 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <span className="font-bold uppercase tracking-wider text-sm">{dict.errors.connectionTitle}</span>
+        <span className="font-bold uppercase tracking-wider text-sm text-red-500">{dict.errors.connectionTitle}</span>
         <span className="text-zinc-500 text-xs text-center px-4">
           {dict.errors.nextRaceMsg}
         </span>
-      </div>
+      </>
     );
   }
 
-  if (!nextRace) return null;
+  if (!nextRace) {
+    return renderStatus(
+      <>
+        <span className="text-red-500 font-bold uppercase tracking-widest text-xs">{dict.nextRace.title}</span>
+        <span className="text-white font-bold uppercase tracking-wider text-xl sm:text-2xl text-center">{dict.nextRace.seasonOver}</span>
+        <span className="text-zinc-500 text-xs sm:text-sm text-center px-4">{dict.nextRace.seasonOverMsg}</span>
+      </>
+    );
+  }
 
   return (
     <div className="w-full h-full flex flex-col relative px-4 py-6 sm:p-8">

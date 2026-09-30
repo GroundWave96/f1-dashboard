@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Constructor } from "../../../types/f1";
 import { getConstructorLogo, translateNationality } from "../../../lib/f1-utils";
+import { fetchWikiSummary, firstSentences } from "../../../lib/wikipedia";
 import { useLanguage } from "../../../i18n/LanguageContext";
 import Spinner from "../../ui/Spinner";
 
@@ -17,58 +18,38 @@ export default function ConstructorModal({ constructorData, onClose }: Construct
     const [loading, setLoading] = useState(true);
     const { dict, lang } = useLanguage();
 
-    const getWikiTitle = (id: string, name: string, lang: string) => {
-        const exactTitles: Record<string, { pt: string, en: string }> = {
-            'mercedes': { pt: 'Mercedes-Benz_na_Fórmula_1', en: 'Mercedes-Benz_in_Formula_One' },
-            'red_bull': { pt: 'Red_Bull_Racing', en: 'Red_Bull_Racing' },
-            'ferrari': { pt: 'Scuderia_Ferrari', en: 'Scuderia_Ferrari' },
-            'mclaren': { pt: 'McLaren', en: 'McLaren' },
-            'aston_martin': { pt: 'Aston_Martin_F1_Team', en: 'Aston_Martin_in_Formula_One' },
-            'alpine': { pt: 'Alpine_F1_Team', en: 'Alpine_F1_Team' },
-            'williams': { pt: 'Williams_Grand_Prix_Engineering', en: 'Williams_Racing' },
-            'rb': { pt: 'Racing_Bulls', en: 'RB_Formula_One_Team' },
-            'sauber': { pt: 'Sauber_Motorsport', en: 'Sauber_Motorsport' },
-            'haas': { pt: 'Haas_F1_Team', en: 'Haas_F1_Team' },
-            'audi': { pt: 'Audi_Sport', en: 'Audi_in_Formula_One' },
-            'cadillac': { pt: 'Andretti_Global', en: 'Andretti_Global' }
-        };
-
-        if (exactTitles[id]) {
-            return exactTitles[id][lang as 'pt' | 'en'];
-        }
-        return name;
-    };
-
     useEffect(() => {
+        let cancelled = false;
+
         async function fetchWikiData() {
             setLoading(true);
             try {
-                const mappedTitle = getWikiTitle(constructorData.constructorId, constructorData.name, lang);
-                let wikiUrl = `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(mappedTitle)}`;
-                
-                let res = await fetch(wikiUrl);
-                let data = await res.json();
+                const fallbackTerm = lang === 'pt' ? `${constructorData.name} (Fórmula 1)` : `${constructorData.name} Formula One team`;
+                const data = await fetchWikiSummary(lang, constructorData.url, [fallbackTerm, constructorData.name]);
+                if (cancelled) return;
 
-                if (data.type === "disambiguation" || data.title === "Not found") {
-                    const fallbackTerm = lang === 'pt' ? `${constructorData.name} (Fórmula 1)` : `${constructorData.name} Formula One team`;
-                    wikiUrl = `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(fallbackTerm)}`;
-                    res = await fetch(wikiUrl);
-                    data = await res.json();
-                }
-
-                if (data.extract) {
-                    const sentences = data.extract.split('. ');
-                    setSummary(sentences.slice(0, 3).join('. ') + '.');
-                }
+                setSummary(data ? firstSentences(data.extract, 3) : null);
             } catch (error) {
                 console.error("Erro ao buscar dados na Wikipédia:", error);
             } finally {
-                setLoading(false);
+                if (!cancelled) setLoading(false);
             }
         }
 
         fetchWikiData();
+
+        return () => {
+            cancelled = true;
+        };
     }, [constructorData, lang]);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") onClose();
+        };
+        document.addEventListener("keydown", handleKeyDown);
+        return () => document.removeEventListener("keydown", handleKeyDown);
+    }, [onClose]);
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -80,6 +61,7 @@ export default function ConstructorModal({ constructorData, onClose }: Construct
             <div className="relative w-full max-w-sm bg-zinc-900/80 backdrop-blur-xl border border-zinc-700/50 rounded-3xl shadow-2xl p-6 pt-8 overflow-hidden animate-in zoom-in-95 duration-200">
                 <button
                     onClick={onClose}
+                    aria-label={dict.driverModal.close}
                     className="absolute top-4 right-4 text-zinc-400 hover:text-white bg-zinc-800/80 hover:bg-red-500 rounded-full p-2 transition-all z-10"
                 >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>

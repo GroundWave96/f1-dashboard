@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef, useSyncExternalStore, ReactNode } from "react";
 import { dictionaries, Language } from "./dictionaries";
 
 interface LanguageContextType {
@@ -11,32 +11,51 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+const STORAGE_KEY = "f1dash-lang";
+
+function getSavedLang(): Language {
+  try {
+    const savedLang = localStorage.getItem(STORAGE_KEY);
+    if (savedLang === "pt" || savedLang === "en") return savedLang;
+  } catch {
+    // localStorage indisponível (ex.: navegação privada)
+  }
+  return "pt";
+}
+
+const noopSubscribe = () => () => {};
+
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Language>("pt");
+  // No servidor renderiza null; no cliente só renderiza após a hidratação, evitando mismatch de idioma
+  const isMounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
+  const [lang, setLang] = useState<Language>(() => (typeof window === "undefined" ? "pt" : getSavedLang()));
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
+  const transitionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    setIsMounted(true);
-    const savedLang = localStorage.getItem("f1dash-lang") as Language;
-    if (savedLang === "pt" || savedLang === "en") {
-      setLang(savedLang);
-    }
+    document.documentElement.lang = lang === "pt" ? "pt-BR" : "en";
+  }, [lang]);
+
+  useEffect(() => {
+    return () => {
+      if (transitionTimer.current) clearTimeout(transitionTimer.current);
+    };
   }, []);
 
   const toggleLang = () => {
-    if (isTransitioning) return; 
-    
+    if (isTransitioning) return;
+
     setIsTransitioning(true);
 
-    setTimeout(() => {
-      setLang((prev) => {
-        const newLang = prev === "pt" ? "en" : "pt";
-        localStorage.setItem("f1dash-lang", newLang);
-        return newLang;
-      }); 
-      
-      setIsTransitioning(false); 
+    transitionTimer.current = setTimeout(() => {
+      const newLang = lang === "pt" ? "en" : "pt";
+      try {
+        localStorage.setItem(STORAGE_KEY, newLang);
+      } catch {
+        // localStorage indisponível (ex.: navegação privada)
+      }
+      setLang(newLang);
+      setIsTransitioning(false);
     }, 300);
   };
 

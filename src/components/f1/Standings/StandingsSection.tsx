@@ -18,18 +18,19 @@ export default function StandingsSection() {
     const [error, setError] = useState(false);
     const [selectedDriver, setSelectedDriver] = useState<{ driver: Driver, constructorName: string } | null>(null);
     const [selectedConstructor, setSelectedConstructor] = useState<Constructor | null>(null);
+    const [season, setSeason] = useState<string>(String(new Date().getFullYear()));
     const { dict } = useLanguage();
-    const currentYear = new Date().getFullYear();
-    
+
 
     useEffect(() => {
         async function fetchData() {
             try {
                 const [driversRes, constructorsRes] = await Promise.all([
-                    api.get("current/driverStandings.json"),
-                    api.get("current/constructorStandings.json")
+                    api.get("current/driverStandings.json?limit=100"),
+                    api.get("current/constructorStandings.json?limit=100")
                 ]);
 
+                setSeason(driversRes.data.MRData.StandingsTable.season);
                 setDrivers(driversRes.data.MRData.StandingsTable.StandingsLists[0]?.DriverStandings || []);
                 setConstructors(constructorsRes.data.MRData.StandingsTable.StandingsLists[0]?.ConstructorStandings || []);
             } catch (error) {
@@ -44,7 +45,7 @@ export default function StandingsSection() {
 
     if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center text-gray-400 gap-4">
+            <div className="flex flex-col items-center justify-center text-gray-400 gap-4 h-full">
                 <Spinner />
                 <span>{dict.standings.loading}</span>
             </div>
@@ -71,7 +72,7 @@ export default function StandingsSection() {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
                 <div className="text-center sm:text-left">
                     <span className="text-red-500 font-bold uppercase tracking-widest text-[10px]">{dict.standings.title}</span>
-                    <h2 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-wider">{dict.standings.season} {currentYear}</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-wider">{dict.standings.season} {season}</h2>
                 </div>
 
                 <div className="relative bg-zinc-900 p-1 rounded-full border border-zinc-800 flex items-center w-64 h-11">

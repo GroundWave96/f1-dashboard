@@ -91,19 +91,22 @@ export default function RaceInfo({ race }: RaceInfoProps) {
 
     if (isPureIOSSafari) {
         const formatICSDate = (date: Date) => date.toISOString().replace(/-|:|\.\d+/g, "").substring(0, 15) + "Z";
+        const escapeICSText = (text: string) => text.replace(/\\/g, "\\\\").replace(/([,;])/g, "\\$1").replace(/\n/g, "\\n");
         const icsContent = [
             "BEGIN:VCALENDAR",
             "VERSION:2.0",
             "PRODID:-//F1Dash//Gabriel Pimentel//PT",
             "BEGIN:VEVENT",
+            `UID:f1dash-${race.season}-${race.round}@f1dash.pages.dev`,
+            `DTSTAMP:${formatICSDate(new Date())}`,
             `DTSTART:${formatICSDate(startDate)}`,
             `DTEND:${formatICSDate(endDate)}`,
-            `SUMMARY:🏎️ F1: ${race.raceName}`,
-            `DESCRIPTION:${dict.nextRace.calendarDesc || "Corrida gerada via F1Dash."}`,
-            `LOCATION:${race.Circuit.circuitName}, ${race.Circuit.Location.locality}, ${race.Circuit.Location.country}`,
+            `SUMMARY:${escapeICSText(`🏎️ F1: ${race.raceName}`)}`,
+            `DESCRIPTION:${escapeICSText(dict.nextRace.calendarDesc || "Corrida gerada via F1Dash.")}`,
+            `LOCATION:${escapeICSText(`${race.Circuit.circuitName}, ${race.Circuit.Location.locality}, ${race.Circuit.Location.country}`)}`,
             "END:VEVENT",
             "END:VCALENDAR"
-        ].join("\n");
+        ].join("\r\n");
 
         const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
         const url = window.URL.createObjectURL(blob);

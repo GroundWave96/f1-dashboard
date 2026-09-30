@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, UIEvent } from "react";
+import { useState } from "react";
 import Preloader from "../components/ui/Preloader/Preloader";
 import SideNavigation from "../components/layout/SideNavigation";
 import NextRace from "../components/f1/NextRace/NextRace";
@@ -10,15 +10,6 @@ import LastRacesSection from "../components/f1/Results/LastRacesSection";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
-  const [scrollProgress, setScrollProgress] = useState(0);
-
-  const handleScroll = (e: UIEvent<HTMLElement>) => {
-    const target = e.currentTarget;
-    const scrollableHeight = target.scrollHeight - target.clientHeight;
-    if (scrollableHeight > 0) {
-      setScrollProgress((target.scrollTop / scrollableHeight) * 100);
-    }
-  };
 
   return (
     <>

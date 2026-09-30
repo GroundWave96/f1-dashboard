@@ -1,6 +1,7 @@
 import React from "react";
 import { PastRace } from "../../../types/f1";
 import { useLanguage } from "../../../i18n/LanguageContext";
+import Select from "../../ui/Select";
 
 interface RaceNavigationProps {
     currentRace: PastRace;
@@ -34,7 +35,10 @@ export default function RaceNavigation({
     });
 
     const currentYear = new Date().getFullYear();
-    const years = Array.from(new Array(currentYear - 1950), (val, index) => (currentYear - 1) - index);
+    const yearOptions = Array.from(new Array(currentYear - 1950), (_, index) => {
+        const year = String(currentYear - 1 - index);
+        return { value: year, label: year };
+    });
 
     const isStandings = viewMode !== "races";
 
@@ -44,28 +48,19 @@ export default function RaceNavigation({
                 <div className="flex justify-between items-center sm:items-start mb-1">
                     <span className="text-red-500 font-bold uppercase tracking-widest text-xs">
                         {isStandings 
-                            ? `${dict.standings.season} ${selectedSeason === "current" ? currentYear : selectedSeason}`
+                            ? `${dict.standings.season} ${currentRace.season}`
                             : `${dict.results.round} ${currentRace.round} • ${formattedDate}`
                         }
                     </span>
                     
-                    <div className="sm:hidden relative">
-                        <select
-                            id="season-mobile"
-                            name="season-mobile"
-                            aria-label="Selecionar temporada (mobile)"
+                    <div className="sm:hidden">
+                        <Select
                             value={selectedSeason}
-                            onChange={(e) => onSeasonChange(e.target.value)}
-                            className="appearance-none bg-zinc-800 text-white text-xs font-bold py-1 px-3 pr-6 rounded-full border border-zinc-700 outline-none focus:border-red-500 cursor-pointer"
-                        >
-                            <option value="current">{dict.results.current}</option>
-                            {years.map(year => (
-                                <option key={year} value={year.toString()}>{year}</option>
-                            ))}
-                        </select>
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
-                            <svg className="fill-current h-3 w-3" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
-                        </div>
+                            options={[{ value: "current", label: dict.results.current }, ...yearOptions]}
+                            onChange={onSeasonChange}
+                            ariaLabel={dict.results.selectSeason}
+                            align="right"
+                        />
                     </div>
                 </div>
                 
@@ -80,23 +75,13 @@ export default function RaceNavigation({
                             : currentRace.Circuit.circuitName}
                     </p>
                     
-                    <div className="hidden sm:block relative">
-                        <select
-                            id="season-desktop"
-                            name="season-desktop"
-                            aria-label="Selecionar temporada (desktop)"
+                    <div className="hidden sm:block">
+                        <Select
                             value={selectedSeason}
-                            onChange={(e) => onSeasonChange(e.target.value)}
-                            className="appearance-none bg-zinc-800 text-white text-xs font-bold py-1 px-3 pr-6 rounded-full border border-zinc-700 outline-none focus:border-red-500 cursor-pointer transition-colors hover:bg-zinc-700"
-                        >
-                            <option value="current">{dict.results.currentSeason}</option>
-                            {years.map(year => (
-                                <option key={year} value={year.toString()}>{year}</option>
-                            ))}
-                        </select>
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
-                            <svg className="fill-current h-3 w-3" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
-                        </div>
+                            options={[{ value: "current", label: dict.results.currentSeason }, ...yearOptions]}
+                            onChange={onSeasonChange}
+                            ariaLabel={dict.results.selectSeason}
+                        />
                     </div>
                 </div>
             </div>

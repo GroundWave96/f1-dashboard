@@ -19,6 +19,28 @@ export const nationalityToISO = (nationality: string): string => {
     'Finnish': 'fi',
     'Chinese': 'cn',
     'New Zealander': 'nz',
+    'Austrian': 'at',
+    'Swiss': 'ch',
+    'Belgian': 'be',
+    'Colombian': 'co',
+    'Swedish': 'se',
+    'Polish': 'pl',
+    'Russian': 'ru',
+    'Indian': 'in',
+    'Indonesian': 'id',
+    'Malaysian': 'my',
+    'Portuguese': 'pt',
+    'Venezuelan': 've',
+    'Irish': 'ie',
+    'Hungarian': 'hu',
+    'Czech': 'cz',
+    'Chilean': 'cl',
+    'Uruguayan': 'uy',
+    'South African': 'za',
+    'Liechtensteiner': 'li',
+    'Rhodesian': 'zw',
+    'East German': 'de',
+    'Hong Kong': 'hk',
   };
   return map[nationality] || 'un';
 };
@@ -91,7 +113,26 @@ export const translateNationality = (nationality: string, lang: 'pt' | 'en'): st
     'New Zealander': 'Neozelandês',
     'Colombian': 'Colombiano',
     'Austrian': 'Austríaco',
-    'Swiss': 'Suíço'
+    'Swiss': 'Suíço',
+    'Belgian': 'Belga',
+    'Swedish': 'Sueco',
+    'Polish': 'Polonês',
+    'Russian': 'Russo',
+    'Indian': 'Indiano',
+    'Indonesian': 'Indonésio',
+    'Malaysian': 'Malaio',
+    'Portuguese': 'Português',
+    'Venezuelan': 'Venezuelano',
+    'Irish': 'Irlandês',
+    'Hungarian': 'Húngaro',
+    'Czech': 'Tcheco',
+    'Chilean': 'Chileno',
+    'Uruguayan': 'Uruguaio',
+    'South African': 'Sul-Africano',
+    'Liechtensteiner': 'Liechtensteinense',
+    'Rhodesian': 'Rodesiano',
+    'East German': 'Alemão Oriental',
+    'Hong Kong': 'Honconguês'
   };
   return map[nationality] || nationality;
 };
@@ -120,7 +161,20 @@ export const countryToISO = (country: string): string => {
     'Mexico': 'mx', 
     'Qatar': 'qa', 
     'UAE': 'ae', 
-    'Saudi': 'sa'
+    'Saudi': 'sa',
+    'Malaysia': 'my',
+    'Argentina': 'ar',
+    'France': 'fr',
+    'Germany': 'de',
+    'India': 'in',
+    'Korea': 'kr',
+    'Morocco': 'ma',
+    'Portugal': 'pt',
+    'Russia': 'ru',
+    'South Africa': 'za',
+    'Sweden': 'se',
+    'Switzerland': 'ch',
+    'Turkey': 'tr'
   };
   return map[country] || 'un';
 };

@@ -15,7 +15,7 @@ export default function CalendarSection() {
   
   const { dict, lang } = useLanguage();
   const locale = lang === 'pt' ? 'pt-BR' : 'en-US';
-  const currentYear = new Date().getFullYear();
+  const season = races[0]?.season ?? String(new Date().getFullYear());
   const now = new Date();
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export default function CalendarSection() {
     <div className="w-full max-w-4xl mx-auto px-4 flex flex-col h-full py-4 sm:py-6">
       <div className="flex flex-col mb-4 sm:mb-6 shrink-0 text-center sm:text-left">
         <span className="text-red-500 font-bold uppercase tracking-widest text-[10px]">{dict.calendar.title}</span>
-        <h2 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-wider">{currentYear}</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-wider">{season}</h2>
       </div>
 
       <div className="flex-1 overflow-y-auto overscroll-contain rounded-xl custom-scrollbar pr-2 pb-16 lg:pb-0">
@@ -83,6 +83,7 @@ export default function CalendarSection() {
           {races.map((race) => {
             const isExpanded = expandedId === race.round;
             const status = getRaceStatus(race);
+            const sprintQualifying = race.SprintQualifying || race.SprintShootout;
 
             return (
               <div 
@@ -138,13 +139,13 @@ export default function CalendarSection() {
                       </div>
                     )}
                     
-                    {(race.SprintShootout || race.SecondPractice) && (
+                    {(sprintQualifying || race.SecondPractice) && (
                       <div className="flex justify-between border-b border-zinc-800/50 pb-2">
                         <span className="text-xs text-zinc-400 font-bold uppercase tracking-wider">
-                          {race.SprintShootout ? dict.calendar.sprintShootout : dict.calendar.fp2}
+                          {sprintQualifying ? dict.calendar.sprintShootout : dict.calendar.fp2}
                         </span>
                         <span className="text-xs text-zinc-200 font-mono">
-                          {formatDateTime(race.SprintShootout?.date || race.SecondPractice?.date, race.SprintShootout?.time || race.SecondPractice?.time)}
+                          {formatDateTime(sprintQualifying?.date || race.SecondPractice?.date, sprintQualifying?.time || race.SecondPractice?.time)}
                         </span>
                       </div>
                     )}

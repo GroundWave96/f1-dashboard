@@ -15,36 +15,34 @@ interface CountdownTimerProps {
   targetTime: string;
 }
 
+const getTimeLeft = (raceDate: number): TimeLeft => {
+  const distance = Math.max(raceDate - Date.now(), 0);
+  return {
+    days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+    minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+    seconds: Math.floor((distance % (1000 * 60)) / 1000),
+  };
+};
+
+const getRaceTimestamp = (targetDate: string, targetTime: string) =>
+  new Date(`${targetDate}T${targetTime || "00:00:00Z"}`).getTime();
+
 export default function CountdownTimer({ targetDate, targetTime }: CountdownTimerProps) {
-  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>(() => getTimeLeft(getRaceTimestamp(targetDate, targetTime)));
   
   const { dict } = useLanguage();
 
   useEffect(() => {
-    const raceDateStr = `${targetDate}T${targetTime || "00:00:00Z"}`;
-    const raceDate = new Date(raceDateStr).getTime();
+    const raceDate = getRaceTimestamp(targetDate, targetTime);
 
     const interval = setInterval(() => {
-      const now = new Date().getTime();
-      const distance = raceDate - now;
-
-      if (distance < 0) {
-        clearInterval(interval);
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-      } else {
-        setTimeLeft({
-          days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((distance % (1000 * 60)) / 1000),
-        });
-      }
+      setTimeLeft(getTimeLeft(raceDate));
+      if (raceDate <= Date.now()) clearInterval(interval);
     }, 1000);
 
     return () => clearInterval(interval);
   }, [targetDate, targetTime]);
-
-  if (!timeLeft) return null;
 
   return (
     <div className="flex justify-between sm:justify-start items-start w-full sm:gap-6 max-w-full overflow-hidden px-1 sm:px-0">
