@@ -6,12 +6,6 @@ interface TrackMapProps {
     circuitId: string;
 }
 
-// circuitIds da API cujo arquivo em /public/circuits tem outro nome
-const circuitFileAliases: Record<string, string> = {
-    albert_park: "albert-park",
-    madring: "madrid",
-};
-
 export default function TrackMap({ circuitId }: TrackMapProps) {
     const [trackPath, setTrackPath] = useState<string | null>(null);
     const [notFound, setNotFound] = useState(false);
@@ -19,8 +13,7 @@ export default function TrackMap({ circuitId }: TrackMapProps) {
     useEffect(() => {
         async function fetchSvg() {
             try {
-                const fileName = circuitFileAliases[circuitId] ?? circuitId;
-                const res = await fetch(`/circuits/${fileName}.svg`);
+                const res = await fetch(`/circuits/${circuitId}.svg`);
                 if (!res.ok) throw new Error(`SVG do circuito "${circuitId}" não encontrado`);
                 const text = await res.text();
                 
