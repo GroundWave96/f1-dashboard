@@ -176,7 +176,31 @@ export const countryToISO = (country: string): string => {
     'Switzerland': 'ch',
     'Turkey': 'tr'
   };
-  return map[country] || 'un';
+  return map[country] || regionCodeFromName(country) || 'un';
+};
+
+// Mapa "nome do país em inglês" -> código ISO gerado pelo próprio navegador (Intl).
+// Cobre automaticamente países novos no calendário sem precisar editar a lista acima.
+let regionNames: Map<string, string> | null = null;
+
+const regionCodeFromName = (country: string): string | undefined => {
+  if (!regionNames) {
+    regionNames = new Map();
+    try {
+      const displayNames = new Intl.DisplayNames(['en'], { type: 'region' });
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      for (const a of letters) {
+        for (const b of letters) {
+          const code = a + b;
+          const name = displayNames.of(code);
+          if (name && name !== code) regionNames.set(name.toLowerCase(), code.toLowerCase());
+        }
+      }
+    } catch {
+      // Intl.DisplayNames indisponível: fica só com o mapa manual
+    }
+  }
+  return regionNames.get(country.toLowerCase());
 };
 
 export const getPositionStyle = (pos: string): string => {
