@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { api } from "../../../lib/api";
+import { apiGet } from "../../../lib/api";
 import { PastRace } from "../../../types/f1";
 import RaceInfo from "./RaceInfo";
 import CountdownTimer from "./CountdownTimer";
@@ -19,8 +19,8 @@ export default function NextRace() {
   useEffect(() => {
     async function fetchNextRace() {
       try {
-        const response = await api.get("current/next.json");
-        setNextRace(response.data.MRData.RaceTable.Races[0] ?? null);
+        const data = await apiGet("current/next.json");
+        setNextRace(data.RaceTable?.Races[0] ?? null);
       } catch (error) {
         console.error("Erro ao buscar próxima corrida:", error);
         setError(true);

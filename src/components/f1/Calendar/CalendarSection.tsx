@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { api } from "../../../lib/api";
+import { apiGet } from "../../../lib/api";
 import { Race } from "../../../types/f1";
 import { useLanguage } from "../../../i18n/LanguageContext";
 import { countryToISO } from "../../../lib/f1-utils";
@@ -21,8 +21,8 @@ export default function CalendarSection() {
   useEffect(() => {
     async function fetchCalendar() {
       try {
-        const response = await api.get("current.json");
-        setRaces(response.data.MRData.RaceTable.Races);
+        const data = await apiGet("current.json");
+        setRaces(data.RaceTable?.Races ?? []);
       } catch (err) {
         console.error("Erro ao buscar calendário:", err);
         setError(true);

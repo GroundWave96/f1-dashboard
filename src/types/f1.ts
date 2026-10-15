@@ -1,6 +1,7 @@
 export interface Driver {
   driverId: string;
   permanentNumber?: string;
+  code?: string;
   givenName: string;
   familyName: string;
   nationality: string;
@@ -24,6 +25,8 @@ export interface DriverStanding {
 }
 
 export interface Location {
+  lat?: string;
+  long?: string;
   locality: string;
   country: string;
 }
@@ -57,6 +60,7 @@ export interface Race {
 
 export interface RaceResult {
   position: string;
+  positionText?: string;
   points: string;
   grid: string;
   laps: string;
@@ -79,8 +83,19 @@ export interface RaceResult {
   };
 }
 
+export interface QualifyingResult {
+  position: string;
+  Driver: Driver;
+  Constructor: Constructor;
+  Q1?: string;
+  Q2?: string;
+  Q3?: string;
+}
+
 export interface PastRace extends Race {
   Results: RaceResult[];
+  SprintResults?: RaceResult[];
+  QualifyingResults?: QualifyingResult[];
 }
 
 export interface ConstructorStanding {
@@ -88,4 +103,27 @@ export interface ConstructorStanding {
   points: string;
   wins: string;
   Constructor: Constructor;
+}
+
+export interface StandingsList {
+  season: string;
+  round: string;
+  DriverStandings?: DriverStanding[];
+  ConstructorStandings?: ConstructorStanding[];
+}
+
+// Envelope padrão das respostas da Jolpica/Ergast
+export interface MRData {
+  total: string;
+  limit: string;
+  offset: string;
+  RaceTable?: {
+    season?: string;
+    Races: PastRace[];
+  };
+  StandingsTable?: {
+    season: string;
+    round?: string;
+    StandingsLists: StandingsList[];
+  };
 }

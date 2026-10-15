@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { api } from "../../../lib/api";
+import { apiGet } from "../../../lib/api";
 import { DriverStanding, ConstructorStanding, Driver, Constructor } from "../../../types/f1";
 import DriverTable from "./DriverTable";
 import ConstructorTable from "./ConstructorTable";
@@ -26,13 +26,13 @@ export default function StandingsSection() {
         async function fetchData() {
             try {
                 const [driversRes, constructorsRes] = await Promise.all([
-                    api.get("current/driverStandings.json?limit=100"),
-                    api.get("current/constructorStandings.json?limit=100")
+                    apiGet("current/driverStandings.json?limit=100"),
+                    apiGet("current/constructorStandings.json?limit=100")
                 ]);
 
-                setSeason(driversRes.data.MRData.StandingsTable.season);
-                setDrivers(driversRes.data.MRData.StandingsTable.StandingsLists[0]?.DriverStandings || []);
-                setConstructors(constructorsRes.data.MRData.StandingsTable.StandingsLists[0]?.ConstructorStandings || []);
+                setSeason(driversRes.StandingsTable?.season ?? String(new Date().getFullYear()));
+                setDrivers(driversRes.StandingsTable?.StandingsLists[0]?.DriverStandings || []);
+                setConstructors(constructorsRes.StandingsTable?.StandingsLists[0]?.ConstructorStandings || []);
             } catch (error) {
                 console.error("Erro ao buscar classificações:", error);
                 setError(true);

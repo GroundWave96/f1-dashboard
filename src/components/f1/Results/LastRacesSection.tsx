@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { api } from "../../../lib/api";
+import { apiGet, apiGetAllRaces } from "../../../lib/api";
 import { PastRace, DriverStanding, ConstructorStanding, Driver , Constructor } from "../../../types/f1";
 import RaceNavigation from "./RaceNavigation";
 import ResultsTable from "./ResultsTable";
@@ -35,43 +35,17 @@ export default function LastRacesSection() {
             setLoading(true);
             setError(false);
             try {
-                const allRacesMap: Record<string, PastRace> = {};
-                let offset = 0;
-                const limit = 100;
-                let total = 1;
-                
-                while (offset < total) {
-                    if (cancelled) return;
-                    const response = await api.get(`${season}/results.json?limit=${limit}&offset=${offset}`);
-                    const data = response.data.MRData;
-                    total = parseInt(data.total);
-                    const fetchedRaces = data.RaceTable.Races;
-                    
-                    for (const race of fetchedRaces) {
-                        if (allRacesMap[race.round]) {
-                            allRacesMap[race.round].Results = [
-                                ...allRacesMap[race.round].Results,
-                                ...race.Results
-                            ];
-                        } else {
-                            allRacesMap[race.round] = race;
-                        }
-                    }
-                    offset += limit;
-                }
-
-                const allRaces = Object.values(allRacesMap).sort(
-                    (a: PastRace, b: PastRace) => Number(a.round) - Number(b.round)
-                );
+                const allRaces = await apiGetAllRaces(season, "results");
+                if (cancelled) return;
 
                 const [standingsRes, constructorsRes] = await Promise.all([
-                    api.get(`${season}/driverStandings.json?limit=100`),
-                    api.get(`${season}/constructorStandings.json?limit=100`)
+                    apiGet(`${season}/driverStandings.json?limit=100`),
+                    apiGet(`${season}/constructorStandings.json?limit=100`)
                 ]);
                 if (cancelled) return;
 
-                const seasonStandings = standingsRes.data.MRData.StandingsTable.StandingsLists[0]?.DriverStandings || [];
-                const seasonConstructors = constructorsRes.data.MRData.StandingsTable.StandingsLists[0]?.ConstructorStandings || [];
+                const seasonStandings = standingsRes.StandingsTable?.StandingsLists[0]?.DriverStandings || [];
+                const seasonConstructors = constructorsRes.StandingsTable?.StandingsLists[0]?.ConstructorStandings || [];
 
                 setRaces(allRaces);
                 setStandings(seasonStandings);
