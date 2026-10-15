@@ -1,4 +1,4 @@
-import { Constructor, Driver, PastRace, Race } from "../types/f1";
+import { Constructor, Driver, PastRace, Race, RaceResult } from "../types/f1";
 import { getRaceStart } from "./sessions";
 
 // ---------- Disputa pelo título ----------
@@ -59,6 +59,44 @@ export function computeTitleFight(entries: { id: string; points: number }[], ava
   // Decidido quando nem o segundo colocado alcança o líder
   const clinched = contenders.length > 1 && contenders.filter((c) => c.alive).length === 1;
   return { contenders, leaderPoints, clinched };
+}
+
+// ---------- Evolução dos pontos ----------
+
+export interface PointsTimeline {
+  rounds: { round: string; raceName: string }[];
+  // pontos acumulados por rodada, na mesma ordem de `rounds`
+  series: Map<string, number[]>;
+  labels: Map<string, { name: string; short: string }>;
+}
+
+export function buildPointsTimeline(races: PastRace[], sprints: PastRace[], kind: "drivers" | "constructors"): PointsTimeline {
+  const sprintByRound = new Map(sprints.map((s) => [s.round, s.SprintResults ?? []]));
+  const rounds = races.map((r) => ({ round: r.round, raceName: r.raceName }));
+  const totals = new Map<string, number>();
+  const series = new Map<string, number[]>();
+  const labels: PointsTimeline["labels"] = new Map();
+
+  const keyOf = (result: RaceResult) => (kind === "drivers" ? result.Driver.driverId : result.Constructor.constructorId);
+  const labelOf = (result: RaceResult) =>
+    kind === "drivers"
+      ? { name: `${result.Driver.givenName} ${result.Driver.familyName}`, short: result.Driver.code ?? result.Driver.familyName.slice(0, 3).toUpperCase() }
+      : { name: result.Constructor.name, short: result.Constructor.name };
+
+  races.forEach((race, index) => {
+    const results = [...(race.Results ?? []), ...(sprintByRound.get(race.round) ?? [])];
+    for (const result of results) {
+      const key = keyOf(result);
+      totals.set(key, (totals.get(key) ?? 0) + Number(result.points || 0));
+      if (!labels.has(key)) labels.set(key, labelOf(result));
+    }
+    for (const [key, total] of totals) {
+      if (!series.has(key)) series.set(key, new Array(index).fill(0));
+      series.get(key)!.push(total);
+    }
+  });
+
+  return { rounds, series, labels };
 }
 
 // ---------- Duelo entre companheiros de equipe ----------
