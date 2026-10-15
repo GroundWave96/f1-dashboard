@@ -178,3 +178,111 @@ export const countryToISO = (country: string): string => {
   };
   return map[country] || 'un';
 };
+
+export const getPositionStyle = (pos: string): string => {
+  if (pos === "1") return "text-yellow-400 font-black drop-shadow-[0_0_8px_rgba(250,204,21,0.6)] text-base sm:text-lg";
+  if (pos === "2") return "text-slate-300 font-black drop-shadow-[0_0_8px_rgba(203,213,225,0.5)] text-base sm:text-lg";
+  if (pos === "3") return "text-amber-600 font-black drop-shadow-[0_0_8px_rgba(217,119,6,0.5)] text-base sm:text-lg";
+  return "text-white font-bold";
+};
+
+export type ResultOutcome = 'classified' | 'dnf' | 'dns' | 'dsq' | 'dnq' | 'nc';
+
+// Siglas usadas pela própria F1 (iguais em português e inglês)
+export const OUTCOME_LABEL: Record<Exclude<ResultOutcome, 'classified'>, string> = {
+  dnf: 'DNF',
+  dns: 'DNS',
+  dsq: 'DSQ',
+  dnq: 'DNQ',
+  nc: 'NC',
+};
+
+const isFinishedStatus = (status: string) =>
+  status === 'Finished' || status === 'Lapped' || /^\+\d+ Laps?$/.test(status);
+
+export const getResultOutcome = (result: { positionText?: string; status: string }): ResultOutcome => {
+  switch (result.positionText) {
+    case 'R': return 'dnf';
+    case 'D':
+    case 'E': return 'dsq';
+    case 'W': return 'dns';
+    case 'F': return 'dnq';
+    case 'N': return 'nc';
+  }
+  if (result.positionText) return 'classified';
+
+  // Dados antigos sem positionText: deduz pelo status
+  const { status } = result;
+  if (/disqualified|excluded/i.test(status)) return 'dsq';
+  if (/did not start|withdrew/i.test(status)) return 'dns';
+  if (/did not (pre)?qualify/i.test(status)) return 'dnq';
+  return isFinishedStatus(status) ? 'classified' : 'dnf';
+};
+
+const statusPt: Record<string, string> = {
+  'Finished': 'Completou',
+  'Lapped': 'Retardatário',
+  'Retired': 'Abandono',
+  'Disqualified': 'Desclassificado',
+  'Excluded': 'Excluído',
+  'Did not start': 'Não largou',
+  'Withdrew': 'Retirou-se',
+  'Did not qualify': 'Não se classificou',
+  'Did not prequalify': 'Não pré-classificado',
+  'Not classified': 'Não classificado',
+  'Accident': 'Acidente',
+  'Fatal accident': 'Acidente fatal',
+  'Collision': 'Colisão',
+  'Collision damage': 'Danos de colisão',
+  'Damage': 'Danos',
+  'Spun off': 'Rodou',
+  'Engine': 'Motor',
+  'Power Unit': 'Unidade de potência',
+  'Gearbox': 'Câmbio',
+  'Transmission': 'Transmissão',
+  'Clutch': 'Embreagem',
+  'Hydraulics': 'Hidráulica',
+  'Electrical': 'Elétrica',
+  'Electronics': 'Eletrônica',
+  'Battery': 'Bateria',
+  'Brakes': 'Freios',
+  'Suspension': 'Suspensão',
+  'Steering': 'Direção',
+  'Driveshaft': 'Semieixo',
+  'Exhaust': 'Escapamento',
+  'Turbo': 'Turbo',
+  'Overheating': 'Superaquecimento',
+  'Radiator': 'Radiador',
+  'Water leak': 'Vazamento de água',
+  'Oil leak': 'Vazamento de óleo',
+  'Oil pressure': 'Pressão do óleo',
+  'Fuel pressure': 'Pressão de combustível',
+  'Fuel system': 'Sistema de combustível',
+  'Fuel pump': 'Bomba de combustível',
+  'Out of fuel': 'Sem combustível',
+  'Puncture': 'Pneu furado',
+  'Tyre': 'Pneu',
+  'Wheel': 'Roda',
+  'Wheel nut': 'Porca da roda',
+  'Front wing': 'Asa dianteira',
+  'Rear wing': 'Asa traseira',
+  'Throttle': 'Acelerador',
+  'Pneumatics': 'Pneumática',
+  'Vibrations': 'Vibrações',
+  'Mechanical': 'Problema mecânico',
+  'Debris': 'Detritos',
+  'Fire': 'Incêndio',
+  'Illness': 'Doença',
+  'Injury': 'Lesão',
+};
+
+/** Traduz o status de um resultado. `lapsDown` = voltas atrás do vencedor (para "Lapped"). */
+export const translateStatus = (status: string, lang: 'pt' | 'en', lapsDown = 0): string => {
+  const lapped = status === 'Lapped' || /^\+\d+ Laps?$/.test(status);
+  if (lapped && lapsDown > 0) {
+    if (lang === 'pt') return `+${lapsDown} ${lapsDown === 1 ? 'volta' : 'voltas'}`;
+    return `+${lapsDown} ${lapsDown === 1 ? 'Lap' : 'Laps'}`;
+  }
+  if (lang === 'en') return status;
+  return statusPt[status] ?? status;
+};

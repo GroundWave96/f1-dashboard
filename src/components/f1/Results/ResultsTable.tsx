@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { RaceResult } from "../../../types/f1";
-import { nationalityToISO, getConstructorLogo } from "../../../lib/f1-utils";
+import { nationalityToISO, getConstructorLogo, getPositionStyle, getResultOutcome, OUTCOME_LABEL, translateStatus } from "../../../lib/f1-utils";
+import { clickableProps } from "../../../lib/hooks";
 import { useLanguage } from "../../../i18n/LanguageContext";
 
 interface ResultsTableProps {
@@ -12,13 +13,8 @@ interface ResultsTableProps {
 
 export default function ResultsTable({ results }: ResultsTableProps) {
     const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
-    const { dict } = useLanguage();
-    const getPositionStyle = (pos: string) => {
-        if (pos === "1") return "text-yellow-400 font-black drop-shadow-[0_0_8px_rgba(250,204,21,0.6)] text-base sm:text-lg";
-        if (pos === "2") return "text-slate-300 font-black drop-shadow-[0_0_8px_rgba(203,213,225,0.5)] text-base sm:text-lg";
-        if (pos === "3") return "text-amber-600 font-black drop-shadow-[0_0_8px_rgba(217,119,6,0.5)] text-base sm:text-lg";
-        return "text-white font-bold";
-    };
+    const { dict, lang } = useLanguage();
+    const leaderLaps = Number(results[0]?.laps ?? 0);
     const toggleRow = (rowId: string) => {
         setExpandedRowId((prev) => (prev === rowId ? null : rowId));
     };
@@ -41,12 +37,15 @@ export default function ResultsTable({ results }: ResultsTableProps) {
                         const rowId = `${row.position}-${row.Driver.driverId}`;
                         const isExpanded = expandedRowId === rowId;
                         const isPurpleLap = row.FastestLap?.rank === "1";
+                        const outcome = getResultOutcome(row);
+                        const statusText = translateStatus(row.status, lang, leaderLaps - Number(row.laps));
 
                         return (
                             <React.Fragment key={rowId}>
                                 <tr
-                                    className="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors cursor-pointer"
-                                    onClick={() => toggleRow(rowId)}
+                                    className="border-b border-zinc-800 hover:bg-zinc-800/50 focus-visible:bg-zinc-800/50 outline-none transition-colors cursor-pointer"
+                                    {...clickableProps(() => toggleRow(rowId))}
+                                    aria-expanded={isExpanded}
                                 >
                                     <td className="px-3 py-4 sm:px-6">
                                         <span className={getPositionStyle(row.position)}>{row.position}º</span>
@@ -61,6 +60,7 @@ export default function ResultsTable({ results }: ResultsTableProps) {
                                                 height={24}
                                                 className="w-6 h-6 object-contain aspect-square brightness-110 sm:hidden"
                                             />
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
                                             <img
                                                 src={`https://flagcdn.com/w40/${nationalityToISO(row.Driver.nationality)}.png`}
                                                 alt={row.Driver.nationality}
@@ -91,8 +91,19 @@ export default function ResultsTable({ results }: ResultsTableProps) {
                                         </div>
                                     </td>
 
-                                    <td className="px-3 py-4 sm:px-6 text-center font-bold text-red-500">
-                                        {Number(row.points) > 0 ? `+${row.points}` : row.status}
+                                    <td className="px-3 py-4 sm:px-6 text-center">
+                                        {Number(row.points) > 0 ? (
+                                            <span className="font-bold text-red-500">+{row.points}</span>
+                                        ) : outcome === "classified" ? (
+                                            <span className="font-mono text-zinc-600">0</span>
+                                        ) : (
+                                            <span
+                                                className="inline-block text-[10px] font-black tracking-wider text-red-400 bg-red-500/10 border border-red-500/25 rounded px-1.5 py-0.5"
+                                                title={statusText}
+                                            >
+                                                {OUTCOME_LABEL[outcome]}
+                                            </span>
+                                        )}
                                     </td>
 
                                     <td className="px-3 py-4 sm:px-6 text-center">
@@ -136,7 +147,7 @@ export default function ResultsTable({ results }: ResultsTableProps) {
                                                     <div className="flex flex-col items-center">
                                                         <span className="text-gray-500 uppercase text-xs font-bold mb-1">{dict.results.totalTime}</span>
                                                         <span className="font-mono text-gray-300">
-                                                            {row.status.includes("Lap") ? row.status : row.Time ? row.Time.time : row.status}
+                                                            {row.Time ? row.Time.time : statusText}
                                                         </span>
                                                         <span className="text-xs text-gray-500 mt-1">{row.laps} {dict.results.laps}</span>
                                                     </div>
