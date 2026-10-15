@@ -5,18 +5,25 @@ import Image from "next/image";
 import { Constructor } from "../../../types/f1";
 import { getConstructorLogo, translateNationality } from "../../../lib/f1-utils";
 import { fetchWikiSummary, firstSentences } from "../../../lib/wikipedia";
+import { loadConstructorCareer } from "../../../lib/career";
+import { useAsyncData, useEscapeKey } from "../../../lib/hooks";
 import { useLanguage } from "../../../i18n/LanguageContext";
 import Spinner from "../../ui/Spinner";
+import StatTiles from "../../ui/StatTiles";
+import TeammateDuel from "./TeammateDuel";
 
 interface ConstructorModalProps {
     constructorData: Constructor;
+    // Temporada usada no duelo entre companheiros ("current" ou o ano)
+    season: string;
     onClose: () => void;
 }
 
-export default function ConstructorModal({ constructorData, onClose }: ConstructorModalProps) {
+export default function ConstructorModal({ constructorData, season, onClose }: ConstructorModalProps) {
     const [summary, setSummary] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const { dict, lang } = useLanguage();
+    const { data: career } = useAsyncData(`career:team:${constructorData.constructorId}`, () => loadConstructorCareer(constructorData.constructorId));
 
     useEffect(() => {
         let cancelled = false;
@@ -43,23 +50,19 @@ export default function ConstructorModal({ constructorData, onClose }: Construct
         };
     }, [constructorData, lang]);
 
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Escape") onClose();
-        };
-        document.addEventListener("keydown", handleKeyDown);
-        return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [onClose]);
+    useEscapeKey(onClose);
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label={constructorData.name}>
             <div
                 className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
                 onClick={onClose}
             ></div>
 
-            <div className="relative w-full max-w-sm bg-zinc-900/80 backdrop-blur-xl border border-zinc-700/50 rounded-3xl shadow-2xl p-6 pt-8 overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="relative w-full max-w-sm max-h-[92dvh] overflow-y-auto custom-scrollbar bg-zinc-900/80 backdrop-blur-xl border border-zinc-700/50 rounded-3xl shadow-2xl p-6 pt-8 animate-in zoom-in-95 duration-200">
                 <button
+                    type="button"
+                    autoFocus
                     onClick={onClose}
                     aria-label={dict.driverModal.close}
                     className="absolute top-4 right-4 text-zinc-400 hover:text-white bg-zinc-800/80 hover:bg-red-500 rounded-full p-2 transition-all z-10"
@@ -90,7 +93,7 @@ export default function ConstructorModal({ constructorData, onClose }: Construct
                             {constructorData.name}
                         </h3>
 
-                        <div className="flex gap-3 mb-6 w-full justify-center">
+                        <div className="flex gap-3 mb-5 w-full justify-center">
                             <div className="bg-zinc-800/50 rounded-lg px-4 py-2 border border-zinc-700/50 min-w-36">
                                 <span className="block text-[10px] text-zinc-500 uppercase tracking-wider font-bold mb-0.5">{dict.driverModal.nationality}</span>
                                 <span className="text-white text-sm capitalize truncate block">
@@ -98,6 +101,17 @@ export default function ConstructorModal({ constructorData, onClose }: Construct
                                 </span>
                             </div>
                         </div>
+
+                        <StatTiles
+                            title={dict.driverModal.career}
+                            stats={[
+                                { label: dict.driverModal.wins, value: career?.wins },
+                                { label: dict.driverModal.podiums, value: career?.podiums },
+                                { label: dict.driverModal.poles, value: career?.poles },
+                            ]}
+                        />
+
+                        <TeammateDuel constructorData={constructorData} season={season} />
 
                         <div className="bg-zinc-950/60 border border-zinc-800/50 rounded-xl p-4 w-full max-h-40 overflow-y-auto custom-scrollbar">
                             {summary ? (

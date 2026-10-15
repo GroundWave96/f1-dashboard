@@ -5,8 +5,11 @@ import Image from "next/image";
 import { Driver } from "../../../types/f1";
 import { nationalityToISO, translateNationality } from "../../../lib/f1-utils";
 import { fetchWikiSummary, firstSentences } from "../../../lib/wikipedia";
+import { loadDriverCareer } from "../../../lib/career";
+import { useAsyncData, useEscapeKey } from "../../../lib/hooks";
 import { useLanguage } from "../../../i18n/LanguageContext";
 import Spinner from "../../ui/Spinner";
+import StatTiles from "../../ui/StatTiles";
 
 interface DriverModalProps {
     driver: Driver;
@@ -19,14 +22,15 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
     const [summary, setSummary] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const { dict, lang } = useLanguage();
+    const { data: career } = useAsyncData(`career:${driver.driverId}`, () => loadDriverCareer(driver.driverId));
 
     const formatDOB = (dob?: string) => {
         if (!dob) return "--";
         const date = new Date(dob);
         return date.toLocaleDateString(lang === 'pt' ? 'pt-BR' : 'en-US', {
             year: 'numeric',
-            month: 'short',
-            day: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
             timeZone: 'UTC'
         });
     };
@@ -57,23 +61,17 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
         };
     }, [driver, lang]);
 
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Escape") onClose();
-        };
-        document.addEventListener("keydown", handleKeyDown);
-        return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [onClose]);
+    useEscapeKey(onClose);
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label={`${driver.givenName} ${driver.familyName}`}>
 
             <div
                 className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
                 onClick={onClose}
             ></div>
 
-            <div className="relative w-full max-w-sm bg-zinc-900/80 backdrop-blur-xl border border-zinc-700/50 rounded-3xl shadow-2xl p-6 pt-8 overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="relative w-full max-w-sm max-h-[92dvh] overflow-y-auto custom-scrollbar bg-zinc-900/80 backdrop-blur-xl border border-zinc-700/50 rounded-3xl shadow-2xl p-6 pt-8 animate-in zoom-in-95 duration-200">
 
                 {driver.permanentNumber && (
                     <div className="absolute top-4 left-4 bg-white text-zinc-950 font-black italic text-xl px-3 py-0.5 rounded shadow-lg border border-white/20 transform -skew-x-12 z-10">
@@ -82,6 +80,8 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
                 )}
 
                 <button
+                    type="button"
+                    autoFocus
                     onClick={onClose}
                     aria-label={dict.driverModal.close}
                     className="absolute top-4 right-4 text-zinc-400 hover:text-white bg-zinc-800/80 hover:bg-red-500 rounded-full p-2 transition-all z-10"
@@ -107,6 +107,7 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
                                 className="relative w-full h-full object-cover rounded-full border-2 border-zinc-600 shadow-2xl"
                                 unoptimized
                             />
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                                 src={`https://flagcdn.com/w40/${nationalityToISO(driver.nationality)}.png`}
                                 alt={driver.nationality}
@@ -122,16 +123,16 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
                             {constructorName}
                         </p>
 
-                        <div className="flex flex-col sm:flex-row gap-3 mb-5 w-full justify-center items-center">
+                        <div className="grid grid-cols-2 gap-3 mb-5 w-full">
                             
-                            <div className="bg-zinc-800/50 rounded-lg px-4 py-2 border border-zinc-700/50 w-full sm:w-auto sm:min-w-32 text-center">
+                            <div className="bg-zinc-800/50 rounded-lg px-3 py-2 border border-zinc-700/50 text-center min-w-0">
                                 <span className="block text-[10px] text-zinc-500 uppercase tracking-wider font-bold mb-0.5">{dict.driverModal.dob || "Nascimento"}</span>
                                 <span className="text-white text-sm font-mono block">
                                     {formatDOB(driver.dateOfBirth)}
                                 </span>
                             </div>
                         
-                            <div className="bg-zinc-800/50 rounded-lg px-4 py-2 border border-zinc-700/50 w-full sm:w-auto sm:min-w-36 text-center">
+                            <div className="bg-zinc-800/50 rounded-lg px-3 py-2 border border-zinc-700/50 text-center min-w-0">
                                 <span className="block text-[10px] text-zinc-500 uppercase tracking-wider font-bold mb-0.5">{dict.driverModal.nationality}</span>
                                 <span className="text-white text-sm capitalize truncate block">
                                     {translateNationality(driver.nationality, lang as 'pt' | 'en')}
@@ -139,6 +140,16 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
                             </div>
                             
                         </div>
+
+                        <StatTiles
+                            title={dict.driverModal.career}
+                            stats={[
+                                { label: dict.driverModal.races, value: career?.races },
+                                { label: dict.driverModal.wins, value: career?.wins },
+                                { label: dict.driverModal.podiums, value: career?.podiums },
+                                { label: dict.driverModal.poles, value: career?.poles },
+                            ]}
+                        />
 
                         <div className="bg-zinc-950/60 border border-zinc-800/50 rounded-xl p-4 w-full max-h-36 overflow-y-auto custom-scrollbar flex flex-col gap-3">
                             {summary ? (

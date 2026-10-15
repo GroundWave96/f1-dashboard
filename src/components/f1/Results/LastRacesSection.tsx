@@ -224,6 +224,7 @@ export default function LastRacesSection() {
             {selectedConstructor && (
                 <ConstructorModal
                     constructorData={selectedConstructor}
+                    season={season}
                     onClose={() => setSelectedConstructor(null)}
                 />
             )}

@@ -117,6 +117,7 @@ export default function StandingsSection() {
             {selectedConstructor && (
                 <ConstructorModal
                     constructorData={selectedConstructor}
+                    season="current"
                     onClose={() => setSelectedConstructor(null)}
                 />
             )}
