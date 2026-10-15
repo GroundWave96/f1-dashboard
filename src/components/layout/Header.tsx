@@ -64,7 +64,8 @@ export default function Header() {
               ref={buttonRef}
               onClick={() => setIsAboutOpen(!isAboutOpen)}
               className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-700 flex items-center justify-center text-zinc-400 hover:text-white hover:border-zinc-500 hover:bg-zinc-800 transition-colors focus:outline-none"
-              aria-label="Sobre o projeto"
+              aria-label={dict.header.about}
+              aria-expanded={isAboutOpen}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -119,7 +120,7 @@ export default function Header() {
 
         <button
           onClick={toggleLang}
-          aria-label="Mudar idioma"
+          aria-label={dict.header.changeLanguage}
           className="relative w-18 h-7 rounded-full cursor-pointer focus:outline-none"
         >
           <div className="absolute inset-0 rounded-full overflow-hidden border border-zinc-700 bg-zinc-950 shadow-[inset_0_4px_10px_rgba(0,0,0,1)]">

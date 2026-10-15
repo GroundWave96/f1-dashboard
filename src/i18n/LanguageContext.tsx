@@ -1,34 +1,58 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useRef, useSyncExternalStore, ReactNode } from "react";
-import { dictionaries, Language } from "./dictionaries";
+import { dictionaries, Dictionary, Language } from "./dictionaries";
 
 interface LanguageContextType {
   lang: Language;
   toggleLang: () => void;
-  dict: typeof dictionaries.pt;
+  dict: Dictionary;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 const STORAGE_KEY = "f1dash-lang";
 
-function getSavedLang(): Language {
+// Idioma escolhido nesta aba (vale mesmo se o localStorage estiver bloqueado)
+let chosenLang: Language | null = null;
+const listeners = new Set<() => void>();
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  window.addEventListener("storage", listener);
+  return () => {
+    listeners.delete(listener);
+    window.removeEventListener("storage", listener);
+  };
+}
+
+// Preferência salva > idioma do navegador (primeira visita)
+function getClientLang(): Language {
+  if (chosenLang) return chosenLang;
   try {
     const savedLang = localStorage.getItem(STORAGE_KEY);
     if (savedLang === "pt" || savedLang === "en") return savedLang;
   } catch {
     // localStorage indisponível (ex.: navegação privada)
   }
-  return "pt";
+  return navigator.language.toLowerCase().startsWith("pt") ? "pt" : "en";
 }
 
-const noopSubscribe = () => () => {};
+// O HTML gerado no servidor sai em português; no navegador o React troca para o idioma do usuário
+const getServerLang = (): Language => "pt";
+
+function saveLang(lang: Language) {
+  chosenLang = lang;
+  try {
+    localStorage.setItem(STORAGE_KEY, lang);
+  } catch {
+    // localStorage indisponível (ex.: navegação privada)
+  }
+  listeners.forEach((listener) => listener());
+}
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  // No servidor renderiza null; no cliente só renderiza após a hidratação, evitando mismatch de idioma
-  const isMounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
-  const [lang, setLang] = useState<Language>(() => (typeof window === "undefined" ? "pt" : getSavedLang()));
+  const lang = useSyncExternalStore(subscribe, getClientLang, getServerLang);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const transitionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -48,24 +72,16 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     setIsTransitioning(true);
 
     transitionTimer.current = setTimeout(() => {
-      const newLang = lang === "pt" ? "en" : "pt";
-      try {
-        localStorage.setItem(STORAGE_KEY, newLang);
-      } catch {
-        // localStorage indisponível (ex.: navegação privada)
-      }
-      setLang(newLang);
+      saveLang(lang === "pt" ? "en" : "pt");
       setIsTransitioning(false);
     }, 300);
   };
 
   const dict = dictionaries[lang];
 
-  if (!isMounted) return null;
-
   return (
     <LanguageContext.Provider value={{ lang, toggleLang, dict }}>
-      <div 
+      <div
         className={`transition-opacity duration-300 ease-in-out h-full w-full ${
           isTransitioning ? "opacity-0" : "opacity-100"
         }`}
