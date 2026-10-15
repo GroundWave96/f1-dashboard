@@ -5,11 +5,14 @@ import StartingLight from "./StartingLight";
 
 interface PreloaderProps {
     onComplete: () => void;
+    // Pula a sequência de luzes (visitas seguintes na mesma sessão ou "reduzir movimento" ativado)
+    quick?: boolean;
 }
 
-export default function Preloader({ onComplete }: PreloaderProps) {
+export default function Preloader({ onComplete, quick = false }: PreloaderProps) {
     const [lightsOn, setLightsOn] = useState(0);
-    const [phase, setPhase] = useState<"lights" | "go" | "done">("lights");
+    const [lightsPhase, setPhase] = useState<"lights" | "go" | "done">("lights");
+    const phase = quick ? "done" : lightsPhase;
 
     useEffect(() => {
         if (phase !== "lights") return;
