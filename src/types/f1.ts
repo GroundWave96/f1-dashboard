@@ -93,7 +93,7 @@ export interface QualifyingResult {
 }
 
 export interface PastRace extends Race {
-  Results: RaceResult[];
+  Results?: RaceResult[];
   SprintResults?: RaceResult[];
   QualifyingResults?: QualifyingResult[];
 }

@@ -164,3 +164,15 @@ export function computeTeammateDuel(
 
   return duel;
 }
+
+// ---------- Tempos ----------
+
+/** Converte "1:31.373" ou "58.123" em milissegundos. */
+export function parseLapTime(time?: string): number | null {
+  if (!time) return null;
+  const parts = time.split(":");
+  const seconds = Number(parts.pop());
+  const minutes = parts.length ? Number(parts.pop()) : 0;
+  if (Number.isNaN(seconds) || Number.isNaN(minutes)) return null;
+  return Math.round((minutes * 60 + seconds) * 1000);
+}
