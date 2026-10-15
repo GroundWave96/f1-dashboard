@@ -11,10 +11,11 @@ export default function SideNavigation() {
   const { dict } = useLanguage();
 
   const sectionsList = [
-    dict.nextRace?.title || "Próxima Corrida",
-    dict.standings?.title || "Classificação",
-    dict.calendar?.title || "Calendário",
-    dict.results?.title || "Resultados",
+    dict.nextRace.title,
+    dict.highlights.title,
+    dict.standings.title,
+    dict.calendar.title,
+    dict.results.title,
   ];
 
   useEffect(() => {
@@ -56,13 +57,18 @@ export default function SideNavigation() {
         style={{ width: `${scrollProgress}%` }}
       />
 
-      <div className="hidden lg:flex fixed right-6 top-1/2 -translate-y-1/2 flex-col gap-4 z-50">
+      <nav className="hidden lg:flex fixed right-6 top-1/2 -translate-y-1/2 flex-col gap-4 z-50">
         {sectionsList.map((label, index) => (
-          <div 
-            key={index} 
-            className="relative flex items-center justify-end h-8 cursor-pointer"
+          <button
+            key={index}
+            type="button"
+            aria-label={label}
+            aria-current={activeIndex === index ? "true" : undefined}
+            className="relative flex items-center justify-end h-8 cursor-pointer outline-none group"
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
+            onFocus={() => setHoveredIndex(index)}
+            onBlur={() => setHoveredIndex(null)}
             onClick={() => scrollToSection(index)}
           >
             <span 
@@ -75,9 +81,9 @@ export default function SideNavigation() {
               {label}
             </span>
             
-            <div className="w-6 h-6 flex items-center justify-center">
-              <div
-                  className={`transition-all duration-300 rounded-full ${
+            <span className="w-6 h-6 flex items-center justify-center">
+              <span
+                  className={`block transition-all duration-300 rounded-full ${
                   activeIndex === index 
                       ? "w-2.5 h-2.5 bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)]" 
                       : hoveredIndex === index
@@ -85,10 +91,10 @@ export default function SideNavigation() {
                           : "w-1.5 h-1.5 bg-zinc-600"
                   }`}
               />
-            </div>
-          </div>
+            </span>
+          </button>
         ))}
-      </div>
+      </nav>
     </>
   );
 }

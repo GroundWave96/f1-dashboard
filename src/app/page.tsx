@@ -4,6 +4,7 @@ import { useCallback, useState, useSyncExternalStore } from "react";
 import Preloader from "../components/ui/Preloader/Preloader";
 import SideNavigation from "../components/layout/SideNavigation";
 import NextRace from "../components/f1/NextRace/NextRace";
+import HighlightsSection from "../components/f1/Highlights/HighlightsSection";
 import StandingsSection from "../components/f1/Standings/StandingsSection";
 import CalendarSection from "../components/f1/Calendar/CalendarSection";
 import LastRacesSection from "../components/f1/Results/LastRacesSection";
@@ -47,6 +48,10 @@ export default function Home() {
 
         <section className="h-dvh w-full snap-start relative">
           <NextRace />
+        </section>
+
+        <section className="h-dvh w-full snap-start relative">
+          <HighlightsSection />
         </section>
 
         <section className="h-dvh w-full snap-start relative">
