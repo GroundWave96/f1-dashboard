@@ -1,22 +1,15 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useLanguage } from "../../../i18n/LanguageContext";
 
-interface TimeLeft {
-  days: number;
-  hours: number;
-  minutes: number;
-  seconds: number;
-}
-
 interface CountdownTimerProps {
-  targetDate: string;
-  targetTime: string;
+  target: number;
+  now: number;
 }
 
-const getTimeLeft = (raceDate: number): TimeLeft => {
-  const distance = Math.max(raceDate - Date.now(), 0);
+const getTimeLeft = (distanceMs: number) => {
+  const distance = Math.max(distanceMs, 0);
   return {
     days: Math.floor(distance / (1000 * 60 * 60 * 24)),
     hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
@@ -25,53 +18,30 @@ const getTimeLeft = (raceDate: number): TimeLeft => {
   };
 };
 
-const getRaceTimestamp = (targetDate: string, targetTime: string) =>
-  new Date(`${targetDate}T${targetTime || "00:00:00Z"}`).getTime();
-
-export default function CountdownTimer({ targetDate, targetTime }: CountdownTimerProps) {
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>(() => getTimeLeft(getRaceTimestamp(targetDate, targetTime)));
-  
+export default function CountdownTimer({ target, now }: CountdownTimerProps) {
   const { dict } = useLanguage();
+  const timeLeft = getTimeLeft(target - now);
 
-  useEffect(() => {
-    const raceDate = getRaceTimestamp(targetDate, targetTime);
-
-    const interval = setInterval(() => {
-      setTimeLeft(getTimeLeft(raceDate));
-      if (raceDate <= Date.now()) clearInterval(interval);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [targetDate, targetTime]);
+  const units = [
+    { value: timeLeft.days, label: dict.nextRace.days },
+    { value: timeLeft.hours, label: dict.nextRace.hours },
+    { value: timeLeft.minutes, label: dict.nextRace.minutes },
+    { value: timeLeft.seconds, label: dict.nextRace.seconds, highlight: true },
+  ];
 
   return (
-    <div className="flex justify-between sm:justify-start items-start w-full sm:gap-6 max-w-full overflow-hidden px-1 sm:px-0">
-      
-      <div className="flex flex-col items-center flex-1 sm:flex-none">
-        <span className="text-2xl sm:text-5xl font-mono font-bold text-white tracking-tighter">{String(timeLeft.days).padStart(2, '0')}</span>
-        <span className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1 truncate w-full text-center">{dict.nextRace.days}</span>
-      </div>
-      
-      <span className="text-xl sm:text-4xl text-zinc-700 font-light mt-0.5 sm:mt-1 shrink-0">:</span>
-      
-      <div className="flex flex-col items-center flex-1 sm:flex-none">
-        <span className="text-2xl sm:text-5xl font-mono font-bold text-white tracking-tighter">{String(timeLeft.hours).padStart(2, '0')}</span>
-        <span className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1 truncate w-full text-center">{dict.nextRace.hours}</span>
-      </div>
-      
-      <span className="text-xl sm:text-4xl text-zinc-700 font-light mt-0.5 sm:mt-1 shrink-0">:</span>
-      
-      <div className="flex flex-col items-center flex-1 sm:flex-none">
-        <span className="text-2xl sm:text-5xl font-mono font-bold text-white tracking-tighter">{String(timeLeft.minutes).padStart(2, '0')}</span>
-        <span className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1 truncate w-full text-center">{dict.nextRace.minutes}</span>
-      </div>
-      
-      <span className="text-xl sm:text-4xl text-zinc-700 font-light mt-0.5 sm:mt-1 shrink-0">:</span>
-      
-      <div className="flex flex-col items-center flex-1 sm:flex-none">
-        <span className="text-2xl sm:text-5xl font-mono font-bold text-red-500 tracking-tighter">{String(timeLeft.seconds).padStart(2, '0')}</span>
-        <span className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1 truncate w-full text-center">{dict.nextRace.seconds}</span>
-      </div>
+    <div className="flex justify-between sm:justify-start items-start w-full sm:gap-6 max-w-full overflow-hidden px-1 sm:px-0" role="timer">
+      {units.map((unit, index) => (
+        <React.Fragment key={unit.label}>
+          {index > 0 && <span className="text-xl sm:text-4xl text-zinc-700 font-light mt-0.5 sm:mt-1 shrink-0">:</span>}
+          <div className="flex flex-col items-center flex-1 sm:flex-none">
+            <span className={`text-2xl sm:text-5xl font-mono font-bold tracking-tighter tabular-nums ${unit.highlight ? "text-red-500" : "text-white"}`}>
+              {String(unit.value).padStart(2, "0")}
+            </span>
+            <span className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1 truncate w-full text-center">{unit.label}</span>
+          </div>
+        </React.Fragment>
+      ))}
     </div>
   );
 }
