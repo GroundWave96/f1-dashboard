@@ -5,7 +5,6 @@ export const dictionaries = {
       round: "Rodada",
       at: "às",
       weekendSchedule: "Programação do Fim de Semana",
-      weekendHighlights: "Destaques do Fim de Semana",
       qualifying: "Qualificação",
       race: "Corrida",
       saturday: "Sábado",
@@ -31,7 +30,6 @@ export const dictionaries = {
       trackUnavailable: "Traçado em breve",
       scrollDown: "Ir para a próxima seção",
       seasonOver: "Temporada encerrada",
-      seasonOverMsg: "Não há mais corridas programadas nesta temporada. Até a próxima!",
       driverChampion: "Campeão de Pilotos",
       constructorChampion: "Campeã de Construtores",
       nextSeasonSoon: "O calendário da próxima temporada ainda não foi divulgado. Assim que sair, a contagem regressiva aparece aqui automaticamente.",
@@ -165,14 +163,7 @@ export const dictionaries = {
       upcoming: "Em Breve",
       next: "Próxima",
       thisWeekend: "Neste fim de semana",
-      winner: "Vencedor",
-      fp1: "Treino Livre 1",
-      fp2: "Treino Livre 2",
-      fp3: "Treino Livre 3",
-      qualifying: "Qualificação",
-      sprintShootout: "Classif. Sprint",
-      sprint: "Sprint",
-      race: "Corrida"
+      winner: "Vencedor"
     },
     header: {
       about: "Sobre o projeto",
@@ -194,7 +185,6 @@ export const dictionaries = {
       round: "Round",
       at: "at",
       weekendSchedule: "Weekend Schedule",
-      weekendHighlights: "Weekend Highlights",
       qualifying: "Qualifying",
       race: "Race",
       saturday: "Saturday",
@@ -220,7 +210,6 @@ export const dictionaries = {
       trackUnavailable: "Track map coming soon",
       scrollDown: "Go to next section",
       seasonOver: "Season over",
-      seasonOverMsg: "There are no more races scheduled this season. See you next year!",
       driverChampion: "Drivers' Champion",
       constructorChampion: "Constructors' Champion",
       nextSeasonSoon: "Next season's calendar hasn't been released yet. As soon as it is, the countdown will show up here automatically.",
@@ -354,14 +343,7 @@ export const dictionaries = {
       upcoming: "Upcoming",
       next: "Next",
       thisWeekend: "This weekend",
-      winner: "Winner",
-      fp1: "Free Practice 1",
-      fp2: "Free Practice 2",
-      fp3: "Free Practice 3",
-      qualifying: "Qualifying",
-      sprintShootout: "Sprint Qualifying",
-      sprint: "Sprint",
-      race: "Race"
+      winner: "Winner"
     },
     header: {
       about: "About the project",
