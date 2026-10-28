@@ -62,7 +62,7 @@ export default function Preloader({ onComplete, quick = false }: PreloaderProps)
                 }`}
         >
             <div
-                className={`flex w-[90%] max-w-5xl justify-between items-center transition-all duration-300 ${phase !== "lights" ? "opacity-0 scale-95" : "opacity-100 scale-100"
+                className={`flex w-[90%] max-w-5xl justify-between items-center transition-[opacity,scale] duration-300 ${phase !== "lights" ? "opacity-0 scale-95" : "opacity-100 scale-100"
                     }`}
             >
                 <div className="w-[16%]"><StartingLight isOn={lightsOn >= 1} /></div>

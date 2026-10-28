@@ -64,7 +64,7 @@ export default function SideNavigation() {
             type="button"
             aria-label={label}
             aria-current={activeIndex === index ? "true" : undefined}
-            className="relative flex items-center justify-end h-8 cursor-pointer outline-none group"
+            className="relative flex items-center justify-end h-8 rounded-full cursor-pointer group"
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
             onFocus={() => setHoveredIndex(index)}
@@ -72,10 +72,10 @@ export default function SideNavigation() {
             onClick={() => scrollToSection(index)}
           >
             <span 
-              className={`absolute right-8 text-[10px] font-bold text-white uppercase tracking-widest bg-zinc-900 px-3 py-1.5 rounded border border-zinc-800 pointer-events-none whitespace-nowrap shadow-lg transition-all duration-200 ${
+              className={`absolute right-8 text-[10px] font-bold text-white uppercase tracking-widest bg-zinc-900 px-3 py-1.5 rounded border border-zinc-800 pointer-events-none whitespace-nowrap shadow-lg transition-[opacity,translate] duration-200 ${
                 hoveredIndex === index 
                   ? "opacity-100 translate-x-0" 
-                  : "opacity-0 translate-x-2"
+                  : "opacity-0 motion-safe:translate-x-2"
               }`}
             >
               {label}
@@ -83,7 +83,7 @@ export default function SideNavigation() {
             
             <span className="w-6 h-6 flex items-center justify-center">
               <span
-                  className={`block transition-all duration-300 rounded-full ${
+                  className={`block transition-[width,height,background-color,box-shadow] duration-300 rounded-full ${
                   activeIndex === index 
                       ? "w-2.5 h-2.5 bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)]" 
                       : hoveredIndex === index
