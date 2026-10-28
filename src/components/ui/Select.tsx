@@ -134,7 +134,7 @@ export default function Select({ value, options, onChange, ariaLabel, align = "l
         aria-label={ariaLabel}
         onClick={() => (isOpen ? close() : open())}
         onKeyDown={handleButtonKeyDown}
-        className={`flex items-center gap-1.5 bg-zinc-800 text-white text-xs font-bold py-1 pl-3 pr-2 rounded-full border outline-none cursor-pointer transition-colors hover:bg-zinc-700 focus-visible:border-red-500 ${
+        className={`flex items-center gap-1.5 h-9 whitespace-nowrap bg-zinc-800 text-white text-xs font-bold py-1 pl-3 pr-2 rounded-full border outline-none cursor-pointer transition-colors hover:bg-zinc-700 focus-visible:border-red-500 ${
           isOpen ? "border-red-500" : "border-zinc-700"
         }`}
       >
@@ -158,7 +158,7 @@ export default function Select({ value, options, onChange, ariaLabel, align = "l
           aria-label={ariaLabel}
           aria-activedescendant={`${listId}-${activeIndex}`}
           onKeyDown={handleListKeyDown}
-          className={`absolute top-full mt-2 z-40 min-w-44 w-max max-h-64 overflow-y-auto overscroll-contain p-1 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl outline-none animate-in fade-in zoom-in-95 slide-in-from-top-1 duration-150 [scrollbar-width:thin] [scrollbar-color:#3f3f46_transparent] ${
+          className={`absolute top-full mt-2 z-40 min-w-44 w-max max-h-64 overflow-y-auto overscroll-contain p-1 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl outline-none animate-in fade-in motion-safe:zoom-in-95 motion-safe:slide-in-from-top-1 duration-150 [scrollbar-width:thin] [scrollbar-color:#3f3f46_transparent] ${
             align === "right" ? "right-0 origin-top-right" : "left-0 origin-top-left"
           }`}
         >

@@ -17,6 +17,7 @@ export const dictionaries = {
       sprint: "Sprint",
       sprintWeekend: "Fim de semana Sprint",
       addToCalendarTooltip: "Clique para adicionar à sua agenda!",
+      addToCalendar: "Adicionar à agenda",
       calendarDesc: "Corrida de Fórmula 1. Adicionado via F1Dash.",
       startsIn: "começa em",
       lightsOut: "Largada em",
@@ -27,6 +28,11 @@ export const dictionaries = {
       weather: "Previsão do Tempo",
       rain: "chuva",
       pastWinners: "Últimos Vencedores Aqui",
+      circuitFacts: "Sobre o Circuito",
+      gpsHere: "GPs aqui",
+      firstGp: "Primeiro GP",
+      laps: "Voltas",
+      fastestLap: "Melhor volta",
       trackUnavailable: "Traçado em breve",
       scrollDown: "Ir para a próxima seção",
       seasonOver: "Temporada encerrada",
@@ -74,7 +80,14 @@ export const dictionaries = {
       champion: "Campeão",
       tiebreakNote: "Cálculo pela pontuação máxima possível. Critérios de desempate não são considerados.",
       noData: "Os destaques aparecem após a primeira corrida da temporada.",
-      loading: "Carregando destaques...",
+      seasonNumbers: "A Temporada em Números",
+      differentWinners: "Vencedores diferentes",
+      retirements: "Abandonos",
+      mostWins: "Mais vitórias",
+      mostPoles: "Mais poles",
+      mostPodiums: "Mais pódios",
+      mostFastestLaps: "Mais voltas rápidas",
+      loading: "Carregando destaques…",
     },
     standings: {
       title: "Classificação Mundial",
@@ -89,9 +102,10 @@ export const dictionaries = {
       driver: "Piloto",
       team: "Equipe",
       wins: "Vitórias",
+      win: "vitória",
       pts: "Pts",
-      loading: "Carregando Dados...",
-      noTeam: "Sem Equipe"
+      loading: "Carregando dados…",
+      noTeam: "Sem equipe"
     },
     errors: {
       connectionTitle: "Erro de Conexão",
@@ -99,7 +113,7 @@ export const dictionaries = {
       standingsMsg: "Não foi possível carregar a classificação. Tente recarregar a página.",
       resultsMsg: "Não foi possível carregar os resultados da temporada.",
       highlightsMsg: "Não foi possível carregar os destaques.",
-      tryAgain: "Tentar Novamente"
+      tryAgain: "Tentar novamente"
     },
     driverModal: {
       dob: "Nascimento",
@@ -107,7 +121,7 @@ export const dictionaries = {
       nationality: "Nacionalidade",
       team: "Equipe",
       biography: "Biografia",
-      loadingBio: "Carregando biografia...",
+      loadingBio: "Carregando biografia…",
       bioNotFound: "Biografia não encontrada para este piloto.",
       bioNotFoundTeam: "Biografia não encontrada para esta equipe.",
       close: "Fechar",
@@ -197,6 +211,7 @@ export const dictionaries = {
       sprint: "Sprint",
       sprintWeekend: "Sprint weekend",
       addToCalendarTooltip: "Click to add to your calendar!",
+      addToCalendar: "Add to calendar",
       calendarDesc: "Formula 1 race. Added via F1Dash.",
       startsIn: "starts in",
       lightsOut: "Lights out in",
@@ -207,6 +222,11 @@ export const dictionaries = {
       weather: "Weather Forecast",
       rain: "rain",
       pastWinners: "Recent Winners Here",
+      circuitFacts: "About the Circuit",
+      gpsHere: "GPs held",
+      firstGp: "First GP",
+      laps: "Laps",
+      fastestLap: "Fastest lap",
       trackUnavailable: "Track map coming soon",
       scrollDown: "Go to next section",
       seasonOver: "Season over",
@@ -254,7 +274,14 @@ export const dictionaries = {
       champion: "Champion",
       tiebreakNote: "Based on the maximum possible points. Tie-breakers are not considered.",
       noData: "Highlights will appear after the season's first race.",
-      loading: "Loading highlights...",
+      seasonNumbers: "Season in Numbers",
+      differentWinners: "Different winners",
+      retirements: "Retirements",
+      mostWins: "Most wins",
+      mostPoles: "Most poles",
+      mostPodiums: "Most podiums",
+      mostFastestLaps: "Most fastest laps",
+      loading: "Loading highlights…",
     },
     standings: {
       title: "World Standings",
@@ -269,9 +296,10 @@ export const dictionaries = {
       driver: "Driver",
       team: "Team",
       wins: "Wins",
+      win: "win",
       pts: "Pts",
-      loading: "Loading Data...",
-      noTeam: "No Team"
+      loading: "Loading data…",
+      noTeam: "No team"
     },
     errors: {
       connectionTitle: "Connection Error",
@@ -279,7 +307,7 @@ export const dictionaries = {
       standingsMsg: "Could not load the standings. Please try refreshing the page.",
       resultsMsg: "Could not load the season results.",
       highlightsMsg: "Could not load the highlights.",
-      tryAgain: "Try Again"
+      tryAgain: "Try again"
     },
     driverModal: {
       dob: "Born",
@@ -287,7 +315,7 @@ export const dictionaries = {
       nationality: "Nationality",
       team: "Team",
       biography: "Biography",
-      loadingBio: "Loading biography...",
+      loadingBio: "Loading biography…",
       bioNotFound: "Biography not found for this driver.",
       bioNotFoundTeam: "Biography not found for this team.",
       close: "Close",
