@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 /** Horário atual, atualizado a cada `intervalMs`. */
 export function useNow(intervalMs = 1000) {
@@ -118,21 +118,22 @@ export function useDialog(onClose: () => void) {
   }, [trigger]);
 }
 
-const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
-
-function subscribeReducedMotion(onChange: () => void) {
-  const media = window.matchMedia(reducedMotionQuery);
-  media.addEventListener("change", onChange);
-  return () => media.removeEventListener("change", onChange);
+/** true enquanto a media query (ex.: "(min-width: 640px)") for verdadeira; acompanha mudanças da tela. */
+export function useMediaQuery(query: string) {
+  const subscribe = useCallback(
+    (onChange: () => void) => {
+      const media = window.matchMedia(query);
+      media.addEventListener("change", onChange);
+      return () => media.removeEventListener("change", onChange);
+    },
+    [query],
+  );
+  return useSyncExternalStore(subscribe, () => window.matchMedia(query).matches, () => false);
 }
 
 /** true quando o sistema pede "reduzir movimento". */
 export function useReducedMotion() {
-  return useSyncExternalStore(
-    subscribeReducedMotion,
-    () => window.matchMedia(reducedMotionQuery).matches,
-    () => false,
-  );
+  return useMediaQuery("(prefers-reduced-motion: reduce)");
 }
 
 /** Props para tornar um elemento não-botão (ex.: linha de tabela) clicável também pelo teclado. */

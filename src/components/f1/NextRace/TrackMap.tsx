@@ -2,21 +2,13 @@
 
 import React from "react";
 import { useAsyncData, useReducedMotion } from "../../../lib/hooks";
+import { loadTrackPath } from "../../../lib/circuit";
 import { countryToISO } from "../../../lib/f1-utils";
 import { useLanguage } from "../../../i18n/LanguageContext";
 
 interface TrackMapProps {
     circuitId: string;
     country: string;
-}
-
-// O arquivo em /public/circuits deve ter exatamente o circuitId da API (ex.: "albert_park.svg").
-// `npm run check:assets` lista os circuitos do calendário que ainda não têm SVG.
-async function loadTrackPath(circuitId: string): Promise<string | null> {
-    const res = await fetch(`/circuits/${circuitId}.svg`);
-    if (!res.ok) return null;
-    const text = await res.text();
-    return text.match(/d="([^"]+)"/)?.[1] ?? null;
 }
 
 // Traçado genérico usado quando o circuito ainda não tem SVG

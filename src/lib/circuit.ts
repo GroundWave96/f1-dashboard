@@ -1,6 +1,17 @@
 import { apiGet } from "./api";
 
 /**
+ * Traçado do circuito (atributo "d" do SVG em /public/circuits). O arquivo deve ter exatamente o
+ * circuitId da API (ex.: "albert_park.svg"); `npm run check:assets` lista os que ainda faltam.
+ */
+export async function loadTrackPath(circuitId: string): Promise<string | null> {
+  const res = await fetch(`/circuits/${circuitId}.svg`);
+  if (!res.ok) return null;
+  const text = await res.text();
+  return text.match(/d="([^"]+)"/)?.[1] ?? null;
+}
+
+/**
  * Histórico de um circuito: GPs disputados, primeiro ano, voltas e melhor volta da última edição
  * e os últimos vencedores. Tudo vem da API, então se atualiza sozinho a cada temporada.
  */
