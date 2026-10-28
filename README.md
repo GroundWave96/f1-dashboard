@@ -45,7 +45,7 @@ O ponto de entrada do usuário. Traz informações críticas sobre o próximo ev
 ### 2. Destaques (Highlights)
 - **Pódio do último GP**, com pole, volta mais rápida e o piloto que mais ganhou posições.
 - **Disputa pelo título:** calcula, com o calendário restante, quem ainda tem chance matemática de ser campeão (pilotos e equipes) e avisa quando o título está decidido.
-- **A temporada em números:** vencedores diferentes, abandonos e quem lidera em vitórias, poles, pódios e voltas mais rápidas.
+- **A temporada em números:** vencedores diferentes, abandonos e quem lidera em vitórias, poles, pódios e voltas mais rápidas — em telas grandes, os 3 primeiros de cada categoria, com barras.
 - No computador os três cards ficam lado a lado; no celular viram um carrossel.
 
 <div align="center">
@@ -55,7 +55,8 @@ O ponto de entrada do usuário. Traz informações críticas sobre o próximo ev
 ### 3. Classificação Mundial (Standings)
 Uma visão completa e dividida da tabela de pontos atualizada, renderizada com animações suaves de fade-in.
 - **Pilotos & Equipes:** Tabelas completas com cálculo de diferenças de pontos, logotipos oficiais e bandeiras.
-- Em telas largas a lista se divide em duas colunas (1º–11º | 12º–22º) e cabe inteira na tela, com uma barra mostrando os pontos de cada um em relação ao líder.
+- Em telas largas a lista se divide em duas colunas (1º–11º | 12º–22º) e ocupa a tela inteira, com uma barra mostrando os pontos de cada um em relação ao líder.
+- Em telas altas, as **equipes** ficam numa coluna só, com os pilotos de cada uma e os pontos de cada piloto.
 - **Evolução dos pontos:** gráfico interativo rodada a rodada dos 6 primeiros (pilotos ou equipes).
 - **Modal da equipe:** números da equipe na história e o **duelo interno** entre os companheiros (qualificação, corrida e pontos).
 - **Wikipédia Dinâmica (Modal):** Ao clicar em um piloto, um modal interativo é aberto. Ele consome a API oficial da Wikipédia (buscando em `pt` ou `en` dinamicamente) para extrair foto e biografia (a partir do link exato do piloto informado pela própria API), além dos números da carreira (GPs, vitórias, pódios e poles).
@@ -69,7 +70,7 @@ Uma visão completa e dividida da tabela de pontos atualizada, renderizada com a
 </div>
 
 ### 4. Calendário
-- A temporada inteira em uma grade de cards (no celular, uma lista que já abre na próxima corrida), com datas, vencedor de cada GP já disputado e selo de fim de semana Sprint.
+- A temporada inteira em uma grade de cards (no celular, uma lista que já abre na próxima corrida), com o desenho de cada pista, datas, vencedor de cada GP já disputado e selo de fim de semana Sprint.
 - Clicar numa etapa abre a programação completa, com os horários no fuso de quem está vendo.
 
 <div align="center">
