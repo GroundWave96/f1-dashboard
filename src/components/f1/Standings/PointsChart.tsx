@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from "react";
 import { apiGetAllRaces } from "../../../lib/api";
 import { buildPointsTimeline } from "../../../lib/championship";
-import { useAsyncData, useElementWidth } from "../../../lib/hooks";
+import { useAsyncData, useElementSize } from "../../../lib/hooks";
 import { useLanguage } from "../../../i18n/LanguageContext";
 import Spinner from "../../ui/Spinner";
 
@@ -29,7 +29,8 @@ export default function PointsChart() {
   const [kind, setKind] = useState<"drivers" | "constructors">("drivers");
   const [hidden, setHidden] = useState<Set<string>>(new Set());
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
-  const [containerRef, width] = useElementWidth<HTMLDivElement>();
+  const [containerRef, size] = useElementSize<HTMLDivElement>();
+  const width = size.width;
   const { data, loading } = useAsyncData("season-results:current", loadSeasonResults);
 
   const timeline = useMemo(() => (data ? buildPointsTimeline(data.races, data.sprints, kind) : null), [data, kind]);
@@ -62,7 +63,7 @@ export default function PointsChart() {
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div className="flex flex-col">
         <span className="text-sm font-bold text-white uppercase tracking-wider">{dict.standings.pointsProgress}</span>
-        <span className="text-[10px] text-zinc-500">{dict.standings.chartHint}</span>
+        <span className="text-[10px] text-muted">{dict.standings.chartHint}</span>
       </div>
       <div className="relative bg-zinc-950 p-0.5 rounded-full border border-zinc-800 flex items-center h-8 w-40 shrink-0 self-center sm:self-auto">
         <div className={`absolute h-7 w-[calc(50%-2px)] bg-zinc-700 rounded-full transition-transform duration-300 ease-in-out ${kind === "drivers" ? "translate-x-0" : "translate-x-full"}`} />
@@ -72,7 +73,7 @@ export default function PointsChart() {
             type="button"
             onClick={() => switchKind(option)}
             aria-pressed={kind === option}
-            className={`relative z-10 h-full flex-1 text-[10px] font-bold uppercase tracking-tight transition-colors ${kind === option ? "text-white" : "text-zinc-500"}`}
+            className={`relative z-10 h-full flex-1 text-[10px] font-bold uppercase tracking-tight transition-colors ${kind === option ? "text-white" : "text-muted"}`}
           >
             {option === "drivers" ? dict.standings.drivers : dict.standings.teams}
           </button>
@@ -83,7 +84,7 @@ export default function PointsChart() {
 
   if (loading) {
     return (
-      <div className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl p-4 sm:p-6 h-full flex items-center justify-center">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl shadow-xl p-4 sm:p-6 h-full flex items-center justify-center">
         <Spinner />
       </div>
     );
@@ -91,16 +92,17 @@ export default function PointsChart() {
 
   if (!timeline || timeline.rounds.length === 0) {
     return (
-      <div className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl p-4 sm:p-6 flex flex-col gap-4">
+      <div className="h-full bg-zinc-900 border border-zinc-800 rounded-2xl shadow-xl p-4 sm:p-6 flex flex-col gap-4">
         {header}
-        <p className="text-sm text-zinc-500 text-center py-10">{dict.standings.chartEmpty}</p>
+        <p className="text-sm text-muted text-center py-10">{dict.standings.chartEmpty}</p>
       </div>
     );
   }
 
   const rounds = timeline.rounds;
   const visible = series.filter((s) => !hidden.has(s.id));
-  const height = width < 520 ? 240 : width < 900 ? 300 : 380;
+  // O gráfico ocupa a altura que sobrar no card (a seção não rola)
+  const height = Math.max(160, Math.floor(size.height));
   const plotW = Math.max(width - MARGIN.left - MARGIN.right, 0);
   const plotH = height - MARGIN.top - MARGIN.bottom;
 
@@ -145,7 +147,7 @@ export default function PointsChart() {
   const tooltipOnLeft = hoverIndex !== null && x(hoverIndex) > width * 0.6;
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl p-4 sm:p-6 flex flex-col gap-4 animate-in fade-in duration-500">
+    <div className="h-full bg-zinc-900 border border-zinc-800 rounded-2xl shadow-xl p-4 sm:p-6 flex flex-col gap-3 sm:gap-4">
       {header}
 
       <div className="flex flex-wrap gap-1.5" role="group" aria-label={dict.standings.chartHint}>
@@ -157,7 +159,7 @@ export default function PointsChart() {
               type="button"
               onClick={() => toggleSeries(s.id)}
               aria-pressed={!off}
-              className={`flex items-center gap-2 rounded-full border px-2.5 py-1 text-[11px] transition-all ${off ? "border-zinc-800 text-zinc-600" : "border-zinc-700 bg-zinc-950/40 text-zinc-300 hover:border-zinc-500"}`}
+              className={`flex items-center gap-2 rounded-full border px-2.5 py-1 text-[11px] transition-colors ${off ? "border-zinc-800 text-muted" : "border-zinc-700 bg-zinc-950/40 text-zinc-300 hover:border-zinc-500"}`}
             >
               <span className="w-3 h-0.5 rounded-full" style={{ backgroundColor: off ? "#3f3f46" : s.color }} />
               <span className={off ? "line-through" : ""}>{s.name}</span>
@@ -169,8 +171,7 @@ export default function PointsChart() {
 
       <div
         ref={containerRef}
-        className="relative w-full outline-none focus-visible:ring-1 focus-visible:ring-zinc-600 rounded"
-        style={{ height }}
+        className="relative w-full rounded flex-1 min-h-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-red-500"
         tabIndex={0}
         onKeyDown={handleKey}
         onBlur={() => setHoverIndex(null)}
@@ -181,16 +182,16 @@ export default function PointsChart() {
             {yTicks.map((tick) => (
               <g key={tick}>
                 <line x1={MARGIN.left} x2={MARGIN.left + plotW} y1={y(tick)} y2={y(tick)} stroke="#27272a" strokeWidth="1" />
-                <text x={MARGIN.left - 8} y={y(tick)} dy="0.32em" textAnchor="end" className="fill-zinc-500 text-[10px] font-mono">{tick}</text>
+                <text x={MARGIN.left - 8} y={y(tick)} dy="0.32em" textAnchor="end" className="fill-muted text-[10px] font-mono">{tick}</text>
               </g>
             ))}
 
             {rounds.map((r, i) => (i + 1) % labelEvery === 0 || i === rounds.length - 1 ? (
-              <text key={r.round} x={x(i + 1)} y={height - 8} textAnchor="middle" className="fill-zinc-500 text-[10px] font-mono">{r.round}</text>
+              <text key={r.round} x={x(i + 1)} y={height - 8} textAnchor="middle" className="fill-muted text-[10px] font-mono">{r.round}</text>
             ) : null)}
 
             {visible.map((s) => (
-              <path key={s.id} d={pathFor(s.values)} fill="none" stroke={s.color} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+              <path key={s.id} d={pathFor(s.values)} pathLength={1} className="draw-line" fill="none" stroke={s.color} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
             ))}
 
             {visible.map((s) => (
@@ -228,7 +229,7 @@ export default function PointsChart() {
             className="absolute top-2 z-10 min-w-40 bg-zinc-950/95 border border-zinc-700 rounded-lg shadow-2xl px-3 py-2 pointer-events-none"
             style={tooltipOnLeft ? { right: width - x(hoverIndex) + 12 } : { left: x(hoverIndex) + 12 }}
           >
-            <div className="text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-1.5 whitespace-nowrap">
+            <div className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1.5 whitespace-nowrap">
               {dict.results.round} {rounds[hoverIndex - 1].round} • {rounds[hoverIndex - 1].raceName.replace(" Grand Prix", " GP")}
             </div>
             <ul className="flex flex-col gap-1">

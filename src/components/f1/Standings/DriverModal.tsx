@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { Driver } from "../../../types/f1";
 import { nationalityToISO, translateNationality } from "../../../lib/f1-utils";
 import { fetchWikiSummary, firstSentences } from "../../../lib/wikipedia";
 import { loadDriverCareer } from "../../../lib/career";
-import { useAsyncData, useEscapeKey } from "../../../lib/hooks";
+import { useAsyncData, useDialog } from "../../../lib/hooks";
 import { useLanguage } from "../../../i18n/LanguageContext";
 import Spinner from "../../ui/Spinner";
 import StatTiles from "../../ui/StatTiles";
@@ -61,17 +62,18 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
         };
     }, [driver, lang]);
 
-    useEscapeKey(onClose);
+    useDialog(onClose);
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label={`${driver.givenName} ${driver.familyName}`}>
+    // Renderizado direto no <body>: nenhum container da página interfere na posição do modal
+    return createPortal(
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 font-sans text-white" role="dialog" aria-modal="true" aria-label={`${driver.givenName} ${driver.familyName}`}>
 
             <div
                 className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
                 onClick={onClose}
             ></div>
 
-            <div className="relative w-full max-w-sm max-h-[92dvh] overflow-y-auto custom-scrollbar bg-zinc-900/80 backdrop-blur-xl border border-zinc-700/50 rounded-3xl shadow-2xl p-6 pt-8 animate-in zoom-in-95 duration-200">
+            <div className="relative w-full max-w-sm max-h-[92dvh] overflow-y-auto custom-scrollbar bg-zinc-900/80 backdrop-blur-xl border border-zinc-700/50 rounded-3xl shadow-2xl p-6 pt-8 animate-in motion-safe:zoom-in-95 duration-200">
 
                 {driver.permanentNumber && (
                     <div className="absolute top-4 left-4 bg-white text-zinc-950 font-black italic text-xl px-3 py-0.5 rounded shadow-lg border border-white/20 transform -skew-x-12 z-10">
@@ -84,7 +86,7 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
                     autoFocus
                     onClick={onClose}
                     aria-label={dict.driverModal.close}
-                    className="absolute top-4 right-4 text-zinc-400 hover:text-white bg-zinc-800/80 hover:bg-red-500 rounded-full p-2 transition-all z-10"
+                    className="absolute top-4 right-4 text-zinc-400 hover:text-white bg-zinc-800/80 hover:bg-red-500 rounded-full p-2 transition-colors z-10"
                 >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
@@ -126,14 +128,14 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
                         <div className="grid grid-cols-2 gap-3 mb-5 w-full">
                             
                             <div className="bg-zinc-800/50 rounded-lg px-3 py-2 border border-zinc-700/50 text-center min-w-0">
-                                <span className="block text-[10px] text-zinc-500 uppercase tracking-wider font-bold mb-0.5">{dict.driverModal.dob || "Nascimento"}</span>
+                                <span className="block text-[10px] text-muted uppercase tracking-wider font-bold mb-0.5">{dict.driverModal.dob || "Nascimento"}</span>
                                 <span className="text-white text-sm font-mono block">
                                     {formatDOB(driver.dateOfBirth)}
                                 </span>
                             </div>
                         
                             <div className="bg-zinc-800/50 rounded-lg px-3 py-2 border border-zinc-700/50 text-center min-w-0">
-                                <span className="block text-[10px] text-zinc-500 uppercase tracking-wider font-bold mb-0.5">{dict.driverModal.nationality}</span>
+                                <span className="block text-[10px] text-muted uppercase tracking-wider font-bold mb-0.5">{dict.driverModal.nationality}</span>
                                 <span className="text-white text-sm capitalize truncate block">
                                     {translateNationality(driver.nationality, lang as 'pt' | 'en')}
                                 </span>
@@ -157,7 +159,7 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
                                     {summary}
                                 </p>
                             ) : (
-                                <p className="text-sm text-zinc-500 italic">{dict.driverModal.bioNotFound}</p>
+                                <p className="text-sm text-muted italic">{dict.driverModal.bioNotFound}</p>
                             )}
                             
                             {driver.url && (
@@ -175,6 +177,7 @@ export default function DriverModal({ driver, constructorName, onClose }: Driver
                     </div>
                 )}
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }

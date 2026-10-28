@@ -45,8 +45,8 @@ export default function TeammateDuel({ constructorData, season }: TeammateDuelPr
   return (
     <div className="w-full bg-zinc-950/60 border border-zinc-800/50 rounded-xl p-4 mb-5 text-left">
       <div className="flex justify-between items-center mb-3">
-        <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">{dict.driverModal.teammateDuel}</span>
-        <span className="text-[10px] text-zinc-600 font-mono">{data.seasonYear}</span>
+        <span className="text-[10px] text-muted uppercase tracking-widest font-bold">{dict.driverModal.teammateDuel}</span>
+        <span className="text-[10px] text-muted font-mono">{data.seasonYear}</span>
       </div>
 
       <div className="flex justify-between items-center mb-3 gap-3">
@@ -68,7 +68,7 @@ export default function TeammateDuel({ constructorData, season }: TeammateDuelPr
             <div key={row.label}>
               <div className="flex items-center justify-between text-xs mb-1">
                 <span className={`font-mono ${va > vb ? "text-white font-bold" : "text-zinc-400"}`}>{va}</span>
-                <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">{row.label}</span>
+                <span className="text-[10px] uppercase tracking-wider text-muted font-bold">{row.label}</span>
                 <span className={`font-mono ${vb > va ? "text-white font-bold" : "text-zinc-400"}`}>{vb}</span>
               </div>
               <div className="flex h-1.5 rounded-full overflow-hidden gap-0.5" aria-hidden="true">
