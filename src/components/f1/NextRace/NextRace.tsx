@@ -8,7 +8,8 @@ import RaceInfo from "./RaceInfo";
 import CountdownTimer from "./CountdownTimer";
 import TrackMap from "./TrackMap";
 import WeekendSchedule from "./WeekendSchedule";
-import RaceExtras, { RaceDayWeather } from "./RaceExtras";
+import RaceExtras from "./RaceExtras";
+import CircuitFacts from "./CircuitFacts";
 import SeasonOver from "./SeasonOver";
 import Header from "../../layout/Header";
 import Spinner from "../../ui/Spinner";
@@ -53,8 +54,8 @@ function SessionStatus({ state, now }: { state: WeekendState; now: number }) {
   if (state.kind === "upcoming") {
     const label = state.session.key === "race" ? dict.nextRace.lightsOut : `${dict.sessions[state.session.key]} ${dict.nextRace.startsIn}`;
     return (
-      <div className="w-full flex flex-col items-center md:items-start gap-2">
-        <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-zinc-500">{label}</span>
+      <div className="w-full flex flex-col items-center landscape:items-start gap-2">
+        <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-muted">{label}</span>
         <CountdownTimer target={state.session.start.getTime()} now={now} />
       </div>
     );
@@ -62,17 +63,17 @@ function SessionStatus({ state, now }: { state: WeekendState; now: number }) {
 
   if (state.kind === "live") {
     return (
-      <div className="w-full flex flex-col items-center md:items-start gap-1 py-1" aria-live="polite">
+      <div className="w-full flex flex-col items-center landscape:items-start gap-1" aria-live="polite">
         <div className="flex items-center gap-2.5">
           <span className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
+            <span className="motion-safe:animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
             <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600" />
           </span>
           <span className="text-red-500 font-black uppercase tracking-[0.3em] text-xs sm:text-sm">{dict.nextRace.liveNow}</span>
         </div>
-        <span className="text-2xl sm:text-4xl font-bold text-white uppercase tracking-wider">{dict.sessions[state.session.key]}</span>
+        <span className="font-bold text-white uppercase tracking-wider text-[clamp(1.5rem,min(5vh,7vw),2.75rem)] leading-tight">{dict.sessions[state.session.key]}</span>
         {state.next && (
-          <span className="text-xs sm:text-sm text-zinc-500 text-center md:text-left">
+          <span className="text-xs sm:text-sm text-muted text-center landscape:text-left">
             {dict.nextRace.upNext}: <span className="text-zinc-300 font-bold">{dict.sessions[state.next.key]}</span> • {describe(state.next)}
           </span>
         )}
@@ -81,11 +82,11 @@ function SessionStatus({ state, now }: { state: WeekendState; now: number }) {
   }
 
   return (
-    <div className="w-full flex items-center justify-center md:justify-start gap-3 py-1">
+    <div className="w-full flex items-center justify-center landscape:justify-start gap-3">
       <CheckeredFlag />
       <div className="flex flex-col">
         <span className="text-white font-bold uppercase tracking-wider text-lg sm:text-2xl">{dict.nextRace.finishedTitle}</span>
-        <span className="text-xs sm:text-sm text-zinc-500">{dict.nextRace.finishedMsg}</span>
+        <span className="text-xs sm:text-sm text-muted">{dict.nextRace.finishedMsg}</span>
       </div>
     </div>
   );
@@ -109,9 +110,9 @@ export default function NextRace() {
   };
 
   const renderStatus = (content: React.ReactNode) => (
-    <div className="w-full h-full flex flex-col relative px-4 py-6 sm:p-8">
+    <div className="shell h-full flex flex-col pt-3 pb-6 sm:pt-6 sm:pb-8">
       <Header />
-      <div className="flex-1 flex flex-col items-center justify-center gap-2">
+      <div className="flex-1 min-h-0 flex flex-col items-center justify-center gap-2">
         {content}
       </div>
     </div>
@@ -126,10 +127,10 @@ export default function NextRace() {
       <>
         <ErrorIcon className="w-12 h-12 mb-2 opacity-50 text-red-500" />
         <span className="font-bold uppercase tracking-wider text-sm text-red-500">{dict.errors.connectionTitle}</span>
-        <span className="text-zinc-500 text-xs text-center px-4 mb-2">
+        <span className="text-muted text-xs text-center px-4 mb-2">
           {dict.errors.nextRaceMsg}
         </span>
-        <button onClick={calendar.reload} className="px-4 py-2 bg-zinc-800 text-white rounded hover:bg-zinc-700 font-bold text-sm transition-colors">
+        <button onClick={calendar.reload} className="px-4 py-2 bg-zinc-800 text-white rounded hover:bg-zinc-700 font-bold text-sm transition-[background-color,scale] duration-150 motion-safe:active:scale-[0.96]">
           {dict.errors.tryAgain}
         </button>
       </>
@@ -144,47 +145,53 @@ export default function NextRace() {
   const state = getWeekendState(sessions, now);
   const isNextSeason = Boolean(races?.length) && race.season !== races?.[0]?.season;
 
+  // O card ocupa exatamente a altura disponível; o mapa é a parte "elástica" que cresce ou encolhe,
+  // então nada precisa de rolagem. Retrato (celular/tablet/monitor vertical): uma coluna.
+  // Paisagem (computador/celular deitado): duas colunas.
   return (
-    <div className="w-full h-full flex flex-col relative px-4 py-6 sm:p-8">
+    <div className="shell h-full flex flex-col gap-3 sm:gap-4 pt-3 pb-9 sm:pt-6 sm:pb-8 [@media(max-height:500px)]:pt-2 [@media(max-height:500px)]:pb-2 [@media(max-height:500px)]:gap-2">
 
       <Header />
 
-      <div className="w-full max-w-4xl mx-auto my-auto">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 max-h-[85dvh] sm:max-h-none overflow-y-auto sm:overflow-visible relative">
-
-          <div className="flex flex-col items-center md:items-start text-center md:text-left flex-1 w-full min-w-0">
-            <RaceInfo race={race} seasonLabel={isNextSeason ? `${dict.standings.season} ${race.season}` : undefined} />
-            <WeekendSchedule sessions={sessions} now={now} />
-            <SessionStatus state={state} now={now} />
-            <RaceDayWeather race={race} sessions={sessions} now={now} />
-          </div>
-
-          <div className="flex flex-col items-center w-full md:w-80 shrink-0 gap-2">
-            <TrackMap key={race.Circuit.circuitId} circuitId={race.Circuit.circuitId} country={race.Circuit.Location.country} />
-            <RaceExtras race={race} sessions={sessions} now={now} />
-          </div>
-
-          <button
-            type="button"
-            onClick={handleScrollDown}
-            aria-label={dict.nextRace.scrollDown}
-            className="absolute bottom-4 right-4 flex lg:hidden flex-col items-center text-zinc-500/60 cursor-pointer hover:text-zinc-400 transition-colors z-10"
-          >
-            <svg className="w-5 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 32" aria-hidden="true">
-              <path className="animate-chevron" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 4l6 6 6-6" />
-              <path className="animate-chevron animation-delay-150" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 12l6 6 6-6" />
-              <path className="animate-chevron animation-delay-300" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 20l6 6 6-6" />
-            </svg>
-          </button>
-
+      <article
+        className="reveal relative flex-1 min-h-0 flex flex-col landscape:flex-row gap-[clamp(0.75rem,2.2vh,2rem)] landscape:gap-[clamp(1rem,3vw,3.5rem)] rounded-2xl border border-zinc-800 bg-zinc-900 shadow-xl p-4 sm:p-6 lg:p-8 [@media(max-height:500px)]:p-3"
+        style={{ "--i": 1 } as React.CSSProperties}
+      >
+        <div className="shrink-0 landscape:shrink landscape:flex-1 landscape:basis-0 min-w-0 flex flex-col items-center landscape:items-start landscape:justify-center gap-[clamp(0.6rem,2vh,1.6rem)]">
+          <RaceInfo race={race} seasonLabel={isNextSeason ? `${dict.standings.season} ${race.season}` : undefined} />
+          <WeekendSchedule sessions={sessions} now={now} />
+          <SessionStatus state={state} now={now} />
+          <CircuitFacts
+            circuitId={race.Circuit.circuitId}
+            className="hidden [@media(orientation:landscape)_and_(min-height:760px)]:flex [@media(orientation:portrait)_and_(min-height:1000px)]:flex"
+          />
         </div>
-      </div>
+
+        <div className="flex-1 basis-0 min-h-0 min-w-0 flex flex-col gap-3">
+          <div className="relative flex-1 min-h-16">
+            <TrackMap key={race.Circuit.circuitId} circuitId={race.Circuit.circuitId} country={race.Circuit.Location.country} />
+          </div>
+          <RaceExtras race={race} sessions={sessions} now={now} />
+        </div>
+      </article>
 
       <button
         type="button"
         onClick={handleScrollDown}
         aria-label={dict.nextRace.scrollDown}
-        className="hidden lg:flex absolute bottom-8 right-8 flex-col items-center gap-2 text-zinc-500 cursor-pointer hover:text-zinc-400 transition-colors z-10"
+        className="absolute bottom-1 left-1/2 -translate-x-1/2 flex lg:hidden [@media(max-height:500px)]:hidden flex-col items-center text-muted/70 cursor-pointer hover:text-zinc-300 transition-colors z-10"
+      >
+        <svg className="w-5 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 32" aria-hidden="true">
+          <path className="animate-chevron" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 4l6 6 6-6" />
+          <path className="animate-chevron animation-delay-150" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 12l6 6 6-6" />
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        onClick={handleScrollDown}
+        aria-label={dict.nextRace.scrollDown}
+        className="hidden lg:flex absolute bottom-6 right-6 flex-col items-center gap-2 text-muted cursor-pointer hover:text-zinc-400 transition-colors z-10"
       >
         <div className="flex items-center justify-center w-6 h-10 border-2 border-zinc-500/50 rounded-full relative">
           <div className="w-1.5 bg-[#FB2C36] rounded-full absolute animate-scroll-mouse" />

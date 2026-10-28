@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import { Race } from "../../../types/f1";
 import { useLanguage } from "../../../i18n/LanguageContext";
 
@@ -12,51 +12,6 @@ interface RaceInfoProps {
 
 export default function RaceInfo({ race, seasonLabel }: RaceInfoProps) {
   const { dict, lang } = useLanguage();
-  const [showTooltip, setShowTooltip] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        } else {
-          setIsVisible(false);
-          setShowTooltip(false);
-        }
-      },
-      { threshold: 0.5 }
-    );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    let showTimer: NodeJS.Timeout;
-    let hideTimer: NodeJS.Timeout;
-
-    if (isVisible) {
-      showTimer = setTimeout(() => {
-        setShowTooltip(true);
-        
-        hideTimer = setTimeout(() => {
-          setShowTooltip(false);
-        }, 5000);
-        
-      }, 3000);
-    }
-
-    return () => {
-      clearTimeout(showTimer);
-      clearTimeout(hideTimer);
-    };
-  }, [isVisible]);
-
   const raceDateObj = new Date(`${race.date}T${race.time}`);
   const locale = lang === 'pt' ? 'pt-BR' : 'en-US';
   
@@ -73,7 +28,6 @@ export default function RaceInfo({ race, seasonLabel }: RaceInfoProps) {
   });
 
   const handleAddToCalendar = () => {
-    setShowTooltip(false); 
     const startDate = new Date(`${race.date}T${race.time}`);
     const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000); 
 
@@ -122,8 +76,8 @@ export default function RaceInfo({ race, seasonLabel }: RaceInfoProps) {
   };
 
   return (
-    <div ref={containerRef} className="w-full flex flex-col items-center md:items-start relative">
-      <div className="flex items-center gap-2 mb-1 sm:mb-2">
+    <div className="w-full flex flex-col items-center text-center landscape:items-start landscape:text-left">
+      <div className="flex items-center gap-2 mb-1">
         <span className="text-red-500 font-bold uppercase tracking-widest text-[10px] sm:text-xs">
           {seasonLabel ?? dict.nextRace.title} • {dict.nextRace.round} {race.round}
         </span>
@@ -133,36 +87,31 @@ export default function RaceInfo({ race, seasonLabel }: RaceInfoProps) {
           </span>
         )}
       </div>
-      <h2 className="text-xl sm:text-4xl font-bold text-white uppercase tracking-wider mb-1 text-center md:text-left">
+      <h2 className="font-bold text-white uppercase tracking-wider leading-[1.05] text-balance text-[clamp(1.35rem,min(4.4vh,6.2vw)+0.2rem,3rem)]">
         {race.raceName}
       </h2>
-      <p className="text-gray-400 text-xs sm:text-base mb-3 sm:mb-6 text-center md:text-left">
+      <p className="text-zinc-400 text-xs sm:text-sm lg:text-base mt-1.5 [@media(max-height:500px)]:hidden">
         {race.Circuit.circuitName} • {race.Circuit.Location.locality}, {race.Circuit.Location.country}
       </p>
 
-      <div className="relative mb-4 sm:mb-6">
-        <button 
-          onClick={handleAddToCalendar}
-          className="flex items-center gap-2 sm:gap-3 text-zinc-300 font-medium bg-zinc-950/50 hover:bg-zinc-800/80 hover:text-white transition-all py-2 px-4 sm:py-2 sm:px-4 rounded-lg border border-zinc-800/50 hover:border-red-500/50 text-sm sm:text-base cursor-pointer shadow-lg"
-          aria-label={dict.nextRace.addToCalendarTooltip}
-        >
-          <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          <span>{capitalizedDate} {dict.nextRace.at} {formattedTime}</span>
-        </button>
-
-        {showTooltip && (
-          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-5 sm:top-1/2 sm:-translate-y-1/2 sm:mt-0 sm:left-auto sm:right-full sm:mr-3 sm:translate-x-0 bg-zinc-800 text-white text-[10px] sm:text-xs font-bold tracking-wider py-2 px-3 rounded-lg shadow-xl whitespace-nowrap pointer-events-none animate-bounce z-20 border border-zinc-700/50">
-            {dict.nextRace.addToCalendarTooltip || "💡 Clique para adicionar à sua agenda!"}
-            
-            <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-zinc-800 border-t border-l border-zinc-700/50 rotate-45 sm:hidden"></div>
-            
-            <div className="hidden sm:block absolute top-1/2 -translate-y-1/2 -right-1.5 w-3 h-3 bg-zinc-800 border-t border-r border-zinc-700/50 rotate-45"></div>
-          </div>
-        )}
-      </div>
-
+      <button
+        type="button"
+        onClick={handleAddToCalendar}
+        title={dict.nextRace.addToCalendarTooltip}
+        className="group mt-[clamp(0.6rem,1.8vh,1.25rem)] flex items-center gap-3 rounded-lg border border-zinc-800/60 bg-zinc-950/50 py-1.5 pl-3 pr-4 text-left shadow-lg transition-[color,background-color,border-color,scale] duration-200 ease-fluid hover:border-red-500/50 hover:bg-zinc-800/70 motion-safe:active:scale-[0.96]"
+      >
+        <svg className="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2zM12 11v6m-3-3h6" />
+        </svg>
+        <span className="flex flex-col leading-tight">
+          <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-muted group-hover:text-red-400 transition-colors [@media(max-height:500px)]:hidden">
+            {dict.nextRace.addToCalendar}
+          </span>
+          <span className="text-sm sm:text-base font-medium text-zinc-200 group-hover:text-white transition-colors">
+            {capitalizedDate} {dict.nextRace.at} {formattedTime}
+          </span>
+        </span>
+      </button>
     </div>
   );
 }

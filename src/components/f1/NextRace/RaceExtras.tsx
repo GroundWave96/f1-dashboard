@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { Race } from "../../../types/f1";
-import { apiGet } from "../../../lib/api";
+import { loadCircuitHistory } from "../../../lib/circuit";
 import { useAsyncData } from "../../../lib/hooks";
 import { RaceSession } from "../../../lib/sessions";
 import { fetchWeekendForecast, FORECAST_RANGE_MS, weatherIcon, WeatherIcon } from "../../../lib/weather";
@@ -19,9 +19,9 @@ interface RaceExtrasProps {
 const CLOUD = "M7.5 18.5h9.25a3.75 3.75 0 0 0 .5-7.47 5.25 5.25 0 0 0-10.1-1.03A4.25 4.25 0 0 0 7.5 18.5z";
 const SUN_RAYS = "M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4";
 
-function WeatherGlyph({ icon }: { icon: WeatherIcon }) {
+function WeatherGlyph({ icon, className = "w-7 h-7" }: { icon: WeatherIcon; className?: string }) {
   return (
-    <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg className={className} viewBox="0 0 24 24" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       {icon === "sun" && (
         <g className="stroke-amber-400">
           <circle cx="12" cy="12" r="4" />
@@ -65,106 +65,93 @@ function useWeekendForecast(race: Race, sessions: RaceSession[], now: number) {
 const weekdayOf = (date: string, locale: string) =>
   new Date(`${date}T12:00:00Z`).toLocaleDateString(locale, { weekday: "short", timeZone: "UTC" }).replace(".", "");
 
-/** Versão compacta para o celular: só a previsão do dia da corrida. */
-export function RaceDayWeather({ race, sessions, now }: RaceExtrasProps) {
-  const { dict, lang } = useLanguage();
-  const locale = lang === "pt" ? "pt-BR" : "en-US";
-  const forecast = useWeekendForecast(race, sessions, now);
-  const raceDay = forecast?.[forecast.length - 1];
-  if (!raceDay) return null;
-
-  return (
-    <div className="sm:hidden flex items-center justify-center gap-2 mt-4 bg-zinc-950/40 border border-zinc-800/50 rounded-full px-3 py-1 text-xs">
-      <WeatherGlyph icon={weatherIcon(raceDay.code)} />
-      <span className="text-zinc-400 capitalize">{weekdayOf(raceDay.date, locale)}</span>
-      <span className="font-mono text-white">
-        {raceDay.max}° <span className="text-zinc-500">/ {raceDay.min}°</span>
-      </span>
-      {raceDay.rain !== null && (
-        <span className={`font-mono ${raceDay.rain >= 50 ? "text-sky-400" : "text-zinc-500"}`}>
-          • {raceDay.rain}% {dict.nextRace.rain}
-        </span>
-      )}
-    </div>
-  );
-}
-
+/**
+ * Previsão do tempo do fim de semana + últimos vencedores no circuito.
+ * Os dois blocos ficam lado a lado quando há largura (container query) e empilhados no celular.
+ */
 export default function RaceExtras({ race, sessions, now }: RaceExtrasProps) {
   const { dict, lang } = useLanguage();
   const locale = lang === "pt" ? "pt-BR" : "en-US";
   const forecast = useWeekendForecast(race, sessions, now);
 
   const circuitId = race.Circuit.circuitId;
-  const { data: winners } = useAsyncData(`winners:${circuitId}`, async () => {
-    const data = await apiGet(`circuits/${circuitId}/results/1.json?limit=100`);
-    return (data.RaceTable?.Races ?? []).slice(-3).reverse();
-  });
+  const { data: history } = useAsyncData(`circuit:${circuitId}`, () => loadCircuitHistory(circuitId));
+  const winners = history?.winners;
 
-  if (!forecast?.length && !winners?.length) return null;
+  const hasForecast = Boolean(forecast?.length);
+  const hasWinners = Boolean(winners?.length);
+  if (!hasForecast && !hasWinners) return null;
+
+  const label = "block text-[10px] font-bold text-muted uppercase tracking-widest mb-1.5";
+  const chip = "bg-zinc-950/40 border border-zinc-800/50 rounded-lg";
 
   return (
-    <div className="hidden sm:flex flex-col gap-4 w-full px-2 pb-2">
-      {forecast && forecast.length > 0 && (
-        <div className="flex flex-col gap-2">
-          <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-center md:text-left">
-            {dict.nextRace.weather}
-          </span>
-          <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${forecast.length}, minmax(0, 1fr))` }}>
-            {forecast.map((day) => (
-              <div key={day.date} className="bg-zinc-950/40 border border-zinc-800/40 rounded-lg px-2 py-2 flex flex-col items-center gap-0.5">
-                <span className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">
-                  {weekdayOf(day.date, locale)}
-                </span>
-                <WeatherGlyph icon={weatherIcon(day.code)} />
-                <span className="text-xs font-mono text-white">
-                  {day.max}° <span className="text-zinc-500">/ {day.min}°</span>
-                </span>
-                {day.rain !== null && (
-                  <span className={`text-[10px] font-mono ${day.rain >= 50 ? "text-sky-400" : "text-zinc-500"}`}>
-                    {day.rain}% {dict.nextRace.rain}
-                  </span>
-                )}
-              </div>
-            ))}
+    <div className="@container w-full shrink-0">
+      <div className={`grid gap-3 ${hasForecast && hasWinners ? "@3xl:grid-cols-2" : ""}`}>
+        {hasForecast && (
+          <div className="min-w-0">
+            <span className={label}>{dict.nextRace.weather}</span>
+            <div className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${forecast!.length}, minmax(0, 1fr))` }}>
+              {forecast!.map((day) => (
+                <div key={day.date} className={`${chip} flex items-center gap-1 @sm:gap-1.5 px-1.5 @sm:px-2 py-1.5 min-w-0`}>
+                  <WeatherGlyph icon={weatherIcon(day.code)} className="w-5 h-5 @sm:w-6 @sm:h-6 shrink-0" />
+                  <div className="flex flex-col leading-tight min-w-0">
+                    <span className="text-[9px] sm:text-[10px] text-zinc-400 uppercase font-bold tracking-wide whitespace-nowrap">
+                      {weekdayOf(day.date, locale)}
+                      {day.rain !== null && (
+                        <span className={`ml-1 font-mono normal-case ${day.rain >= 50 ? "text-sky-400" : "text-muted"}`}>{day.rain}%</span>
+                      )}
+                    </span>
+                    <span className="text-[11px] sm:text-xs font-mono text-white whitespace-nowrap">
+                      {day.max}° <span className="text-muted">{day.min}°</span>
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {winners && winners.length > 0 && (
-        <div className="flex flex-col gap-2">
-          <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-center md:text-left">
-            {dict.nextRace.pastWinners}
-          </span>
-          <ul className="flex flex-col gap-1">
-            {winners.map((winnerRace) => {
-              const winner = winnerRace.Results?.[0];
-              if (!winner) return null;
-              return (
-                <li key={winnerRace.season} className="flex items-center gap-3 bg-zinc-950/30 border border-zinc-800/30 rounded-md px-3 py-1.5">
-                  <span className="font-mono text-xs text-zinc-500 w-9">{winnerRace.season}</span>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`https://flagcdn.com/w40/${nationalityToISO(winner.Driver.nationality)}.png`}
-                    alt={winner.Driver.nationality}
-                    className="w-4 h-auto rounded-sm"
-                    loading="lazy"
-                  />
-                  <span className="text-xs text-zinc-300 flex-1 truncate">
-                    {winner.Driver.givenName.charAt(0)}. <span className="font-bold text-white uppercase">{winner.Driver.familyName}</span>
-                  </span>
-                  <Image
-                    src={getConstructorLogo(winner.Constructor.constructorId)}
-                    alt={winner.Constructor.name}
-                    width={20}
-                    height={20}
-                    className="w-5 h-5 object-contain brightness-110"
-                  />
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      )}
+        {hasWinners && (
+          <div className="@container min-w-0 hide-short-portrait">
+            <span className={label}>{dict.nextRace.pastWinners}</span>
+            <ul className="grid grid-cols-3 gap-1.5">
+              {winners!.map((winnerRace) => {
+                const winner = winnerRace.Results?.[0];
+                if (!winner) return null;
+                return (
+                  <li key={winnerRace.season} className={`${chip} flex items-center gap-1.5 px-2 py-1.5 min-w-0`} title={`${winner.Driver.givenName} ${winner.Driver.familyName} • ${winner.Constructor.name}`}>
+                    <Image
+                      src={getConstructorLogo(winner.Constructor.constructorId)}
+                      alt={winner.Constructor.name}
+                      width={20}
+                      height={20}
+                      className="w-5 h-5 object-contain brightness-110 shrink-0"
+                    />
+                    <div className="flex flex-col leading-tight min-w-0">
+                      <span className="flex items-center gap-1 text-[9px] sm:text-[10px] font-mono text-muted">
+                        {winnerRace.season}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={`https://flagcdn.com/w40/${nationalityToISO(winner.Driver.nationality)}.png`}
+                          alt=""
+                          className="w-3 h-auto rounded-[2px]"
+                          loading="lazy"
+                        />
+                      </span>
+                      {/* Bloco estreito: sigla do piloto (VER, HAM...), que sempre cabe; com espaço, o sobrenome */}
+                      <span className="text-[11px] sm:text-xs font-bold text-white uppercase @md:hidden" aria-hidden="true">
+                        {winner.Driver.code ?? winner.Driver.familyName}
+                      </span>
+                      <span className="sr-only @md:not-sr-only @md:truncate text-[11px] sm:text-xs font-bold text-white uppercase">{winner.Driver.familyName}</span>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

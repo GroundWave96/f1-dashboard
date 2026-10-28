@@ -30,15 +30,19 @@ export default function CountdownTimer({ target, now }: CountdownTimerProps) {
   ];
 
   return (
-    <div className="flex justify-between sm:justify-start items-start w-full sm:gap-6 max-w-full overflow-hidden px-1 sm:px-0" role="timer">
+    <div className="flex items-start justify-center landscape:justify-start gap-[clamp(0.5rem,2vw,1.5rem)]" role="timer">
       {units.map((unit, index) => (
         <React.Fragment key={unit.label}>
-          {index > 0 && <span className="text-xl sm:text-4xl text-zinc-700 font-light mt-0.5 sm:mt-1 shrink-0">:</span>}
-          <div className="flex flex-col items-center flex-1 sm:flex-none">
-            <span className={`text-2xl sm:text-5xl font-mono font-bold tracking-tighter tabular-nums ${unit.highlight ? "text-red-500" : "text-white"}`}>
+          {index > 0 && (
+            <span className="text-zinc-700 font-light leading-none text-[clamp(1.1rem,min(4vh,5vw),2.5rem)] mt-[0.15em]" aria-hidden="true">:</span>
+          )}
+          <div className="flex flex-col items-center min-w-[3.2ch]">
+            <span
+              className={`font-mono font-bold tracking-tighter tabular-nums leading-none text-[clamp(1.6rem,min(6.2vh,9vw),3.75rem)] ${unit.highlight ? "text-red-500" : "text-white"}`}
+            >
               {String(unit.value).padStart(2, "0")}
             </span>
-            <span className="text-[9px] sm:text-xs text-gray-500 uppercase tracking-widest mt-1 truncate w-full text-center">{unit.label}</span>
+            <span className="text-[9px] sm:text-[11px] text-muted uppercase tracking-widest mt-1.5">{unit.label}</span>
           </div>
         </React.Fragment>
       ))}

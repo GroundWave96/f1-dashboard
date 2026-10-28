@@ -64,7 +64,7 @@ export default function SeasonOver() {
                 <span className="text-[10px] font-bold uppercase tracking-widest text-yellow-400">{dict.nextRace.driverChampion}</span>
                 <span className="text-xs text-zinc-400 truncate">{driver.Driver.givenName}</span>
                 <span className="text-white text-base sm:text-lg font-black uppercase leading-tight truncate">{driver.Driver.familyName}</span>
-                <span className="text-xs text-zinc-500 font-mono">
+                <span className="text-xs text-muted font-mono">
                   {driver.points} {dict.standings.pts.toLowerCase()} • {driver.wins} {dict.standings.wins.toLowerCase()}
                 </span>
               </div>
@@ -82,7 +82,7 @@ export default function SeasonOver() {
               <div className="flex flex-col min-w-0">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">{dict.nextRace.constructorChampion}</span>
                 <span className="text-white text-base sm:text-lg font-black uppercase truncate">{constructor.Constructor.name}</span>
-                <span className="text-xs text-zinc-500 font-mono">
+                <span className="text-xs text-muted font-mono">
                   {constructor.points} {dict.standings.pts.toLowerCase()} • {constructor.wins} {dict.standings.wins.toLowerCase()}
                 </span>
               </div>
@@ -91,7 +91,7 @@ export default function SeasonOver() {
         </div>
       )}
 
-      <p className="relative text-zinc-500 text-xs sm:text-sm max-w-md mx-auto">{dict.nextRace.nextSeasonSoon}</p>
+      <p className="relative text-muted text-xs sm:text-sm max-w-md mx-auto">{dict.nextRace.nextSeasonSoon}</p>
     </div>
   );
 }
