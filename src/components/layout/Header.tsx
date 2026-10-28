@@ -45,7 +45,7 @@ export default function Header() {
   }, [isAboutOpen]);
 
   return (
-    <header className="w-full max-w-4xl mx-auto flex items-center justify-between shrink-0 p-4 sm:p-0 relative z-50">
+    <header className="reveal w-full flex items-center justify-between shrink-0 py-1 relative z-50">
       <div className="h-5 sm:h-6 flex items-center shrink-0">
         <Image
           src="/teams/f1.svg"
@@ -63,7 +63,7 @@ export default function Header() {
             <button
               ref={buttonRef}
               onClick={() => setIsAboutOpen(!isAboutOpen)}
-              className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-700 flex items-center justify-center text-zinc-400 hover:text-white hover:border-zinc-500 hover:bg-zinc-800 transition-colors focus:outline-none"
+              className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-700 flex items-center justify-center text-zinc-400 hover:text-white hover:border-zinc-500 hover:bg-zinc-800 transition-colors"
               aria-label={dict.header.about}
               aria-expanded={isAboutOpen}
             >
@@ -78,13 +78,13 @@ export default function Header() {
                 
                 <div 
                   ref={aboutRef}
-                  className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm sm:absolute sm:top-full sm:left-auto sm:right-0 sm:translate-x-0 sm:translate-y-0 sm:mt-3 sm:w-80 bg-zinc-900 border border-zinc-700 shadow-2xl rounded-xl p-5 z-50 animate-in fade-in zoom-in-95 sm:slide-in-from-top-2 sm:zoom-in-100 duration-200"
+                  className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm sm:absolute sm:top-full sm:left-auto sm:right-0 sm:translate-x-0 sm:translate-y-0 sm:mt-3 sm:w-80 bg-zinc-900 border border-zinc-700 shadow-2xl rounded-xl p-5 z-50 animate-in fade-in motion-safe:zoom-in-95 motion-safe:sm:slide-in-from-top-2 sm:zoom-in-100 duration-200"
                 >
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="text-white font-bold uppercase tracking-wider text-sm">
                         {dict.about?.title || "Sobre o Projeto"}
                     </h3>
-                    <button onClick={() => setIsAboutOpen(false)} className="text-zinc-500 hover:text-white hover:bg-zinc-800 p-1 rounded-full transition-colors">
+                    <button onClick={() => setIsAboutOpen(false)} className="text-muted hover:text-white hover:bg-zinc-800 p-1 rounded-full transition-colors">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                   </div>
@@ -103,7 +103,7 @@ export default function Header() {
                   </p>
                   
                   <div className="flex flex-col gap-2">
-                    <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">
+                    <span className="text-[10px] text-muted font-bold uppercase tracking-widest">
                         {dict.about?.tech || "Tecnologias"}
                     </span>
                     <div className="flex flex-wrap gap-2">
@@ -120,8 +120,8 @@ export default function Header() {
 
         <button
           onClick={toggleLang}
-          aria-label={dict.header.changeLanguage}
-          className="relative w-18 h-7 rounded-full cursor-pointer focus:outline-none"
+          aria-label={`${lang.toUpperCase()} – ${dict.header.changeLanguage}`}
+          className="relative w-18 h-7 rounded-full cursor-pointer"
         >
           <div className="absolute inset-0 rounded-full overflow-hidden border border-zinc-700 bg-zinc-950 shadow-[inset_0_4px_10px_rgba(0,0,0,1)]">
             <div className={`absolute top-0 bottom-0 left-0 w-12 transition-transform duration-300 ease-in-out ${lang === "pt" ? "translate-x-0" : "-translate-x-full"}`}>

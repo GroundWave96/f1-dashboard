@@ -7,8 +7,8 @@ export default function Footer() {
   const { dict } = useLanguage();
 
   return (
-    <footer className="shrink-0 text-center py-4">
-      <p className="text-[10px] sm:text-xs text-zinc-500 uppercase tracking-widest font-medium">
+    <footer className="shrink-0 text-center py-2 sm:py-3 hide-compact">
+      <p className="text-[10px] sm:text-xs text-muted uppercase tracking-widest font-medium">
         Designed & Developed by{" "}
         <a
           href="https://gabrielpimentel.pages.dev/"

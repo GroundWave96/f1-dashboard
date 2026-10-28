@@ -3,6 +3,7 @@
 import { useCallback, useState, useSyncExternalStore } from "react";
 import Preloader from "../components/ui/Preloader/Preloader";
 import SideNavigation from "../components/layout/SideNavigation";
+import RevealSection from "../components/layout/RevealSection";
 import NextRace from "../components/f1/NextRace/NextRace";
 import HighlightsSection from "../components/f1/Highlights/HighlightsSection";
 import StandingsSection from "../components/f1/Standings/StandingsSection";
@@ -35,6 +36,9 @@ export default function Home() {
     setIsLoading(false);
   }, []);
 
+  // As animações de entrada só começam depois do preloader, para não acontecerem escondidas atrás dele
+  const ready = !isLoading;
+
   return (
     <>
       {isLoading && <Preloader quick={skipIntro} onComplete={finishIntro} />}
@@ -46,25 +50,25 @@ export default function Home() {
       >
         <SideNavigation />
 
-        <section className="h-dvh w-full snap-start relative">
+        <RevealSection ready={ready}>
           <NextRace />
-        </section>
+        </RevealSection>
 
-        <section className="h-dvh w-full snap-start relative">
+        <RevealSection ready={ready}>
           <HighlightsSection />
-        </section>
+        </RevealSection>
 
-        <section className="h-dvh w-full snap-start relative">
+        <RevealSection ready={ready}>
           <StandingsSection />
-        </section>
+        </RevealSection>
 
-        <section className="h-dvh w-full snap-start relative">
+        <RevealSection ready={ready}>
           <CalendarSection />
-        </section>
+        </RevealSection>
 
-        <section className="h-dvh w-full snap-start relative">
+        <RevealSection ready={ready}>
           <LastRacesSection />
-        </section>
+        </RevealSection>
       </main>
     </>
   );
