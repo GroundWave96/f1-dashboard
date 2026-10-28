@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Configuração local do Playwright MCP (usa "cmd", específico do Windows)
+.mcp.json
+# Capturas e registros gerados pelo Playwright MCP durante os testes
+.playwright-mcp/
