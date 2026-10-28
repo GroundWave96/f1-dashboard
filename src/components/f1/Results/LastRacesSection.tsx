@@ -181,7 +181,7 @@ export default function LastRacesSection() {
                         onSelect={(driver, constructorName) => setSelectedDriver({ driver, constructorName })}
                     />
                 )}
-                {viewMode === "constructors" && <ConstructorStandingsList onSelect={setSelectedConstructor} standings={constructorStandings} />}
+                {viewMode === "constructors" && <ConstructorStandingsList onSelect={setSelectedConstructor} standings={constructorStandings} drivers={standings} />}
             </div>
 
             {selectedDriver && (

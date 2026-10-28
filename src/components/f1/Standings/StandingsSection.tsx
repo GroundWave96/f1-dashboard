@@ -90,7 +90,7 @@ export default function StandingsSection() {
                     />
                 )}
                 {view === "constructors" && (
-                    <ConstructorStandingsList onSelect={setSelectedConstructor} standings={data.constructors} />
+                    <ConstructorStandingsList onSelect={setSelectedConstructor} standings={data.constructors} drivers={data.drivers} />
                 )}
                 {view === "evolution" && <PointsChart />}
             </div>
