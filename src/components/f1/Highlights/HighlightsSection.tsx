@@ -9,6 +9,9 @@ import Spinner from "../../ui/Spinner";
 import { ErrorIcon } from "../../ui/icons";
 import LastRacePodium from "./LastRacePodium";
 import TitleFight from "./TitleFight";
+import SeasonStats from "./SeasonStats";
+import CardDeck from "../../ui/CardDeck";
+import SectionHeader from "../../ui/SectionHeader";
 import DriverModal from "../Standings/DriverModal";
 
 async function loadSeason(seasonKey: string) {
@@ -25,6 +28,7 @@ async function loadSeason(seasonKey: string) {
     standingsRound: Number(list?.round ?? 0),
     drivers: list?.DriverStandings ?? [],
     constructors: constructors.StandingsTable?.StandingsLists[0]?.ConstructorStandings ?? [],
+    races,
     lastRace: races[races.length - 1],
   };
 }
@@ -57,7 +61,7 @@ export default function HighlightsSection() {
       <div className="w-full h-full flex flex-col items-center justify-center text-red-500 gap-2">
         <ErrorIcon className="w-12 h-12 mb-2 opacity-50" />
         <span className="font-bold uppercase tracking-wider text-sm">{dict.errors.connectionTitle}</span>
-        <span className="text-zinc-500 text-xs text-center px-4 mb-2">{dict.errors.highlightsMsg}</span>
+        <span className="text-muted text-xs text-center px-4 mb-2">{dict.errors.highlightsMsg}</span>
         <button onClick={reload} className="px-4 py-2 bg-zinc-800 text-white rounded hover:bg-zinc-700 font-bold text-sm transition-colors">
           {dict.errors.tryAgain}
         </button>
@@ -66,36 +70,34 @@ export default function HighlightsSection() {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-2 flex flex-col h-full py-4 sm:py-6">
-      <div className="flex flex-col mb-4 sm:mb-6 shrink-0 text-center sm:text-left">
-        <span className="text-red-500 font-bold uppercase tracking-widest text-[10px]">{dict.highlights.title}</span>
-        <h2 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-wider">
-          {dict.highlights.heading} {data.season}
-        </h2>
-      </div>
+    <div className="shell h-full flex flex-col gap-4 sm:gap-6 py-4 sm:py-6">
+      <SectionHeader eyebrow={dict.highlights.title} title={`${dict.highlights.heading} ${data.season}`} />
 
-      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain custom-scrollbar pr-1 pb-4 flex flex-col">
-        {data.lastRace ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:my-auto animate-in fade-in duration-500">
+      {data.lastRace ? (
+        <CardDeck labels={[dict.highlights.lastRace, dict.highlights.titleFight, dict.highlights.seasonNumbers]}>
+          {[
             <LastRacePodium
+              key="podium"
               race={data.lastRace}
               onDriverClick={(driver, constructorName) => setSelectedDriver({ driver, constructorName })}
-            />
+            />,
             <TitleFight
+              key="title"
               season={data.season}
               calendar={data.calendar}
               standingsRound={data.standingsRound}
               drivers={data.drivers}
               constructors={data.constructors}
               now={now}
-            />
-          </div>
-        ) : (
-          <div className="h-full flex items-center justify-center text-zinc-500 text-sm text-center px-4">
-            {dict.highlights.noData}
-          </div>
-        )}
-      </div>
+            />,
+            <SeasonStats key="stats" races={data.races} totalRounds={data.calendar.length} />,
+          ]}
+        </CardDeck>
+      ) : (
+        <div className="flex-1 flex items-center justify-center text-muted text-sm text-center px-4">
+          {dict.highlights.noData}
+        </div>
+      )}
 
       {selectedDriver && (
         <DriverModal

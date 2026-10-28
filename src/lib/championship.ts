@@ -1,5 +1,6 @@
 import { Constructor, Driver, PastRace, Race, RaceResult } from "../types/f1";
 import { getRaceStart } from "./sessions";
+import { getResultOutcome } from "./f1-utils";
 
 // ---------- Disputa pelo título ----------
 
@@ -175,4 +176,63 @@ export function parseLapTime(time?: string): number | null {
   const minutes = parts.length ? Number(parts.pop()) : 0;
   if (Number.isNaN(seconds) || Number.isNaN(minutes)) return null;
   return Math.round((minutes * 60 + seconds) * 1000);
+}
+
+// ---------- A temporada em números ----------
+
+export interface StatLeader {
+  driver: Driver;
+  constructorId: string;
+  count: number;
+}
+
+export interface SeasonStats {
+  racesDone: number;
+  differentWinners: number;
+  differentWinningTeams: number;
+  mostWins?: StatLeader;
+  mostPoles?: StatLeader;
+  mostPodiums?: StatLeader;
+  mostFastestLaps?: StatLeader;
+  retirements: number;
+}
+
+export function computeSeasonStats(races: PastRace[]): SeasonStats {
+  const tallies = { wins: new Map<string, StatLeader>(), poles: new Map<string, StatLeader>(), podiums: new Map<string, StatLeader>(), fastest: new Map<string, StatLeader>() };
+  const winningTeams = new Set<string>();
+  let retirements = 0;
+
+  const add = (map: Map<string, StatLeader>, result: RaceResult) => {
+    const entry = map.get(result.Driver.driverId) ?? { driver: result.Driver, constructorId: result.Constructor.constructorId, count: 0 };
+    entry.count++;
+    entry.constructorId = result.Constructor.constructorId;
+    map.set(result.Driver.driverId, entry);
+  };
+
+  for (const race of races) {
+    for (const result of race.Results ?? []) {
+      const position = Number(result.position);
+      if (position === 1) {
+        add(tallies.wins, result);
+        winningTeams.add(result.Constructor.constructorId);
+      }
+      if (position <= 3) add(tallies.podiums, result);
+      if (result.grid === "1") add(tallies.poles, result);
+      if (result.FastestLap?.rank === "1") add(tallies.fastest, result);
+      if (getResultOutcome(result) !== "classified") retirements++;
+    }
+  }
+
+  const leader = (map: Map<string, StatLeader>) => [...map.values()].sort((a, b) => b.count - a.count)[0];
+
+  return {
+    racesDone: races.length,
+    differentWinners: tallies.wins.size,
+    differentWinningTeams: winningTeams.size,
+    mostWins: leader(tallies.wins),
+    mostPoles: leader(tallies.poles),
+    mostPodiums: leader(tallies.podiums),
+    mostFastestLaps: leader(tallies.fastest),
+    retirements,
+  };
 }

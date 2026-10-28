@@ -15,17 +15,17 @@ const PODIUM_STYLE: Record<string, { block: string; number: string; height: stri
   "1": {
     block: "border-yellow-400 bg-linear-to-b from-yellow-400/20 to-yellow-400/0",
     number: "text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.6)]",
-    height: "h-20 sm:h-24",
+    height: "h-[var(--podium)]",
   },
   "2": {
     block: "border-slate-300 bg-linear-to-b from-slate-300/15 to-slate-300/0",
     number: "text-slate-300",
-    height: "h-14 sm:h-16",
+    height: "h-[calc(var(--podium)*0.72)]",
   },
   "3": {
     block: "border-amber-600 bg-linear-to-b from-amber-600/15 to-amber-600/0",
     number: "text-amber-600",
-    height: "h-10 sm:h-12",
+    height: "h-[calc(var(--podium)*0.52)]",
   },
 };
 
@@ -69,25 +69,28 @@ export default function LastRacePodium({ race, onDriverClick }: LastRacePodiumPr
   ].filter(Boolean) as { label: string; driver: Driver; detail: string | null; accent: string }[];
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl p-4 sm:p-6 flex flex-col gap-5">
+    <div className="h-full bg-zinc-900 border border-zinc-800 rounded-2xl shadow-xl p-4 sm:p-6 flex flex-col justify-between gap-[clamp(0.75rem,2.2vh,1.5rem)]">
       <div className="flex flex-col">
         <span className="text-red-500 font-bold uppercase tracking-widest text-[10px]">
           {dict.highlights.lastRace} • {dict.results.round} {race.round} • {date}
         </span>
-        <h3 className="text-lg sm:text-xl font-bold text-white uppercase tracking-wider truncate">{race.raceName}</h3>
-        <span className="text-xs text-zinc-500 truncate">{race.Circuit.circuitName}</span>
+        <h3 className="text-lg sm:text-xl font-bold text-white uppercase tracking-wider leading-tight line-clamp-2 text-balance">{race.raceName}</h3>
+        <span className="text-xs text-muted truncate hide-short">{race.Circuit.circuitName}</span>
       </div>
 
-      <div className="grid grid-cols-3 items-end gap-2 sm:gap-3">
+      <div className="grid grid-cols-3 items-end gap-2 sm:gap-3 [--podium:clamp(3.25rem,13vh,9.5rem)]">
         {podium.map((result) => {
           const style = PODIUM_STYLE[result.position];
           const gap = result.position === "1" ? result.Time?.time : result.Time?.time ?? result.status;
+          // Sobe em sequência 3º → 2º → 1º, para o vencedor aparecer por último
+          const order = 3 - Number(result.position);
           return (
             <button
               key={result.Driver.driverId}
               type="button"
               onClick={() => onDriverClick(result.Driver, result.Constructor.name)}
-              className="flex flex-col items-center gap-1.5 min-w-0 group cursor-pointer"
+              className="rise flex flex-col items-center gap-1.5 min-w-0 group cursor-pointer transition-transform duration-150 ease-fluid motion-safe:active:scale-[0.96]"
+              style={{ "--i": order } as React.CSSProperties}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -99,7 +102,7 @@ export default function LastRacePodium({ race, onDriverClick }: LastRacePodiumPr
               <span className="text-xs sm:text-sm font-bold text-white uppercase tracking-wide truncate max-w-full group-hover:text-red-400 transition-colors">
                 {result.Driver.familyName}
               </span>
-              <span className="text-[10px] font-mono text-zinc-500 truncate max-w-full">{gap}</span>
+              <span className="text-[10px] font-mono text-muted truncate max-w-full">{gap}</span>
               <div className={`w-full rounded-t-lg border-t-2 flex flex-col items-center justify-start pt-2 gap-1 ${style.block} ${style.height}`}>
                 <span className={`font-black text-lg sm:text-2xl leading-none ${style.number}`}>{result.position}</span>
                 <Image
@@ -116,13 +119,15 @@ export default function LastRacePodium({ race, onDriverClick }: LastRacePodiumPr
       </div>
 
       {stats.length > 0 && (
-        <ul className="flex flex-col gap-1.5 border-t border-zinc-800/60 pt-4">
+        <ul className="flex flex-col gap-1.5 border-t border-zinc-800/60 pt-[clamp(0.6rem,1.8vh,1rem)] hide-short">
           {stats.map((stat) => (
-            <li key={stat.label} className="flex items-center gap-3 text-xs sm:text-sm">
-              <span className={`w-1.5 h-4 rounded-full shrink-0 ${stat.accent}`} />
-              <span className="text-zinc-500 uppercase text-[10px] sm:text-[11px] font-bold tracking-wider w-32 sm:w-36 shrink-0">{stat.label}</span>
-              <span className="text-zinc-300 truncate">
-                {stat.driver.givenName.charAt(0)}. <span className="font-bold text-white uppercase">{stat.driver.familyName}</span>
+            <li key={stat.label} className="flex items-center gap-3 min-w-0">
+              <span className={`w-1.5 h-7 rounded-full shrink-0 ${stat.accent}`} />
+              <span className="flex flex-col min-w-0 leading-tight">
+                <span className="text-muted uppercase text-[9px] sm:text-[10px] font-bold tracking-wider truncate">{stat.label}</span>
+                <span className="text-xs sm:text-sm text-zinc-300 truncate">
+                  {stat.driver.givenName.charAt(0)}. <span className="font-bold text-white uppercase">{stat.driver.familyName}</span>
+                </span>
               </span>
               {stat.detail && <span className="ml-auto font-mono text-[11px] text-zinc-400 shrink-0">{stat.detail}</span>}
             </li>
