@@ -87,7 +87,7 @@ export default function RaceInfo({ race, seasonLabel }: RaceInfoProps) {
           </span>
         )}
       </div>
-      <h2 className="font-bold text-white uppercase tracking-wider leading-[1.05] text-balance text-[clamp(1.35rem,min(4.4vh,6.2vw)+0.2rem,3rem)]">
+      <h2 className="font-bold text-white uppercase tracking-wider leading-[1.05] text-balance text-[clamp(1.35rem,min(4.4vh,6.2vw)+0.2rem,3rem)] lg:landscape:text-[clamp(2rem,5.2vh,3.75rem)]">
         {race.raceName}
       </h2>
       <p className="text-zinc-400 text-xs sm:text-sm lg:text-base mt-1.5 [@media(max-height:500px)]:hidden">

@@ -82,12 +82,12 @@ export default function RaceExtras({ race, sessions, now }: RaceExtrasProps) {
   const hasWinners = Boolean(winners?.length);
   if (!hasForecast && !hasWinners) return null;
 
-  const label = "block text-[10px] font-bold text-muted uppercase tracking-widest mb-1.5";
-  const chip = "bg-zinc-950/40 border border-zinc-800/50 rounded-lg";
+  const label = "block text-[10px] font-bold text-muted uppercase tracking-widest mb-2";
+  const chip = "bg-zinc-950/40 border border-zinc-800/50 rounded-lg desk-tall:min-h-[4.25rem]";
 
   return (
     <div className="@container w-full shrink-0">
-      <div className={`grid gap-3 ${hasForecast && hasWinners ? "@3xl:grid-cols-2" : ""}`}>
+      <div className={`grid gap-[clamp(0.6rem,2vh,1.6rem)] ${hasForecast && hasWinners ? "@3xl:grid-cols-2" : ""}`}>
         {hasForecast && (
           <div className="min-w-0">
             <span className={label}>{dict.nextRace.weather}</span>

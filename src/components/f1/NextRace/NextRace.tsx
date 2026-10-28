@@ -147,7 +147,9 @@ export default function NextRace() {
 
   // O card ocupa exatamente a altura disponível; o mapa é a parte "elástica" que cresce ou encolhe,
   // então nada precisa de rolagem. Retrato (celular/tablet/monitor vertical): uma coluna.
-  // Paisagem (computador/celular deitado): duas colunas.
+  // Paisagem (computador/celular deitado): duas colunas alinhadas em cima e embaixo — à esquerda,
+  // nome do GP no topo, contagem no meio e programação + circuito na base, na mesma linha da
+  // previsão do tempo e dos vencedores da coluna da direita.
   return (
     <div className="shell h-full flex flex-col gap-3 sm:gap-4 pt-3 pb-9 sm:pt-6 sm:pb-8 [@media(max-height:500px)]:pt-2 [@media(max-height:500px)]:pb-2 [@media(max-height:500px)]:gap-2">
 
@@ -157,17 +159,19 @@ export default function NextRace() {
         className="reveal relative flex-1 min-h-0 flex flex-col landscape:flex-row gap-[clamp(0.75rem,2.2vh,2rem)] landscape:gap-[clamp(1rem,3vw,3.5rem)] rounded-2xl border border-zinc-800 bg-zinc-900 shadow-xl p-4 sm:p-6 lg:p-8 [@media(max-height:500px)]:p-3"
         style={{ "--i": 1 } as React.CSSProperties}
       >
-        <div className="shrink-0 landscape:shrink landscape:flex-1 landscape:basis-0 min-w-0 flex flex-col items-center landscape:items-start landscape:justify-center gap-[clamp(0.6rem,2vh,1.6rem)]">
+        <div className="shrink-0 landscape:shrink landscape:flex-1 landscape:basis-0 min-w-0 flex flex-col items-center landscape:items-start landscape:justify-between gap-[clamp(0.6rem,2vh,1.6rem)]">
           <RaceInfo race={race} seasonLabel={isNextSeason ? `${dict.standings.season} ${race.season}` : undefined} />
-          <WeekendSchedule sessions={sessions} now={now} />
           <SessionStatus state={state} now={now} />
-          <CircuitFacts
-            circuitId={race.Circuit.circuitId}
-            className="hidden [@media(orientation:landscape)_and_(min-height:760px)]:flex [@media(orientation:portrait)_and_(min-height:1000px)]:flex"
-          />
+          <div className="w-full flex flex-col items-center landscape:items-start gap-[clamp(0.6rem,2vh,1.6rem)]">
+            <WeekendSchedule sessions={sessions} now={now} />
+            <CircuitFacts
+              circuitId={race.Circuit.circuitId}
+              className="hidden [@media(orientation:landscape)_and_(min-height:760px)]:flex [@media(orientation:portrait)_and_(min-height:1000px)]:flex"
+            />
+          </div>
         </div>
 
-        <div className="flex-1 basis-0 min-h-0 min-w-0 flex flex-col gap-3">
+        <div className="flex-1 basis-0 min-h-0 min-w-0 flex flex-col gap-[clamp(0.6rem,2vh,1.6rem)]">
           <div className="relative flex-1 min-h-16">
             <TrackMap key={race.Circuit.circuitId} circuitId={race.Circuit.circuitId} country={race.Circuit.Location.country} />
           </div>

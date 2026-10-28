@@ -17,7 +17,7 @@ export default function WeekendSchedule({ sessions, now }: WeekendScheduleProps)
   const columns = sessions.map((s) => `minmax(0, ${Math.min(Math.max(dict.sessionsShort[s.key].length / 5, 1), 1.6)}fr)`).join(" ");
 
   return (
-    <div className="flex flex-col w-full max-w-xl gap-2">
+    <div className="flex flex-col w-full max-w-xl lg:max-w-2xl gap-2">
       <span className="text-[10px] font-bold text-muted uppercase tracking-widest">
         {dict.nextRace.weekendSchedule}
       </span>
@@ -43,7 +43,7 @@ export default function WeekendSchedule({ sessions, now }: WeekendScheduleProps)
           return (
             <li
               key={session.key}
-              className={`rounded-md border px-0.5 sm:px-1 py-[clamp(0.3rem,0.9vh,0.6rem)] flex flex-col items-center text-center transition-colors ${style}`}
+              className={`rounded-md border px-0.5 sm:px-1 py-[clamp(0.3rem,0.9vh,0.6rem)] desk-tall:min-h-[4.25rem] flex flex-col items-center justify-center text-center transition-colors ${style}`}
               aria-current={isLive || isNext ? "true" : undefined}
             >
               <span className={`flex items-center gap-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-normal sm:tracking-wide truncate max-w-full ${isLive || isNext ? "text-red-400" : isRace ? "text-zinc-300" : "text-muted"}`}>

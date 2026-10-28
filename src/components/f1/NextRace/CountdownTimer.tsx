@@ -34,15 +34,15 @@ export default function CountdownTimer({ target, now }: CountdownTimerProps) {
       {units.map((unit, index) => (
         <React.Fragment key={unit.label}>
           {index > 0 && (
-            <span className="text-zinc-700 font-light leading-none text-[clamp(1.1rem,min(4vh,5vw),2.5rem)] mt-[0.15em]" aria-hidden="true">:</span>
+            <span className="text-zinc-700 font-light leading-none text-[clamp(1.1rem,min(4vh,5vw),2.5rem)] lg:landscape:text-[clamp(1.5rem,min(5.5vh,3.2vw),3.75rem)] mt-[0.15em]" aria-hidden="true">:</span>
           )}
           <div className="flex flex-col items-center min-w-[3.2ch]">
             <span
-              className={`font-mono font-bold tracking-tighter tabular-nums leading-none text-[clamp(1.6rem,min(6.2vh,9vw),3.75rem)] ${unit.highlight ? "text-red-500" : "text-white"}`}
+              className={`font-mono font-bold tracking-tighter tabular-nums leading-none text-[clamp(1.6rem,min(6.2vh,9vw),3.75rem)] lg:landscape:text-[clamp(2.5rem,min(9vh,5.2vw),6rem)] ${unit.highlight ? "text-red-500" : "text-white"}`}
             >
               {String(unit.value).padStart(2, "0")}
             </span>
-            <span className="text-[9px] sm:text-[11px] text-muted uppercase tracking-widest mt-1.5">{unit.label}</span>
+            <span className="text-[9px] sm:text-[11px] lg:landscape:text-xs text-muted uppercase tracking-widest mt-1.5">{unit.label}</span>
           </div>
         </React.Fragment>
       ))}
