@@ -38,7 +38,7 @@ export default function QualifyingList({ results }: { results: QualifyingResult[
     <RankFrame count={results.length} ariaLabel={dict.results.qualiSession}>
       {results.map((row) => (
         <li key={`${row.position}-${row.Driver.driverId}`} className="@container min-w-0">
-          <div className="grid grid-cols-[2.25rem_minmax(0,1fr)_auto] items-center gap-3 rounded-lg px-2.5 sm:px-3 py-[clamp(0.3rem,0.95vh,0.8rem)] hover:bg-zinc-800/40 transition-colors">
+          <div className="h-full grid grid-cols-[2.25rem_minmax(0,1fr)_auto] items-center gap-3 rounded-lg px-2.5 sm:px-3 py-[clamp(0.3rem,0.95vh,0.8rem)] hover:bg-zinc-800/40 transition-colors">
             <span className={`text-center ${getPositionStyle(row.position)}`}>{row.position}º</span>
             <span className="flex items-center gap-3 min-w-0">
               <Image src={getConstructorLogo(row.Constructor.constructorId)} alt="" width={28} height={28} className="w-7 h-7 object-contain shrink-0 brightness-110" />

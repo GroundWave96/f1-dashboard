@@ -44,6 +44,11 @@ html {
   html { font-size: 137.5%; }
 }
 
+/* Computador com bastante altura (Full HD em diante): mostra detalhes extras que não cabem em notebooks */
+@custom-variant desk-tall (@media (orientation: landscape) and (min-width: 1024px) and (min-height: 860px));
+/* ...e monitor na vertical (ex.: Full HD em pé) */
+@custom-variant tall-portrait (@media (orientation: portrait) and (min-width: 700px) and (min-height: 1400px));
+
 /* ---------- Layout das seções ---------- */
 
 /* Largura padrão do conteúdo: ocupa a tela no celular e cresce nos monitores grandes,
@@ -61,6 +66,10 @@ html {
 }
 @media (min-width: 1600px) {
   .shell { max-width: 100rem; }
+}
+/* Monitores Full HD em diante: menos margem vazia nas laterais */
+@media (min-width: 1800px) {
+  .shell { max-width: 110rem; }
 }
 
 /* Baralho de cards (CardDeck): carrossel com "espiada" do próximo card no celular;
@@ -85,8 +94,8 @@ html {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     grid-template-rows: minmax(0, 1fr);
-    max-height: 46rem;
-    margin-block: auto;
+    /* Logo abaixo do título, como nas outras seções; só telas enormes (4K) passam do limite */
+    max-height: 64rem;
     width: 100%;
     overflow: visible;
   }
@@ -98,8 +107,6 @@ html {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-rows: minmax(0, 1fr) auto;
-    max-height: 62rem;
-    margin-block: auto;
     width: 100%;
     overflow: visible;
   }
@@ -107,9 +114,18 @@ html {
   .deck > :nth-child(3) { grid-column: 1 / -1; }
   .deck-dots { display: none; }
 }
+/* Monitor na vertical: os três cards empilhados ocupam a altura toda, sem faixas vazias */
+@media (min-width: 700px) and (min-height: 1400px) and (orientation: portrait) {
+  .deck {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+  }
+  .deck > :nth-child(3) { grid-column: auto; }
+}
 
 /* Listas de classificação/resultados: uma coluna no celular (com rolagem e degradê na borda),
-   duas colunas (1º–11º | 12º–22º) a partir de 720px, para caber sem rolagem.
+   duas colunas (1º–11º | 12º–22º) a partir de 720px, para caber sem rolagem. Nessas telas a lista
+   ocupa toda a altura disponível: as linhas se esticam (até 6rem) em vez de sobrar espaço embaixo.
    Monitores/tablets em pé com bastante altura voltam a uma coluna só. */
 .rank-grid {
   display: grid;
@@ -122,11 +138,22 @@ html {
   }
 }
 @media (min-width: 720px) {
+  /* Altura definida (não mínima): sem ela, a grade esticaria todas as linhas até o limite de 6rem */
+  .rank-scroll { height: 100%; }
   .rank-grid {
+    height: 100%;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: repeat(var(--rows), auto);
+    grid-template-rows: repeat(var(--rows), minmax(min-content, 6rem));
     grid-auto-flow: column;
     column-gap: 1.5rem;
+  }
+}
+/* Listas curtas (as 11 equipes): com altura sobrando, uma coluna só preenche melhor que 2 × 6 */
+@media (min-width: 720px) and (min-height: 760px) {
+  .rank-grid.rank-short {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(var(--count), minmax(min-content, 6rem));
+    grid-auto-flow: row;
   }
 }
 /* Telas baixas com duas colunas (notebooks): linhas de uma linha só, para as 11 caberem */
@@ -137,7 +164,7 @@ html {
 @media (min-height: 1600px) and (orientation: portrait) {
   .rank-grid {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: none;
+    grid-template-rows: repeat(var(--count), minmax(min-content, 6rem));
     grid-auto-flow: row;
   }
 }
@@ -162,6 +189,10 @@ html {
     grid-auto-rows: minmax(4.75rem, 1fr);
     gap: 0.625rem;
   }
+}
+/* Full HD em diante: 6 colunas fixas (24 etapas = 4 linhas cheias), em vez de 7 com a última linha quase vazia */
+@media (min-width: 1800px) {
+  .cal-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 }
 
 /* Detalhes secundários que somem em telas muito baixas (celular deitado) */
