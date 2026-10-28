@@ -78,7 +78,9 @@ export default function LastRacePodium({ race, onDriverClick }: LastRacePodiumPr
         <span className="text-xs text-muted truncate hide-short">{race.Circuit.circuitName}</span>
       </div>
 
-      <div className="grid grid-cols-3 items-end gap-2 sm:gap-3 [--podium:clamp(3.25rem,13vh,9.5rem)]">
+      {/* O pódio ocupa toda a altura livre do card: a área mede a própria altura (container de tamanho)
+          e o degrau do 1º cresce até o topo dela, descontando bandeira, nome e tempo */}
+      <div className="flex-1 min-h-[7.5rem] [container-type:size] grid grid-cols-3 items-end gap-2 sm:gap-3 [--podium:clamp(3.25rem,100cqh_-_4.75rem,22rem)] lg:[--podium:clamp(3.25rem,100cqh_-_5.25rem,22rem)]">
         {podium.map((result) => {
           const style = PODIUM_STYLE[result.position];
           const gap = result.position === "1" ? result.Time?.time : result.Time?.time ?? result.status;
@@ -99,18 +101,18 @@ export default function LastRacePodium({ race, onDriverClick }: LastRacePodiumPr
                 className="w-5 h-auto rounded-sm shadow"
                 loading="lazy"
               />
-              <span className="text-xs sm:text-sm font-bold text-white uppercase tracking-wide truncate max-w-full group-hover:text-red-400 transition-colors">
+              <span className="text-xs sm:text-sm lg:text-base font-bold text-white uppercase tracking-wide truncate max-w-full group-hover:text-red-400 transition-colors">
                 {result.Driver.familyName}
               </span>
               <span className="text-[10px] font-mono text-muted truncate max-w-full">{gap}</span>
-              <div className={`w-full rounded-t-lg border-t-2 flex flex-col items-center justify-start pt-2 gap-1 ${style.block} ${style.height}`}>
-                <span className={`font-black text-lg sm:text-2xl leading-none ${style.number}`}>{result.position}</span>
+              <div className={`w-full rounded-t-lg border-t-2 flex flex-col items-center justify-start pt-2 lg:pt-3 gap-1 lg:gap-2 ${style.block} ${style.height}`}>
+                <span className={`font-black text-lg sm:text-2xl lg:text-3xl leading-none ${style.number}`}>{result.position}</span>
                 <Image
                   src={getConstructorLogo(result.Constructor.constructorId)}
                   alt={result.Constructor.name}
                   width={22}
                   height={22}
-                  className="w-5 h-5 sm:w-6 sm:h-6 object-contain brightness-110 opacity-90"
+                  className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 object-contain brightness-110 opacity-90"
                 />
               </div>
             </button>

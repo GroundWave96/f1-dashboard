@@ -17,11 +17,11 @@ export default function SeasonStats({ races, totalRounds }: SeasonStatsProps) {
   const stats = computeSeasonStats(races);
   const progress = totalRounds > 0 ? Math.min(stats.racesDone / totalRounds, 1) : 0;
 
-  const leaders: { label: string; leader?: StatLeader; accent: string }[] = [
-    { label: dict.highlights.mostWins, leader: stats.mostWins, accent: "bg-yellow-400" },
-    { label: dict.highlights.mostPoles, leader: stats.mostPoles, accent: "bg-red-500" },
-    { label: dict.highlights.mostPodiums, leader: stats.mostPodiums, accent: "bg-slate-300" },
-    { label: dict.highlights.mostFastestLaps, leader: stats.mostFastestLaps, accent: "bg-purple-500" },
+  const leaders: { label: string; top: StatLeader[]; accent: string }[] = [
+    { label: dict.highlights.mostWins, top: stats.top.wins, accent: "bg-yellow-400" },
+    { label: dict.highlights.mostPoles, top: stats.top.poles, accent: "bg-red-500" },
+    { label: dict.highlights.mostPodiums, top: stats.top.podiums, accent: "bg-slate-300" },
+    { label: dict.highlights.mostFastestLaps, top: stats.top.fastestLaps, accent: "bg-purple-500" },
   ];
 
   return (
@@ -53,8 +53,9 @@ export default function SeasonStats({ races, totalRounds }: SeasonStatsProps) {
         </div>
       </div>
 
-      <ul className="flex flex-col gap-[clamp(0.35rem,1.2vh,0.75rem)] flex-1 justify-center @2xl:grid @2xl:grid-cols-2 @2xl:gap-x-8 @2xl:content-center">
-        {leaders.map(({ label, leader, accent }) =>
+      {/* Telas comuns: só o líder de cada categoria, uma linha por categoria */}
+      <ul className="flex flex-col gap-[clamp(0.35rem,1.2vh,0.75rem)] flex-1 justify-center @2xl:grid @2xl:grid-cols-2 @2xl:gap-x-8 @2xl:content-center desk-tall:hidden tall-portrait:hidden">
+        {leaders.map(({ label, top: [leader], accent }) =>
           leader ? (
             // Cada linha mede a própria largura: estreita = título em cima e piloto embaixo; larga = tudo numa linha
             <li key={label} className="@container min-w-0">
@@ -69,6 +70,36 @@ export default function SeasonStats({ races, totalRounds }: SeasonStatsProps) {
                 </div>
                 <span className="font-mono text-xs font-bold text-zinc-200 bg-zinc-800 rounded px-1.5 py-0.5 shrink-0">{leader.count}</span>
               </div>
+            </li>
+          ) : null
+        )}
+      </ul>
+
+      {/* Telas com altura sobrando: os 3 primeiros de cada categoria, com barras em relação ao líder
+          (no monitor em pé o card é largo, então as categorias ficam em duas colunas) */}
+      <ul className="hidden desk-tall:flex flex-col flex-1 min-h-0 justify-evenly gap-3 tall-portrait:grid tall-portrait:grid-cols-2 tall-portrait:gap-x-10 tall-portrait:content-evenly">
+        {leaders.map(({ label, top, accent }) =>
+          top.length > 0 ? (
+            <li key={label} className="flex flex-col gap-1.5">
+              <span className="flex items-center gap-2 text-muted uppercase text-[11px] font-bold tracking-wider">
+                <span className={`w-1.5 h-3.5 rounded-full shrink-0 ${accent}`} />
+                {label}
+              </span>
+              <ol className="flex flex-col gap-1">
+                {top.map((entry, index) => (
+                  <li key={entry.driver.driverId} className="grid grid-cols-[1.125rem_7.5rem_minmax(0,1fr)_1.75rem] items-center gap-2.5 text-sm">
+                    <Image src={getConstructorLogo(entry.constructorId)} alt="" width={18} height={18} className="w-4.5 h-4.5 object-contain brightness-110" />
+                    <span className={`font-bold uppercase truncate ${index === 0 ? "text-white" : "text-zinc-400"}`}>{entry.driver.familyName}</span>
+                    <span className="h-1.5 rounded-full bg-zinc-800 overflow-hidden" aria-hidden="true">
+                      <span
+                        className={`grow-x block h-full rounded-full ${index === 0 ? accent : "bg-zinc-600"}`}
+                        style={{ width: `${(entry.count / top[0].count) * 100}%` }}
+                      />
+                    </span>
+                    <span className={`font-mono text-xs font-bold text-right ${index === 0 ? "text-white" : "text-zinc-400"}`}>{entry.count}</span>
+                  </li>
+                ))}
+              </ol>
             </li>
           ) : null
         )}

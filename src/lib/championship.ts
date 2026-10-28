@@ -190,10 +190,8 @@ export interface SeasonStats {
   racesDone: number;
   differentWinners: number;
   differentWinningTeams: number;
-  mostWins?: StatLeader;
-  mostPoles?: StatLeader;
-  mostPodiums?: StatLeader;
-  mostFastestLaps?: StatLeader;
+  // Os 3 primeiros de cada categoria (o 1º é o líder)
+  top: Record<"wins" | "poles" | "podiums" | "fastestLaps", StatLeader[]>;
   retirements: number;
 }
 
@@ -223,16 +221,18 @@ export function computeSeasonStats(races: PastRace[]): SeasonStats {
     }
   }
 
-  const leader = (map: Map<string, StatLeader>) => [...map.values()].sort((a, b) => b.count - a.count)[0];
+  const topThree = (map: Map<string, StatLeader>) => [...map.values()].sort((a, b) => b.count - a.count).slice(0, 3);
 
   return {
     racesDone: races.length,
     differentWinners: tallies.wins.size,
     differentWinningTeams: winningTeams.size,
-    mostWins: leader(tallies.wins),
-    mostPoles: leader(tallies.poles),
-    mostPodiums: leader(tallies.podiums),
-    mostFastestLaps: leader(tallies.fastest),
+    top: {
+      wins: topThree(tallies.wins),
+      poles: topThree(tallies.poles),
+      podiums: topThree(tallies.podiums),
+      fastestLaps: topThree(tallies.fastest),
+    },
     retirements,
   };
 }
