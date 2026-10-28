@@ -138,7 +138,7 @@ export const dictionaries = {
     results: {
       title: "Resultados da Temporada",
       round: "Rodada",
-      fastestLap: "Melhor Volta",
+      fastestLap: "Melhor volta",
       pos: "Pos",
       driver: "Piloto",
       team: "Equipe",
