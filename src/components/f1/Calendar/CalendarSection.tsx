@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { apiGet, apiGetAllRaces } from "../../../lib/api";
-import { useAsyncData, useNow } from "../../../lib/hooks";
+import { useAsyncData, useMediaQuery, useNow } from "../../../lib/hooks";
 import { getRaceSessions, getRaceStart, isWeekendActive, isWeekendOver } from "../../../lib/sessions";
 import { useLanguage } from "../../../i18n/LanguageContext";
 import { countryToISO } from "../../../lib/f1-utils";
@@ -11,6 +11,7 @@ import Spinner from "../../ui/Spinner";
 import SectionHeader from "../../ui/SectionHeader";
 import { ErrorIcon, TrophyIcon } from "../../ui/icons";
 import RaceDetailsModal from "./RaceDetailsModal";
+import TrackOutline from "./TrackOutline";
 
 async function loadCalendar() {
   const data = await apiGet("current.json");
@@ -31,6 +32,8 @@ export default function CalendarSection() {
   const locale = lang === "pt" ? "pt-BR" : "en-US";
   const now = useNow(60_000);
   const listRef = useRef<HTMLOListElement>(null);
+  // O desenho da pista só aparece na grade de cards (a partir de 640px); no celular nem é baixado
+  const showTracks = useMediaQuery("(min-width: 640px)");
 
   const calendar = useAsyncData("calendar:current", loadCalendar);
   const { data: winners } = useAsyncData("winners:current", loadWinners);
@@ -96,15 +99,24 @@ export default function CalendarSection() {
                 : "border-zinc-800 bg-zinc-900";
 
           const status = isLive ? dict.calendar.thisWeekend : isNext ? dict.calendar.next : null;
+          const trackTone = isLive || isNext ? "text-red-500/45 group-hover:text-red-500/70" : isDone ? "text-zinc-700/80 group-hover:text-zinc-600" : "text-zinc-600/70 group-hover:text-zinc-500";
 
           return (
             <li key={race.round} data-round={race.round} className="reveal min-w-0" style={{ "--i": Math.floor(index / 4) + 1 } as React.CSSProperties}>
               <button
                 type="button"
                 onClick={() => setSelected(race)}
-                className={`group relative h-full w-full rounded-xl border p-3 text-left transition-[translate,background-color,border-color] duration-200 ease-fluid motion-safe:hover:-translate-y-0.5 hover:border-zinc-600 flex items-center gap-3 sm:flex-col sm:items-stretch sm:justify-between sm:gap-1.5 ${tone}`}
+                className={`group relative h-full w-full overflow-hidden rounded-xl border p-3 text-left transition-[translate,background-color,border-color] duration-200 ease-fluid motion-safe:hover:-translate-y-0.5 hover:border-zinc-600 flex items-center gap-3 sm:flex-col sm:items-stretch sm:justify-between sm:gap-1.5 ${tone}`}
               >
-                <div className="flex items-center gap-2 shrink-0 sm:justify-between">
+                {showTracks && (
+                  <TrackOutline
+                    circuitId={race.Circuit.circuitId}
+                    className={`absolute right-3 top-[22%] h-[56%] w-[45%] pointer-events-none transition-colors duration-200 ${trackTone}`}
+                  />
+                )}
+
+                {/* As três faixas do card são "relative" para ficarem por cima do desenho da pista */}
+                <div className="relative flex items-center gap-2 shrink-0 sm:justify-between">
                   <span className={`font-mono text-xs font-bold ${isLive || isNext ? "text-red-500" : isDone ? "text-muted" : "text-zinc-400"}`}>
                     R{race.round.padStart(2, "0")}
                   </span>
@@ -121,7 +133,7 @@ export default function CalendarSection() {
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2.5 min-w-0 flex-1 sm:flex-none">
+                <div className="relative flex items-center gap-2.5 min-w-0 flex-1 sm:flex-none">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={`https://flagcdn.com/w40/${countryToISO(race.Circuit.Location.country)}.png`}
@@ -130,14 +142,14 @@ export default function CalendarSection() {
                     loading="lazy"
                   />
                   <span className="flex flex-col min-w-0 leading-tight">
-                    <span className={`font-bold uppercase tracking-wide text-sm truncate ${isDone ? "text-zinc-400" : "text-white"}`}>
+                    <span className={`font-bold uppercase tracking-wide text-sm lg:text-[15px] truncate ${isDone ? "text-zinc-400" : "text-white"}`}>
                       {shortRaceName(race.raceName)}
                     </span>
                     <span className="sm:hidden text-[11px] text-muted truncate">{dateRange(race)}</span>
                   </span>
                 </div>
 
-                <div className="flex items-center justify-end sm:justify-between gap-2 text-[11px] shrink-0">
+                <div className="relative flex items-center justify-end sm:justify-between gap-2 text-[11px] shrink-0">
                   <span className="hidden sm:inline text-muted font-mono">{dateRange(race)}</span>
                   {winner ? (
                     <span className="flex items-center gap-1 text-zinc-300 min-w-0" title={`${dict.calendar.winner}: ${winner.givenName} ${winner.familyName}`}>
