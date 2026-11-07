@@ -1,1 +1,1 @@
-Fonte: https://github.com/emilkowalski/skills (commit 2d22863), licença MIT.
+Fonte: https://github.com/emilkowalski/skills (commit c8a7962), licença MIT.
