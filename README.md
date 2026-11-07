@@ -15,12 +15,13 @@ Um painel interativo e responsivo para acompanhamento em tempo real da temporada
 
 O projeto foi arquitetado para proporcionar uma experiência de **App Nativo** diretamente no navegador, utilizando conceitos avançados de UI/UX e React:
 
-- 🚦 **Preloader Imersivo:** Animação de carregamento inicial simulando as 5 luzes vermelhas de largada da F1 (completa na primeira visita da sessão; nas seguintes, só um fade rápido).
-- 🤖 **Zero Manutenção:** Tudo vem das APIs no momento em que a página abre — próxima corrida, resultados, classificação e calendário se atualizam sozinhos a cada etapa. Se surgir uma pista, equipe ou país novo sem imagem, o site mostra um substituto (traçado genérico, logo da F1, bandeira automática) em vez de quebrar.
-- 📱 **Experiência "App-Like" (Scroll Snap):** Navegação vertical mandatória que trava a tela em seções específicas, garantindo aproveitamento total da tela (Screen Real Estate), ideal para mobile.
+- 🚦 **Abertura de largada:** as cinco luzes acendem, apagam juntas (com o suspense aleatório da F1 de verdade) e um rastro de luz cruza a tela revelando a marca, que se dissolve enquanto o app entra. Roda na primeira visita da sessão; um toque pula.
+- 📱 **Um app no navegador:** páginas Início, Sessão, Campeonato, Calendário e Resultados, com barra de abas de vidro no celular e barra lateral no computador, no tablet deitado e no celular deitado. Cada página rola normalmente, sem rolagem dentro de rolagem. Dá para **instalar na tela inicial** (PWA), inclusive no iPhone, e abrir em tela cheia como um aplicativo.
+- 🧊 **Visual de vidro:** barras e painéis translúcidos sobre um fundo com brilhos vermelhos, no estilo do iPhone, mantendo o preto e vermelho da F1.
+- 🤖 **Zero Manutenção:** os dados vêm da Jolpica e do OpenF1 e ficam guardados num banco da Cloudflare (D1), atualizado sozinho a cada 10 minutos por um Worker agendado. Uns 30 minutos depois de cada treino, qualificação ou corrida, a sessão já aparece no site. Se surgir uma pista, equipe ou país novo sem imagem, o site mostra um substituto (traçado genérico, logo da F1, bandeira automática) em vez de quebrar.
 - 🌍 **Internacionalização Persistente (i18n):** Sistema de tradução instantânea e sem recarregamento (Context API). A interface alterna fluidamente entre Português e Inglês com transições de opacidade, detecta o idioma do navegador na primeira visita e salva a preferência do usuário no `localStorage`.
 - 🛡️ **Resiliência e Tratamento de Erros:** Fallbacks de interface elegantes caso ocorram falhas de conexão ou timeouts nas APIs de dados, impedindo que o layout quebre.
-- 🖥️ **Cabe em qualquer tela, sem rolagem interna:** cada seção ocupa exatamente a altura da tela. Testado em 15 tamanhos — de celulares de 360px a monitores 1440p, incluindo monitor na vertical, tablets e celular deitado — e também em 320px e com zoom de 200%, sem rolagem lateral nem texto cortado. Em telas largas as listas se dividem em duas colunas; no celular, os cards viram carrossel e só as listas longas (22 pilotos, 24 GPs) rolam.
+- 🖥️ **Bonito em qualquer tela:** no computador e no tablet as telas preenchem a altura disponível (listas em duas colunas, calendário em grade); no celular a página rola com o conteúdo inteiro. Testado em celulares de 320px a monitores 1440p, monitor na vertical, tablets e celulares deitados, sem rolagem lateral nem texto cortado.
 - ✨ **Animações fluidas e discretas:** entrada em cascata na primeira vez que cada seção aparece, traçado da pista que se desenha, barras de pontos que "enchem" e pódio que sobe. Com a opção "reduzir movimento" do sistema ligada, tudo vira um simples esmaecer e o carro fica parado na largada.
 - ♿ **Acessível:** dá para usar o site inteiro só com o teclado, com contorno de foco visível em cada botão; textos com contraste dentro do padrão WCAG AA; as janelas de detalhes fecham com Esc e devolvem o foco para onde você estava.
 
@@ -42,7 +43,15 @@ O ponto de entrada do usuário. Traz informações críticas sobre o próximo ev
    <img src="docs/celular.png" alt="Próxima Corrida no celular" width="180">
 </div>
 
-### 2. Destaques (Highlights)
+### 2. Sessão (dados do OpenF1)
+Cada treino, qualificação e corrida desde 2023, com escolha da etapa e da sessão (a escolha fica no endereço, para compartilhar).
+- **Os três primeiros** em cards com a foto do piloto na cor da equipe.
+- **Classificação no estilo da transmissão:** sigla de 3 letras com a barra da cor da equipe no celular e nome completo no computador; melhor volta (a mais rápida em roxo), diferença, voltas e pneu. Na qualificação, Q1/Q2/Q3; na corrida, tempo, diferença e abandonos.
+- **Velocidade máxima** de cada piloto no ponto de medição, em barras na cor da equipe.
+- **Setores:** volta mais rápida × volta teórica (soma dos melhores setores) e a classificação de cada setor.
+- Durante uma sessão ao vivo a aba ganha um ponto vermelho piscando; os dados aparecem ~30 min depois do fim (limite do plano gratuito do OpenF1).
+
+### 3. Destaques (Highlights)
 - **Pódio do último GP**, com pole, volta mais rápida e o piloto que mais ganhou posições.
 - **Disputa pelo título:** calcula, com o calendário restante, quem ainda tem chance matemática de ser campeão (pilotos e equipes) e avisa quando o título está decidido.
 - **A temporada em números:** vencedores diferentes, abandonos e quem lidera em vitórias, poles, pódios e voltas mais rápidas — em telas grandes, os 3 primeiros de cada categoria, com barras.
@@ -52,7 +61,7 @@ O ponto de entrada do usuário. Traz informações críticas sobre o próximo ev
    <img src="docs/destaques.png" alt="Destaques da temporada" width="600">
 </div>
 
-### 3. Classificação Mundial (Standings)
+### 4. Classificação Mundial (Standings)
 Uma visão completa e dividida da tabela de pontos atualizada, renderizada com animações suaves de fade-in.
 - **Pilotos & Equipes:** Tabelas completas com cálculo de diferenças de pontos, logotipos oficiais e bandeiras.
 - Em telas largas a lista se divide em duas colunas (1º–11º | 12º–22º) e ocupa a tela inteira, com uma barra mostrando os pontos de cada um em relação ao líder.
@@ -69,7 +78,7 @@ Uma visão completa e dividida da tabela de pontos atualizada, renderizada com a
   <img src="docs/modal-piloto.png" alt="Pop-up do Piloto" width="400">
 </div>
 
-### 4. Calendário
+### 5. Calendário
 - A temporada inteira em uma grade de cards (no celular, uma lista que já abre na próxima corrida), com o desenho de cada pista, datas, vencedor de cada GP já disputado e selo de fim de semana Sprint.
 - Clicar numa etapa abre a programação completa, com os horários no fuso de quem está vendo.
 
@@ -77,7 +86,7 @@ Uma visão completa e dividida da tabela de pontos atualizada, renderizada com a
    <img src="docs/calendario.png" alt="Calendário da temporada" width="600">
 </div>
 
-### 5. Resultados da Temporada (Last Races)
+### 6. Resultados da Temporada (Last Races)
 Um arquivo histórico navegável de todas as corridas que já ocorreram no ano.
 - Navegação rápida entre as etapas usando botões e selects integrados.
 - Abas de **Corrida, Sprint e Qualificação** (Q1, Q2, Q3 e diferença para a pole).
@@ -104,12 +113,14 @@ Este projeto foi construído seguindo princípios de **Clean Code**:
 
 - **Core:** [Next.js](https://nextjs.org/) (App Router), [React](https://react.dev/), [TypeScript](https://www.typescriptlang.org/)
 - **Estilização:** [Tailwind CSS](https://tailwindcss.com/)
-- **Requisições:** `fetch` nativo com cache compartilhado entre as seções e novas tentativas automáticas (`src/lib/api.ts`)
-- **Hospedagem:** [Cloudflare Pages](https://pages.cloudflare.com/)
+- **Requisições:** `fetch` nativo com cache compartilhado entre as seções e novas tentativas automáticas (`src/lib/api.ts`, `src/lib/openf1.ts`)
+- **Hospedagem:** [Cloudflare Pages](https://pages.cloudflare.com/) com o site estático (`out/`) e a API em Pages Functions (`functions/`)
+- **Dados:** banco [Cloudflare D1](https://developers.cloudflare.com/d1/) (`migrations/`) com a cópia das APIs, mantido por um Worker agendado a cada 10 minutos (`worker/`, `server/`)
 - **Revisão visual:** as skills em `.claude/skills/` (de Emil Kowalski e Jakub Krehel, licença MIT) guiam o Claude Code na revisão de animações, acessibilidade, contraste e textos; os testes nos vários tamanhos de tela usam o Playwright MCP (configuração local em `.mcp.json`, fora do Git).
 
 ### 🔌 APIs Consumidas
 - **[Ergast API (via Jolpi)](https://ergast.com/mrd/):** Fornece os dados brutos de calendários e classificações oficiais da FIA.
+- **[OpenF1](https://openf1.org/):** Voltas, setores, velocidade máxima, pneus, siglas, cores e fotos dos pilotos de cada sessão (de 2023 para cá, plano gratuito).
 - **[Wikimedia REST API](https://www.mediawiki.org/wiki/API:REST_API):** Enriquecimento do modal dos pilotos com fotos e resumos biográficos.
 - **[Flagcdn](https://flagcdn.com/):** Renderização ultrarrápida das bandeiras de nacionalidades.
 - **[UI-Avatars](https://ui-avatars.com/):** Sistema de fallback (letras iniciais) caso o piloto não possua imagem pública na Wikipédia.
@@ -119,7 +130,9 @@ Este projeto foi construído seguindo princípios de **Clean Code**:
 
 ## 🧰 Manutenção (opcional)
 
-O site não depende de nenhuma tarefa agendada: ele busca tudo nas APIs quando a página abre. A única coisa que não vem da API são as imagens das pistas e os logos das equipes — e mesmo sem elas o site continua funcionando com substitutos.
+O site se mantém sozinho: o Worker `f1dash-sync` roda a cada 10 minutos na Cloudflare e guarda no banco o que o site precisa. Para conferir se ele está rodando, abra [f1dash.pages.dev/api/status](https://f1dash.pages.dev/api/status) (mostra as últimas execuções). A única coisa que não vem da API são as imagens das pistas e os logos das equipes — e mesmo sem elas o site continua funcionando com substitutos.
+
+O site é publicado sozinho a cada push na `main`. Só o Worker é publicado à mão, e apenas se o código dele (`worker/` ou `server/`) mudar: `npm run worker:deploy`. Mudanças na estrutura do banco ficam em `migrations/` e são aplicadas com `npm run db:migrate:remote`.
 
 Quando quiser conferir se falta alguma imagem (por exemplo, quando sair o calendário de uma nova temporada):
 
