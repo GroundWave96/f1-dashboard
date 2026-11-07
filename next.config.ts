@@ -19,6 +19,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: '*.wikimedia.org',
       },
+      {
+        protocol: 'https',
+        hostname: 'media.formula1.com',
+      },
     ],
   },
 };
