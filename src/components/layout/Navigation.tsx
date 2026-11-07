@@ -5,10 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "../../i18n/LanguageContext";
-import { apiGet } from "../../lib/api";
+import { loadCalendar } from "../../lib/api";
 import { useAsyncData, useNow } from "../../lib/hooks";
 import { getRaceSessions } from "../../lib/sessions";
-import type { Race } from "../../types/f1";
 import { AboutButton, LanguageToggle } from "./Controls";
 
 type NavKey = "home" | "session" | "standings" | "calendar" | "results";
@@ -47,10 +46,6 @@ function NavIcon({ name, className = "w-6 h-6" }: { name: NavKey; className?: st
   );
 }
 
-async function loadCalendar(): Promise<Race[]> {
-  const data = await apiGet("current.json");
-  return data.RaceTable?.Races ?? [];
-}
 
 /** true enquanto algum treino, qualificação ou corrida está acontecendo (usa o calendário já carregado pelo site). */
 function useSessionLive() {

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { apiGet, apiGetAllRaces } from "../../../lib/api";
+import { apiGetAllRaces, loadCalendar } from "../../../lib/api";
 import { useAsyncData, useMediaQuery, useNow } from "../../../lib/hooks";
 import { getRaceSessions, getRaceStart, isWeekendActive, isWeekendOver } from "../../../lib/sessions";
 import { useLanguage } from "../../../i18n/LanguageContext";
@@ -13,10 +13,6 @@ import { ErrorIcon, TrophyIcon } from "../../ui/icons";
 import RaceDetailsModal from "./RaceDetailsModal";
 import TrackOutline from "./TrackOutline";
 
-async function loadCalendar() {
-  const data = await apiGet("current.json");
-  return data.RaceTable?.Races ?? [];
-}
 
 async function loadWinners() {
   const races = await apiGetAllRaces("current", "results");

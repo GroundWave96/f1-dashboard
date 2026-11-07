@@ -1,4 +1,4 @@
-import { MRData, PastRace } from "../types/f1";
+import { MRData, PastRace, Race } from "../types/f1";
 
 // Primeiro a API do próprio site (cópia no banco da Cloudflare, mais rápida e sem limite da Jolpica);
 // se ela não responder (ex.: rodando com `next dev`, sem as Functions), vai direto na Jolpica.
@@ -126,4 +126,10 @@ export function apiGetAllRaces(season: string, endpoint: "results" | "sprint" | 
   racesCache.set(key, promise);
   promise.catch(() => racesCache.delete(key));
   return promise;
+}
+
+/** Calendário da temporada atual (usado pelo Início, Calendário, Sessão e pelas abas). */
+export async function loadCalendar(): Promise<Race[]> {
+  const data = await apiGet("current.json");
+  return data.RaceTable?.Races ?? [];
 }

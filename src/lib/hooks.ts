@@ -20,14 +20,15 @@ export function useNow(intervalMs = 1000) {
  */
 export function useAsyncData<T>(key: string | null, load: () => Promise<T>) {
   const [state, setState] = useState<{ key: string | null; data?: T; error?: unknown }>({ key: null });
-  const [attempt, setAttempt] = useState(0);
+  // silent: nova tentativa em segundo plano, mantendo o resultado anterior na tela até a resposta chegar
+  const [attempt, setAttempt] = useState({ n: 0, silent: false });
   const loadRef = useRef(load);
 
   useEffect(() => {
     loadRef.current = load;
   });
 
-  const requestKey = key === null ? null : `${key}#${attempt}`;
+  const requestKey = key === null ? null : `${key}#${attempt.n}`;
 
   useEffect(() => {
     if (requestKey === null) return;
@@ -48,11 +49,14 @@ export function useAsyncData<T>(key: string | null, load: () => Promise<T>) {
   }, [requestKey]);
 
   const settled = requestKey !== null && state.key === requestKey;
+  const keepPrevious = !settled && attempt.silent && key !== null && state.key?.startsWith(`${key}#`) === true;
+  const visible = settled || keepPrevious;
   return {
-    data: settled ? state.data : undefined,
-    error: settled ? state.error : undefined,
-    loading: requestKey !== null && !settled,
-    reload: () => setAttempt((n) => n + 1),
+    data: visible ? state.data : undefined,
+    error: visible ? state.error : undefined,
+    loading: requestKey !== null && !visible,
+    reload: () => setAttempt((a) => ({ n: a.n + 1, silent: false })),
+    retrySilently: () => setAttempt((a) => ({ n: a.n + 1, silent: true })),
   };
 }
 

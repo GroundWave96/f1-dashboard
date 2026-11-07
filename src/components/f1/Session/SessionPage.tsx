@@ -20,6 +20,7 @@ import SessionPodium from "./SessionPodium";
 import TimingTable from "./TimingTable";
 import TopSpeed from "./TopSpeed";
 import SectorBoard from "./SectorBoard";
+import SessionLocked from "./SessionLocked";
 
 /**
  * Página "Sessão": classificação, velocidade máxima e setores de cada treino, qualificação e corrida
@@ -69,10 +70,18 @@ export default function SessionPage() {
     );
   }
 
+  if (isLiveLock(season.error)) {
+    return (
+      <div className="shell flex min-h-[calc(100dvh-var(--chrome-top)-var(--chrome-bottom))] items-center justify-center py-6">
+        <SessionLocked onRetry={season.retrySilently} onRetryNow={season.reload} />
+      </div>
+    );
+  }
+
   if (season.error || !selected) {
     return (
       <div className="shell min-h-[60svh] flex flex-col items-center justify-center gap-3 text-center">
-        <span className="text-sm text-zinc-300">{isLiveLock(season.error) ? t.locked : season.error ? t.unavailable : t.noSessions}</span>
+        <span className="text-sm text-zinc-300">{season.error ? t.unavailable : t.noSessions}</span>
         {Boolean(season.error) && (
           <button type="button" onClick={season.reload} className="tap rounded-full bg-white/10 px-4 py-2 text-sm font-bold hover:bg-white/15">
             {dict.errors.tryAgain}
@@ -152,9 +161,11 @@ export default function SessionPage() {
         <div className="min-h-[40svh] flex items-center justify-center">
           <Spinner />
         </div>
+      ) : isLiveLock(data.error) ? (
+        <SessionLocked onRetry={data.retrySilently} onRetryNow={data.reload} />
       ) : data.error || !data.data ? (
         <div className="glass rounded-2xl px-4 py-6 flex flex-col items-center gap-3 text-center">
-          <span className="max-w-xl text-sm text-zinc-300">{isLiveLock(data.error) ? t.locked : t.unavailable}</span>
+          <span className="max-w-xl text-sm text-zinc-300">{t.unavailable}</span>
           <button type="button" onClick={data.reload} className="tap rounded-full bg-white/10 px-4 py-2 text-sm font-bold hover:bg-white/15">
             {dict.errors.tryAgain}
           </button>

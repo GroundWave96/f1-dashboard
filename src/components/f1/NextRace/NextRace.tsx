@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { apiGet } from "../../../lib/api";
+import { apiGet, loadCalendar } from "../../../lib/api";
 import { useAsyncData, useNow } from "../../../lib/hooks";
 import { getRaceSessions, getWeekendState, isWeekendOver, RaceSession, WeekendState } from "../../../lib/sessions";
 import RaceInfo from "./RaceInfo";
@@ -15,10 +15,6 @@ import Spinner from "../../ui/Spinner";
 import { ErrorIcon } from "../../ui/icons";
 import { useLanguage } from "../../../i18n/LanguageContext";
 
-async function loadCalendar() {
-  const data = await apiGet("current.json");
-  return data.RaceTable?.Races ?? [];
-}
 
 // Quando a temporada atual acabou, a Jolpica já devolve a 1ª corrida da próxima (se o calendário saiu)
 async function loadNextSeasonRace() {
