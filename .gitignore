@@ -44,3 +44,9 @@ next-env.d.ts
 .mcp.json
 # Capturas e registros gerados pelo Playwright MCP durante os testes
 .playwright-mcp/
+
+# Imagens de referência usadas só localmente no planejamento
+referencias/
+
+# Estado local do wrangler (banco D1 de teste, cache)
+.wrangler/
