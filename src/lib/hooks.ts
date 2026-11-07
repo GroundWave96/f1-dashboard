@@ -109,10 +109,11 @@ export function useDialog(onClose: () => void) {
   const [trigger] = useState(() => document.activeElement as HTMLElement | null);
 
   useEffect(() => {
-    const main = document.querySelector("main");
-    main?.setAttribute("inert", "");
+    // #app = barras de navegação + página (as janelas ficam fora dele, direto no body)
+    const app = document.getElementById("app");
+    app?.setAttribute("inert", "");
     return () => {
-      main?.removeAttribute("inert");
+      app?.removeAttribute("inert");
       trigger?.focus({ preventScroll: true });
     };
   }, [trigger]);

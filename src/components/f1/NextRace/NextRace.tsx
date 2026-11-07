@@ -11,7 +11,6 @@ import WeekendSchedule from "./WeekendSchedule";
 import RaceExtras from "./RaceExtras";
 import CircuitFacts from "./CircuitFacts";
 import SeasonOver from "./SeasonOver";
-import Header from "../../layout/Header";
 import Spinner from "../../ui/Spinner";
 import { ErrorIcon } from "../../ui/icons";
 import { useLanguage } from "../../../i18n/LanguageContext";
@@ -102,16 +101,8 @@ export default function NextRace() {
   const nextSeason = useAsyncData(races && !upcoming ? "next-season-race" : null, loadNextSeasonRace);
   const race = upcoming ?? nextSeason.data ?? null;
 
-  const handleScrollDown = () => {
-    const sections = document.querySelectorAll("main > section");
-    if (sections.length > 1) {
-      sections[1].scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   const renderStatus = (content: React.ReactNode) => (
-    <div className="shell h-full flex flex-col pt-3 pb-6 sm:pt-6 sm:pb-8">
-      <Header />
+    <div className="shell h-full min-h-[60svh] flex flex-col py-4 sm:py-6">
       <div className="flex-1 min-h-0 flex flex-col items-center justify-center gap-2">
         {content}
       </div>
@@ -151,12 +142,9 @@ export default function NextRace() {
   // nome do GP no topo, contagem no meio e programação + circuito na base, na mesma linha da
   // previsão do tempo e dos vencedores da coluna da direita.
   return (
-    <div className="shell h-full flex flex-col gap-3 sm:gap-4 pt-3 pb-9 sm:pt-6 sm:pb-8 [@media(max-height:500px)]:pt-2 [@media(max-height:500px)]:pb-2 [@media(max-height:500px)]:gap-2">
-
-      <Header />
-
+    <div className="shell h-full flex flex-col py-3 sm:py-5">
       <article
-        className="reveal relative flex-1 min-h-0 flex flex-col landscape:flex-row gap-[clamp(0.75rem,2.2vh,2rem)] landscape:gap-[clamp(1rem,3vw,3.5rem)] rounded-2xl border border-zinc-800 bg-zinc-900 shadow-xl p-4 sm:p-6 lg:p-8 [@media(max-height:500px)]:p-3"
+        className="reveal relative flex-1 min-h-0 flex flex-col landscape:flex-row gap-[clamp(0.75rem,2.2vh,2rem)] landscape:gap-[clamp(1rem,3vw,3.5rem)] glass rounded-[1.75rem] p-4 sm:p-6 lg:p-8 [@media(max-height:500px)]:p-3"
         style={{ "--i": 1 } as React.CSSProperties}
       >
         <div className="shrink-0 landscape:shrink landscape:flex-1 landscape:basis-0 min-w-0 flex flex-col items-center landscape:items-start landscape:justify-between gap-[clamp(0.6rem,2vh,1.6rem)]">
@@ -166,41 +154,20 @@ export default function NextRace() {
             <WeekendSchedule sessions={sessions} now={now} />
             <CircuitFacts
               circuitId={race.Circuit.circuitId}
-              className="hidden [@media(orientation:landscape)_and_(min-height:760px)]:flex [@media(orientation:portrait)_and_(min-height:1000px)]:flex"
+              className="hidden [@media(orientation:landscape)_and_(min-height:760px)]:flex [@media(orientation:portrait)_and_(min-height:1200px)]:flex"
             />
           </div>
         </div>
 
-        <div className="flex-1 basis-0 min-h-0 min-w-0 flex flex-col gap-[clamp(0.6rem,2vh,1.6rem)]">
-          <div className="relative flex-1 min-h-16">
+        {/* Coluna do mapa: elástica quando a tela tem altura fixa; no celular em pé, altura do conteúdo */}
+        <div className="landscape:flex-1 landscape:basis-0 fill:flex-1 fill:basis-0 fill:min-h-0 min-w-0 flex flex-col gap-[clamp(0.6rem,2vh,1.6rem)]">
+          {/* No celular a altura vem do conteúdo, então o mapa tem um tamanho mínimo; no computador ele é "elástico" */}
+          <div className="relative flex-1 min-h-64 fill:min-h-16">
             <TrackMap key={race.Circuit.circuitId} circuitId={race.Circuit.circuitId} country={race.Circuit.Location.country} />
           </div>
           <RaceExtras race={race} sessions={sessions} now={now} />
         </div>
       </article>
-
-      <button
-        type="button"
-        onClick={handleScrollDown}
-        aria-label={dict.nextRace.scrollDown}
-        className="absolute bottom-1 left-1/2 -translate-x-1/2 flex lg:hidden [@media(max-height:500px)]:hidden flex-col items-center text-muted/70 cursor-pointer hover:text-zinc-300 transition-colors z-10"
-      >
-        <svg className="w-5 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 32" aria-hidden="true">
-          <path className="animate-chevron" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 4l6 6 6-6" />
-          <path className="animate-chevron animation-delay-150" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 12l6 6 6-6" />
-        </svg>
-      </button>
-
-      <button
-        type="button"
-        onClick={handleScrollDown}
-        aria-label={dict.nextRace.scrollDown}
-        className="hidden lg:flex absolute bottom-6 right-6 flex-col items-center gap-2 text-muted cursor-pointer hover:text-zinc-400 transition-colors z-10"
-      >
-        <div className="flex items-center justify-center w-6 h-10 border-2 border-zinc-500/50 rounded-full relative">
-          <div className="w-1.5 bg-[#FB2C36] rounded-full absolute animate-scroll-mouse" />
-        </div>
-      </button>
 
     </div>
   );

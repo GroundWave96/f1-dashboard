@@ -183,13 +183,56 @@ export const dictionaries = {
       about: "Sobre o projeto",
       changeLanguage: "Mudar idioma para inglês"
     },
+    nav: {
+      label: "Navegação principal",
+      home: "Início",
+      session: "Sessão",
+      standings: "Campeonato",
+      calendar: "Calendário",
+      results: "Resultados"
+    },
+    common: {
+      close: "Fechar"
+    },
+    home: {
+      latestSession: "Última sessão",
+      seeSession: "Ver sessão"
+    },
+    session: {
+      title: "Sessão",
+      pickMeeting: "Escolher etapa",
+      liveNow: "Ao vivo agora",
+      liveNote: "Os dados aparecem aqui cerca de 30 minutos depois do fim da sessão.",
+      upcoming: "Ainda não aconteceu",
+      noData: "Ainda não há dados desta sessão.",
+      unavailable: "Não foi possível carregar os dados desta sessão. Tente de novo em alguns minutos.",
+      noSessions: "Nenhuma sessão disponível ainda.",
+      classification: "Classificação",
+      pos: "Pos",
+      driver: "Piloto",
+      bestLap: "Melhor volta",
+      gap: "Diferença",
+      laps: "Voltas",
+      tyre: "Pneu",
+      time: "Tempo",
+      topSpeed: "Velocidade máxima",
+      topSpeedNote: "No ponto de medição (speed trap)",
+      sectors: "Setores",
+      sector: "Setor",
+      fastestLap: "Volta mais rápida",
+      theoretical: "Volta teórica",
+      theoreticalNote: "Soma dos melhores setores da sessão",
+      lapsDone: "voltas",
+      tyres: { SOFT: "Macio", MEDIUM: "Médio", HARD: "Duro", INTERMEDIATE: "Intermediário", WET: "Chuva" },
+      status: { dnf: "Abandono", dns: "Não largou", dsq: "Desclassificado" }
+    },
     footer: {
       portfolioTitle: "Ver Portfólio de Gabriel Pimentel"
     },
     about: {
       title: "Sobre o Projeto",
       desc1: "Desenvolvido por ",
-      desc2: " como um projeto de estudo e portfólio. Os dados estatísticos e históricos das corridas são consumidos utilizando a API pública Ergast (via Jolpi).",
+      desc2: " como um projeto de estudo e portfólio. Os dados vêm da Jolpica (história, campeonato e calendário) e do OpenF1 (voltas, setores e telemetria das sessões), guardados num banco da Cloudflare.",
       tech: "Tecnologias utilizadas:"
     },
   },
@@ -377,13 +420,56 @@ export const dictionaries = {
       about: "About the project",
       changeLanguage: "Switch language to Portuguese"
     },
+    nav: {
+      label: "Main navigation",
+      home: "Home",
+      session: "Session",
+      standings: "Standings",
+      calendar: "Calendar",
+      results: "Results"
+    },
+    common: {
+      close: "Close"
+    },
+    home: {
+      latestSession: "Latest session",
+      seeSession: "See session"
+    },
+    session: {
+      title: "Session",
+      pickMeeting: "Choose event",
+      liveNow: "Live now",
+      liveNote: "Data shows up here about 30 minutes after the session ends.",
+      upcoming: "Not started yet",
+      noData: "No data for this session yet.",
+      unavailable: "Couldn't load this session's data. Try again in a few minutes.",
+      noSessions: "No sessions available yet.",
+      classification: "Classification",
+      pos: "Pos",
+      driver: "Driver",
+      bestLap: "Best lap",
+      gap: "Gap",
+      laps: "Laps",
+      tyre: "Tyre",
+      time: "Time",
+      topSpeed: "Top speed",
+      topSpeedNote: "At the speed trap",
+      sectors: "Sectors",
+      sector: "Sector",
+      fastestLap: "Fastest lap",
+      theoretical: "Theoretical lap",
+      theoreticalNote: "Sum of the session's best sectors",
+      lapsDone: "laps",
+      tyres: { SOFT: "Soft", MEDIUM: "Medium", HARD: "Hard", INTERMEDIATE: "Intermediate", WET: "Wet" },
+      status: { dnf: "DNF", dns: "DNS", dsq: "DSQ" }
+    },
     footer: {
       portfolioTitle: "View Gabriel Pimentel's Portfolio"
     },
     about: {
       title: "About the Project",
       desc1: "Developed by ",
-      desc2: " as a study and portfolio project. Racing statistics and historical data are sourced using the public Ergast API (via Jolpi).",
+      desc2: " as a study and portfolio project. Data comes from Jolpica (history, championship and calendar) and OpenF1 (laps, sectors and session telemetry), stored in a Cloudflare database.",
       tech: "Technologies used:"
     },
   }

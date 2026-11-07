@@ -59,7 +59,7 @@ export default function TitleFight({ season, calendar, standingsRound, drivers, 
   ].filter(Boolean).join(" • ");
 
   return (
-    <div className="h-full bg-zinc-900 border border-zinc-800 rounded-2xl shadow-xl p-4 sm:p-6 flex flex-col gap-[clamp(0.75rem,2vh,1.25rem)]">
+    <div className="h-full glass rounded-3xl p-4 sm:p-6 flex flex-col gap-[clamp(0.75rem,2vh,1.25rem)]">
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col min-w-0">
           <span className="text-red-500 font-bold uppercase tracking-widest text-[10px]">{dict.highlights.titleFight}</span>

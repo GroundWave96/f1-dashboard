@@ -27,7 +27,7 @@ export default function SegmentedControl<T extends string>({
   const pill = variant === "primary" ? "bg-red-600 shadow-lg shadow-red-900/30" : "bg-zinc-700";
 
   return (
-    <div role="group" aria-label={ariaLabel} className={`relative flex items-center rounded-full border border-zinc-800 bg-zinc-900 ${height} ${className}`}>
+    <div role="group" aria-label={ariaLabel} className={`relative flex items-center rounded-full border border-white/10 bg-white/[0.04] ${height} ${className}`}>
       <div className="relative flex h-full w-full items-center">
         <span
           aria-hidden="true"

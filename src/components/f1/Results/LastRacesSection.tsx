@@ -7,7 +7,6 @@ import { Driver, Constructor } from "../../../types/f1";
 import RaceNavigation, { ViewMode } from "./RaceNavigation";
 import ResultsList from "./ResultsList";
 import QualifyingList from "./QualifyingList";
-import Footer from "../../layout/Footer";
 import { useLanguage } from "../../../i18n/LanguageContext";
 import Spinner from "../../ui/Spinner";
 import { ErrorIcon } from "../../ui/icons";
@@ -121,14 +120,14 @@ export default function LastRacesSection() {
         if (activeTab === "qualifying") {
             if (qualifying.loading) {
                 return (
-                    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl h-full flex items-center justify-center">
+                    <div className="glass rounded-3xl min-h-48 h-full flex items-center justify-center">
                         <Spinner />
                     </div>
                 );
             }
             if (!qualiRace?.QualifyingResults?.length) {
                 return (
-                    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl h-full flex items-center justify-center text-sm text-muted px-4 text-center">
+                    <div className="glass rounded-3xl min-h-48 h-full flex items-center justify-center text-sm text-muted px-4 text-center">
                         {dict.results.noQuali}
                     </div>
                 );
@@ -198,7 +197,6 @@ export default function LastRacesSection() {
                     onClose={() => setSelectedConstructor(null)}
                 />
             )}
-            <Footer />
         </div>
     );
 }

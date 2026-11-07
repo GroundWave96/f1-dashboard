@@ -7,7 +7,7 @@ export default function Footer() {
   const { dict } = useLanguage();
 
   return (
-    <footer className="shrink-0 text-center py-2 sm:py-3 hide-compact">
+    <footer className="shrink-0 text-center pt-2 pb-6">
       <p className="text-[10px] sm:text-xs text-muted uppercase tracking-widest font-medium">
         Designed & Developed by{" "}
         <a

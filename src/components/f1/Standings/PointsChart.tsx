@@ -84,7 +84,7 @@ export default function PointsChart() {
 
   if (loading) {
     return (
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl shadow-xl p-4 sm:p-6 h-full flex items-center justify-center">
+      <div className="glass rounded-3xl p-4 sm:p-6 h-full flex items-center justify-center">
         <Spinner />
       </div>
     );
@@ -92,7 +92,7 @@ export default function PointsChart() {
 
   if (!timeline || timeline.rounds.length === 0) {
     return (
-      <div className="h-full bg-zinc-900 border border-zinc-800 rounded-2xl shadow-xl p-4 sm:p-6 flex flex-col gap-4">
+      <div className="h-full glass rounded-3xl p-4 sm:p-6 flex flex-col gap-4">
         {header}
         <p className="text-sm text-muted text-center py-10">{dict.standings.chartEmpty}</p>
       </div>
@@ -147,7 +147,7 @@ export default function PointsChart() {
   const tooltipOnLeft = hoverIndex !== null && x(hoverIndex) > width * 0.6;
 
   return (
-    <div className="h-full bg-zinc-900 border border-zinc-800 rounded-2xl shadow-xl p-4 sm:p-6 flex flex-col gap-3 sm:gap-4">
+    <div className="h-full glass rounded-3xl p-4 sm:p-6 flex flex-col gap-3 sm:gap-4">
       {header}
 
       <div className="flex flex-wrap gap-1.5" role="group" aria-label={dict.standings.chartHint}>
@@ -171,7 +171,7 @@ export default function PointsChart() {
 
       <div
         ref={containerRef}
-        className="relative w-full rounded flex-1 min-h-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-red-500"
+        className="relative w-full rounded flex-1 min-h-[20rem] fill:min-h-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-red-500"
         tabIndex={0}
         onKeyDown={handleKey}
         onBlur={() => setHoverIndex(null)}

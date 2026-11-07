@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { apiGet, apiGetAllRaces } from "../../../lib/api";
 import { useAsyncData, useMediaQuery, useNow } from "../../../lib/hooks";
 import { getRaceSessions, getRaceStart, isWeekendActive, isWeekendOver } from "../../../lib/sessions";
@@ -31,7 +31,6 @@ export default function CalendarSection() {
   const { dict, lang } = useLanguage();
   const locale = lang === "pt" ? "pt-BR" : "en-US";
   const now = useNow(60_000);
-  const listRef = useRef<HTMLOListElement>(null);
   // O desenho da pista só aparece na grade de cards (a partir de 640px); no celular nem é baixado
   const showTracks = useMediaQuery("(min-width: 640px)");
 
@@ -40,14 +39,6 @@ export default function CalendarSection() {
   const races = calendar.data ?? [];
   const season = races[0]?.season ?? "";
   const nextRound = races.find((race) => !isWeekendOver(race, now))?.round;
-
-  // No celular (lista com rolagem), já abre mostrando a próxima corrida
-  useEffect(() => {
-    const list = listRef.current;
-    if (!list || !nextRound || list.scrollHeight <= list.clientHeight) return;
-    const item = list.querySelector<HTMLElement>(`[data-round="${nextRound}"]`);
-    if (item) list.scrollTop = item.offsetTop - list.clientHeight / 3;
-  }, [nextRound, races.length]);
 
   const formatDay = (date: Date) =>
     date.toLocaleDateString(locale, { day: "numeric", month: "short" }).replace(" de ", " ").replace(".", "");
@@ -82,8 +73,8 @@ export default function CalendarSection() {
     <div className="shell h-full flex flex-col gap-4 sm:gap-6 py-4 sm:py-6">
       <SectionHeader eyebrow={dict.calendar.title} title={season} />
 
-      {/* Celular: lista com rolagem. A partir de 640px: grade de cards que preenche a altura da tela. */}
-      <ol ref={listRef} className="cal-grid flex-1 min-h-0 overflow-y-auto overscroll-contain custom-scrollbar">
+      {/* Celular: lista (a página rola). A partir de 640px: grade de cards que preenche a altura da tela. */}
+      <ol className="cal-grid fill:flex-1 fill:min-h-0 fill:overflow-y-auto fill:overscroll-contain custom-scrollbar">
         {races.map((race, index) => {
           const isLive = isWeekendActive(race, now);
           const isDone = isWeekendOver(race, now);
@@ -93,10 +84,10 @@ export default function CalendarSection() {
           const tone = isLive
             ? "border-red-500/70 bg-red-500/10 shadow-[0_0_18px_rgba(239,68,68,0.18)]"
             : isNext
-              ? "border-red-500/45 bg-zinc-900 shadow-[0_0_18px_rgba(239,68,68,0.12)]"
+              ? "border-red-500/45 bg-white/[0.05] shadow-[0_0_18px_rgba(239,68,68,0.12)]"
               : isDone
-                ? "border-zinc-800/70 bg-zinc-900/60"
-                : "border-zinc-800 bg-zinc-900";
+                ? "border-white/[0.05] bg-white/[0.02]"
+                : "border-white/[0.07] bg-white/[0.04]";
 
           const status = isLive ? dict.calendar.thisWeekend : isNext ? dict.calendar.next : null;
           const trackTone = isLive || isNext ? "text-red-500/45 group-hover:text-red-500/70" : isDone ? "text-zinc-700/80 group-hover:text-zinc-600" : "text-zinc-600/70 group-hover:text-zinc-500";

@@ -48,11 +48,129 @@ html {
 @custom-variant desk-tall (@media (orientation: landscape) and (min-width: 1024px) and (min-height: 860px));
 /* ...e monitor na vertical (ex.: Full HD em pé) */
 @custom-variant tall-portrait (@media (orientation: portrait) and (min-width: 700px) and (min-height: 1400px));
+/* Barra lateral no lugar das barras de cima/de abas: computador, tablet deitado e celular deitado */
+@custom-variant rail {
+  @media (min-width: 1024px) {
+    @slot;
+  }
+  @media (orientation: landscape) and (max-height: 520px) {
+    @slot;
+  }
+}
+/* Telas que preenchem a altura disponível (tablet e computador), igual ao .screen-fill */
+@custom-variant fill (@media (min-width: 720px) and (min-height: 600px));
+
+/* ---------- Casco do aplicativo ---------- */
+
+/* Espaço ocupado pelas barras fixas. Celular: barra de cima + barra de abas flutuante.
+   Com a barra lateral: só a largura dela à esquerda. */
+:root {
+  --rail-width: 5.5rem;
+  --rail-item: 3.75rem;
+  --chrome-left: 0px;
+  --chrome-top: calc(3.5rem + env(safe-area-inset-top, 0px));
+  --chrome-bottom: calc(4rem + max(env(safe-area-inset-bottom, 0px), 0.75rem) + 0.75rem);
+}
+@media (min-width: 1024px), (orientation: landscape) and (max-height: 520px) {
+  :root {
+    --chrome-left: calc(var(--rail-width) + 1.5rem);
+    --chrome-top: 0px;
+    --chrome-bottom: 0px;
+  }
+}
+@media (orientation: landscape) and (max-height: 520px) {
+  :root { --rail-width: 4.5rem; --rail-item: 2.75rem; }
+}
+
+html {
+  background: #09090b;
+  /* Sem o "flash" cinza ao tocar em botões e links no celular */
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-x: none;
+}
+
+.app-content {
+  padding-left: var(--chrome-left);
+  padding-bottom: var(--chrome-bottom);
+}
+
+/* Controles tocáveis: resposta imediata ao toque e sem selecionar o texto num toque longo */
+.tap {
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Fundo do app: preto com brilhos vermelhos suaves, que o vidro das barras e dos painéis "pega" */
+.app-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(55rem 38rem at -5% -10%, rgb(225 6 0 / 0.17), transparent 62%),
+    radial-gradient(48rem 34rem at 105% 108%, rgb(225 6 0 / 0.11), transparent 62%),
+    radial-gradient(40rem 28rem at 88% 0%, rgb(148 163 184 / 0.07), transparent 60%),
+    #09090b;
+}
+
+/* Telas que preenchem a altura disponível (tablet e computador). No celular a altura é a do
+   conteúdo e quem rola é a página. */
+.screen-fill {
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 720px) and (min-height: 600px) {
+  .screen-fill { height: calc(100dvh - var(--chrome-top) - var(--chrome-bottom)); }
+}
+/* Mesma ideia, só em telas deitadas (computador/tablet deitado): para blocos que, em pé,
+   ficam melhor com a altura do próprio conteúdo numa página que já rola */
+.screen-fill-wide {
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 1024px) and (min-height: 600px) and (orientation: landscape) {
+  .screen-fill-wide { height: calc(100dvh - var(--chrome-top) - var(--chrome-bottom)); }
+}
+
+/* ---------- Vidro ---------- */
+
+/* Barras (navegação): vidro mais "grosso", com borda clara em cima como luz batendo no material */
+.glass-chrome {
+  background: rgb(20 20 24 / 0.6);
+  -webkit-backdrop-filter: blur(28px) saturate(170%);
+  backdrop-filter: blur(28px) saturate(170%);
+  border: 1px solid rgb(255 255 255 / 0.09);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 18px 40px -12px rgb(0 0 0 / 0.75);
+}
+/* Barra de cima do celular: sem borda, com o conteúdo sumindo por baixo dela */
+.glass-bar {
+  background: rgb(9 9 11 / 0.72);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.05);
+}
+/* Painéis de conteúdo (cards, listas): vidro mais leve */
+.glass {
+  background: rgb(24 24 27 / 0.55);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgb(255 255 255 / 0.07);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 24px 48px -24px rgb(0 0 0 / 0.7);
+}
+/* Quem pede menos transparência no sistema recebe superfícies sólidas */
+@media (prefers-reduced-transparency: reduce) {
+  .glass, .glass-chrome, .glass-bar {
+    background: #18181b;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
 
 /* ---------- Layout das seções ---------- */
 
-/* Largura padrão do conteúdo: ocupa a tela no celular e cresce nos monitores grandes,
-   deixando espaço à direita para a navegação lateral (bolinhas) a partir de 1024px. */
+/* Largura padrão do conteúdo: ocupa a tela no celular e cresce nos monitores grandes. */
 .shell {
   width: 100%;
   margin-inline: auto;
@@ -62,7 +180,7 @@ html {
   .shell { padding-inline: 1.5rem; }
 }
 @media (min-width: 1024px) {
-  .shell { max-width: 80rem; padding-inline: 4.5rem; }
+  .shell { max-width: 84rem; padding-inline: 1.5rem 2rem; }
 }
 @media (min-width: 1600px) {
   .shell { max-width: 100rem; }
@@ -123,19 +241,13 @@ html {
   .deck > :nth-child(3) { grid-column: auto; }
 }
 
-/* Listas de classificação/resultados: uma coluna no celular (com rolagem e degradê na borda),
+/* Listas de classificação/resultados: uma coluna no celular (a página rola, a lista não),
    duas colunas (1º–11º | 12º–22º) a partir de 720px, para caber sem rolagem. Nessas telas a lista
    ocupa toda a altura disponível: as linhas se esticam (até 6rem) em vez de sobrar espaço embaixo.
    Monitores/tablets em pé com bastante altura voltam a uma coluna só. */
 .rank-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-}
-@media (max-width: 719px) {
-  .rank-scroll {
-    mask-image: linear-gradient(to bottom, black calc(100% - 2.5rem), transparent);
-    padding-bottom: 2.5rem;
-  }
 }
 @media (min-width: 720px) {
   /* Altura definida (não mínima): sem ela, a grade esticaria todas as linhas até o limite de 6rem */
@@ -169,18 +281,12 @@ html {
   }
 }
 
-/* Calendário: lista com rolagem no celular; grade de cards que divide a altura da tela a partir
+/* Calendário: lista no celular (a página rola); grade de cards que divide a altura da tela a partir
    de 640px (a temporada inteira à vista, sem rolagem). Se a tela for baixa demais, volta a rolar. */
 .cal-grid {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-}
-@media (max-width: 639px) {
-  .cal-grid {
-    mask-image: linear-gradient(to bottom, black calc(100% - 2.5rem), transparent);
-    padding-bottom: 2.5rem;
-  }
 }
 @media (min-width: 640px) {
   .cal-grid {
@@ -211,6 +317,35 @@ html {
 /* Indício de conteúdo escondido: a lista "some" suavemente na borda de baixo */
 .fade-bottom {
   mask-image: linear-gradient(to bottom, black calc(100% - 2.5rem), transparent);
+}
+
+/* ---------- Abertura ---------- */
+
+/* Rastro de luz que cruza a tela no apagar das luzes (velocidade constante, como um carro passando) */
+.intro-streak {
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent, rgb(225 6 0 / 0.9) 55%, #fff 93%, transparent);
+  animation-name: intro-streak;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+.intro-streak-glow {
+  filter: blur(18px);
+  opacity: 0.65;
+  background: linear-gradient(90deg, transparent, rgb(225 6 0 / 0.6) 60%, rgb(255 210 210 / 0.5) 93%, transparent);
+}
+@keyframes intro-streak {
+  from { transform: translate(-50vw, -50%); }
+  to { transform: translate(160vw, -50%); }
+}
+/* A marca aparece "puxada" pelo rastro: revelada da esquerda para a direita, saindo do desfoque.
+   Só "backwards" para, depois de pronta, a transição de saída (escala + desfoque) funcionar. */
+.intro-brand {
+  animation: intro-reveal 260ms var(--ease-fluid) 150ms backwards;
+}
+@keyframes intro-reveal {
+  from { clip-path: inset(-20% 100% -20% 0); filter: blur(6px); opacity: 0.4; }
+  to { clip-path: inset(-20% 0 -20% 0); filter: blur(0); opacity: 1; }
 }
 
 /* ---------- Animações ---------- */
@@ -292,54 +427,5 @@ html {
   section[data-inview="true"] .reveal,
   section[data-inview="true"] .rise {
     animation: fade-in 250ms ease backwards;
-  }
-}
-
-@layer utilities {
-  @media (prefers-reduced-motion: no-preference) {
-    .animate-scroll-mouse {
-      animation: scroll-mouse 2.5s cubic-bezier(0.15, 0.41, 0.69, 0.94) infinite;
-    }
-  }
-}
-
-/* Posição parada do "pontinho" do mouse (quando a animação está desligada) */
-.animate-scroll-mouse { top: 6px; height: 6px; }
-
-@keyframes scroll-mouse {
-  0% { top: 6px; height: 6px; opacity: 1; }
-  20% { top: 6px; height: 18px; opacity: 1; }
-  40% { top: 22px; height: 6px; opacity: 1; }
-  60% { top: 22px; height: 6px; opacity: 0; }
-  65% { top: 6px; height: 6px; opacity: 0; }
-  100% { top: 6px; height: 6px; opacity: 1; }
-}
-
-@layer utilities {
-  @media (prefers-reduced-motion: no-preference) {
-    .animate-chevron {
-      animation: chevron-fade 1.5s infinite ease-out;
-    }
-  }
-  .animation-delay-150 {
-    animation-delay: 150ms;
-  }
-  .animation-delay-300 {
-    animation-delay: 300ms;
-  }
-}
-
-@keyframes chevron-fade {
-  0% {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  50% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(4px);
   }
 }

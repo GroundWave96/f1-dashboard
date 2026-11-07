@@ -25,7 +25,7 @@ export default function SeasonStats({ races, totalRounds }: SeasonStatsProps) {
   ];
 
   return (
-    <div className="@container h-full bg-zinc-900 border border-zinc-800 rounded-2xl shadow-xl p-4 sm:p-6 flex flex-col gap-[clamp(0.75rem,2vh,1.25rem)]">
+    <div className="@container h-full glass rounded-3xl p-4 sm:p-6 flex flex-col gap-[clamp(0.75rem,2vh,1.25rem)]">
       <div className="flex flex-col gap-2">
         <span className="text-red-500 font-bold uppercase tracking-widest text-[10px]">{dict.highlights.seasonNumbers}</span>
         <div className="flex items-baseline justify-between gap-3">

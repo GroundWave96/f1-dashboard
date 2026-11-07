@@ -69,7 +69,7 @@ export default function LastRacePodium({ race, onDriverClick }: LastRacePodiumPr
   ].filter(Boolean) as { label: string; driver: Driver; detail: string | null; accent: string }[];
 
   return (
-    <div className="h-full bg-zinc-900 border border-zinc-800 rounded-2xl shadow-xl p-4 sm:p-6 flex flex-col justify-between gap-[clamp(0.75rem,2.2vh,1.5rem)]">
+    <div className="h-full glass rounded-3xl p-4 sm:p-6 flex flex-col justify-between gap-[clamp(0.75rem,2.2vh,1.5rem)]">
       <div className="flex flex-col">
         <span className="text-red-500 font-bold uppercase tracking-widest text-[10px]">
           {dict.highlights.lastRace} • {dict.results.round} {race.round} • {date}
@@ -80,7 +80,7 @@ export default function LastRacePodium({ race, onDriverClick }: LastRacePodiumPr
 
       {/* O pódio ocupa toda a altura livre do card: a área mede a própria altura (container de tamanho)
           e o degrau do 1º cresce até o topo dela, descontando bandeira, nome e tempo */}
-      <div className="flex-1 min-h-[7.5rem] [container-type:size] grid grid-cols-3 items-end gap-2 sm:gap-3 [--podium:clamp(3.25rem,100cqh_-_4.75rem,22rem)] lg:[--podium:clamp(3.25rem,100cqh_-_5.25rem,22rem)]">
+      <div className="flex-1 min-h-[15rem] fill:min-h-[7.5rem] [container-type:size] grid grid-cols-3 items-end gap-2 sm:gap-3 [--podium:clamp(3.25rem,100cqh_-_4.75rem,22rem)] lg:[--podium:clamp(3.25rem,100cqh_-_5.25rem,22rem)]">
         {podium.map((result) => {
           const style = PODIUM_STYLE[result.position];
           const gap = result.position === "1" ? result.Time?.time : result.Time?.time ?? result.status;

@@ -39,7 +39,7 @@ export default function SeasonOver() {
   const constructor = data?.constructor;
 
   return (
-    <div className="relative w-full max-w-2xl mx-auto bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl p-6 sm:p-10 overflow-hidden text-center animate-in fade-in duration-500">
+    <div className="relative w-full max-w-2xl mx-auto glass rounded-3xl p-6 sm:p-10 overflow-hidden text-center animate-in fade-in duration-500">
       <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-72 h-48 bg-yellow-400/10 blur-3xl rounded-full pointer-events-none" />
 
       <TrophyIcon className="relative w-12 h-12 sm:w-14 sm:h-14 mx-auto text-yellow-400 drop-shadow-[0_0_12px_rgba(250,204,21,0.5)] mb-3" />

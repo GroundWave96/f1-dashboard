@@ -1,18 +1,19 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { useAppReady } from "./AppShell";
 
-interface RevealSectionProps {
+interface RevealProps {
   children: React.ReactNode;
-  // Só observa depois do preloader, para a animação de entrada acontecer à vista do usuário
-  ready: boolean;
+  className?: string;
 }
 
 /**
- * Seção de tela inteira. Marca `data-inview="true"` na primeira vez que ela aparece,
- * o que dispara as animações `.reveal` / `.rise` / `.grow-x` definidas em globals.css.
+ * Bloco de página que marca `data-inview="true"` na primeira vez que aparece na tela (depois da abertura),
+ * o que dispara as animações `.reveal` / `.rise` / `.grow-x` / `.draw-on-view` definidas em globals.css.
  */
-export default function RevealSection({ children, ready }: RevealSectionProps) {
+export default function Reveal({ children, className = "" }: RevealProps) {
+  const ready = useAppReady();
   const ref = useRef<HTMLElement>(null);
   const [seen, setSeen] = useState(false);
 
@@ -26,14 +27,14 @@ export default function RevealSection({ children, ready }: RevealSectionProps) {
           observer.disconnect();
         }
       },
-      { threshold: 0.35 }
+      { threshold: 0.15 },
     );
     observer.observe(element);
     return () => observer.disconnect();
   }, [ready, seen]);
 
   return (
-    <section ref={ref} data-inview={seen ? "true" : "false"} className="h-dvh w-full snap-start relative overflow-hidden">
+    <section ref={ref} data-inview={seen ? "true" : "false"} className={`relative ${className}`}>
       {children}
     </section>
   );

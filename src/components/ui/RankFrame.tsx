@@ -18,7 +18,7 @@ interface RankFrameProps {
  */
 export default function RankFrame({ count, ariaLabel, short = false, children }: RankFrameProps) {
   return (
-    <div className="rank-scroll max-h-full overflow-y-auto overscroll-contain custom-scrollbar rounded-2xl border border-zinc-800 bg-zinc-900 shadow-xl p-1.5 sm:p-2">
+    <div className="rank-scroll glass rounded-3xl p-1.5 sm:p-2 fill:max-h-full fill:overflow-y-auto fill:overscroll-contain custom-scrollbar">
       <ol aria-label={ariaLabel} className={`rank-grid ${short ? "rank-short" : ""}`} style={{ "--rows": Math.ceil(count / 2), "--count": count } as React.CSSProperties}>
         {children}
       </ol>

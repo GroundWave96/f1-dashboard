@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "../i18n/LanguageContext";
+import AppShell from "../components/layout/AppShell";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -12,12 +13,21 @@ const poppins = Poppins({
 export const viewport: Viewport = {
   themeColor: "#09090B",
   colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
+  // Ocupa a tela toda no iPhone (atrás do entalhe/ilha); as barras se afastam dessas áreas com env(safe-area-inset-*)
+  viewportFit: "cover",
+  // No Android o teclado encolhe a área visível, como no iPhone
+  interactiveWidget: "resizes-content",
 };
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://f1dash.pages.dev/"),
 
-  title: "F1 Dashboard | Temporada Atual",
+  title: {
+    default: "F1 Dashboard | Temporada Atual",
+    template: "%s | F1 Dashboard",
+  },
   description: "Acompanhe as próximas corridas, classificação de pilotos e resultados da Fórmula 1 em tempo real.",
 
   appleWebApp: {
@@ -66,9 +76,9 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${poppins.variable} h-full antialiased`}
     >
-      <body className={`${poppins.className} min-h-full flex flex-col bg-[#09090B] text-slate-100`}>
+      <body className={`${poppins.className} min-h-full bg-[#09090B] text-slate-100`}>
         <LanguageProvider>
-          {children}
+          <AppShell>{children}</AppShell>
         </LanguageProvider>
       </body>
     </html>
