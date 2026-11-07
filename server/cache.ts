@@ -108,9 +108,14 @@ const upstreamUrl = (req: CacheRequest) => `${UPSTREAM[req.source]}${req.path}${
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// Os servidores da Cloudflare são compartilhados com outros sites, então a Jolpica às vezes
+// responde 429 (limite de requisições) mesmo com pouco uso nosso: vale insistir algumas vezes
+const RETRY_DELAYS = [800, 1600];
+
 async function fetchUpstream(req: CacheRequest): Promise<string> {
   let status = 504;
-  for (let attempt = 0; attempt < 2; attempt++) {
+  for (let attempt = 0; ; attempt++) {
+    let retryAfter = 0;
     try {
       const res = await fetch(upstreamUrl(req), {
         headers: { accept: "application/json", "user-agent": "f1dash (https://f1dash.pages.dev)" },
@@ -122,10 +127,12 @@ async function fetchUpstream(req: CacheRequest): Promise<string> {
       status = res.status;
       // 429 = limite de requisições; 5xx = instabilidade. Outros erros não adianta repetir.
       if (status !== 429 && status < 500) break;
+      retryAfter = Number(res.headers.get("retry-after")) * 1000 || 0;
     } catch {
       status = 504;
     }
-    if (attempt === 0) await sleep(700);
+    if (attempt >= RETRY_DELAYS.length) break;
+    await sleep(Math.min(Math.max(retryAfter, RETRY_DELAYS[attempt]), 3000));
   }
   throw new UpstreamError(status);
 }
