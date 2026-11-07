@@ -1,6 +1,9 @@
 import { MRData, PastRace } from "../types/f1";
 
-const BASE_URL = "https://api.jolpi.ca/ergast/f1/";
+// Primeiro a API do próprio site (cópia no banco da Cloudflare, mais rápida e sem limite da Jolpica);
+// se ela não responder (ex.: rodando com `next dev`, sem as Functions), vai direto na Jolpica.
+const SITE_API = "/api/jolpica/";
+const JOLPICA = "https://api.jolpi.ca/ergast/f1/";
 const MAX_CONCURRENT = 3;
 const MAX_RETRIES = 3;
 const PAGE_LIMIT = 100;
@@ -29,12 +32,30 @@ function releaseSlot() {
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+let siteApiAvailable = true;
+
+async function fromSiteApi(path: string): Promise<MRData | null> {
+  if (!siteApiAvailable) return null;
+  try {
+    const res = await fetch(`${SITE_API}${path}`);
+    if (res.ok && res.headers.get("content-type")?.includes("json")) return (await res.json()).MRData as MRData;
+    // 404 ou página HTML = site sem a API (desenvolvimento local): não tenta mais nesta visita
+    if (res.status === 404 || !res.headers.get("content-type")?.includes("json")) siteApiAvailable = false;
+  } catch {
+    siteApiAvailable = false;
+  }
+  return null;
+}
+
 async function request(path: string): Promise<MRData> {
+  const cached = await fromSiteApi(path);
+  if (cached) return cached;
+
   for (let attempt = 0; ; attempt++) {
     await acquireSlot();
     let res: Response;
     try {
-      res = await fetch(`${BASE_URL}${path}`);
+      res = await fetch(`${JOLPICA}${path}`);
     } finally {
       releaseSlot();
     }

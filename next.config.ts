@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Site 100% estático (pasta out/), publicado no Cloudflare Pages; a API fica em functions/
+  output: "export",
   images: {
+    // Sem servidor não há otimização de imagens: elas vêm direto da origem
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
