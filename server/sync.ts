@@ -9,7 +9,9 @@
  * O plano gratuito limita cada execução a ~50 consultas ao banco e requisições externas,
  * então cada rodada busca no máximo MAX_FETCHES itens; o resto fica para a próxima.
  */
-import { type CacheEnv, type CacheRequest, cacheKey, DAY, getOrFetch, MINUTE, requestFromKey } from "./cache";
+import { type CacheEnv, type CacheRequest, cacheKey, DAY, getOrFetch, MINUTE, requestFromKey, UpstreamError } from "./cache";
+
+const errorCode = (error: unknown) => (error instanceof UpstreamError ? error.status : "erro");
 
 const MAX_FETCHES = 10;
 
@@ -55,9 +57,9 @@ export async function runSync(env: CacheEnv) {
     const result = await getOrFetch(env, { source: "openf1", path: "sessions", query: `year=${year}` }, { touch: false });
     if (result.state !== "hit") fetched++;
     sessions = JSON.parse(result.body) as Session[];
-  } catch {
+  } catch (error) {
     failed++;
-    notes.push("openf1:sessions");
+    notes.push(`openf1:sessions (${errorCode(error)})`);
   }
 
   // Plano gratuito: de 30 min antes a 30 min depois de cada sessão o OpenF1 bloqueia todas as consultas
@@ -104,9 +106,9 @@ export async function runSync(env: CacheEnv) {
     try {
       await getOrFetch(env, candidate.req, { force: true, touch: false, sessionEnd: candidate.sessionEnd });
       fetched++;
-    } catch {
+    } catch (error) {
       failed++;
-      notes.push(cacheKey(candidate.req));
+      notes.push(`${cacheKey(candidate.req)} (${errorCode(error)})`);
     }
     // Respeita os limites da Jolpica (4 por segundo) e do OpenF1 (3 por segundo)
     await sleep(400);
