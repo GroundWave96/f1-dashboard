@@ -46,10 +46,15 @@ O ponto de entrada do usuário. Traz informações críticas sobre o próximo ev
 ### 2. Sessão (dados do OpenF1)
 Cada treino, qualificação e corrida desde 2023, com escolha da etapa e da sessão (a escolha fica no endereço, para compartilhar).
 - **Os três primeiros** em cards com a foto do piloto na cor da equipe.
-- **Classificação no estilo da transmissão:** sigla de 3 letras com a barra da cor da equipe no celular e nome completo no computador; melhor volta (a mais rápida em roxo), diferença, voltas e pneu. Na qualificação, Q1/Q2/Q3; na corrida, tempo, diferença e abandonos.
+- **Classificação no estilo da transmissão:** sigla de 3 letras com a barra da cor da equipe no celular e nome completo no computador; melhor volta (a mais rápida em roxo), diferença, voltas e pneu. Na qualificação, Q1/Q2/Q3 com o melhor tempo de cada Q em roxo e a diferença para a pole só entre quem chegou ao mesmo Q (quem caiu antes mostra "Q1" ou "Q2"); na corrida, tempo, diferença e abandonos.
 - **Velocidade máxima** de cada piloto no ponto de medição, em barras na cor da equipe.
 - **Setores:** volta mais rápida × volta teórica (soma dos melhores setores) e a classificação de cada setor.
-- Durante uma sessão ao vivo a aba ganha um ponto vermelho piscando; os dados aparecem ~30 min depois do fim (limite do plano gratuito do OpenF1).
+- Durante uma sessão ao vivo a aba ganha um ponto vermelho piscando. O plano gratuito do OpenF1 fecha os dados durante as sessões e só libera ~30 min depois do fim: nesse meio-tempo o site mostra o que já tem guardado no banco; se ainda não tiver nada, aparece um aviso com a sessão em andamento, que tenta de novo sozinho a cada minuto e se preenche quando os dados chegam.
+
+<div align="center">
+   <img src="docs/sessao-openf1.png" alt="Página Sessão no computador" width="600">
+   <img src="docs/sessao-celular.png" alt="Página Sessão no celular" width="180">
+</div>
 
 ### 3. Destaques (Highlights)
 - **Pódio do último GP**, com pole, volta mais rápida e o piloto que mais ganhou posições.
@@ -64,7 +69,7 @@ Cada treino, qualificação e corrida desde 2023, com escolha da etapa e da sess
 ### 4. Classificação Mundial (Standings)
 Uma visão completa e dividida da tabela de pontos atualizada, renderizada com animações suaves de fade-in.
 - **Pilotos & Equipes:** Tabelas completas com cálculo de diferenças de pontos, logotipos oficiais e bandeiras.
-- Em telas largas a lista se divide em duas colunas (1º–11º | 12º–22º) e ocupa a tela inteira, com uma barra mostrando os pontos de cada um em relação ao líder.
+- Em telas largas a lista se divide em duas colunas e ocupa a tela inteira, com uma barra mostrando os pontos de cada um em relação ao líder.
 - Em telas altas, as **equipes** ficam numa coluna só, com os pilotos de cada uma e os pontos de cada piloto.
 - **Evolução dos pontos:** gráfico interativo rodada a rodada dos 6 primeiros (pilotos ou equipes).
 - **Modal da equipe:** números da equipe na história e o **duelo interno** entre os companheiros (qualificação, corrida e pontos).
@@ -79,7 +84,7 @@ Uma visão completa e dividida da tabela de pontos atualizada, renderizada com a
 </div>
 
 ### 5. Calendário
-- A temporada inteira em uma grade de cards (no celular, uma lista que já abre na próxima corrida), com o desenho de cada pista, datas, vencedor de cada GP já disputado e selo de fim de semana Sprint.
+- A temporada inteira em uma grade de cards (no celular, uma lista), com a etapa do fim de semana destacada, o desenho de cada pista, datas, vencedor de cada GP já disputado e selo de fim de semana Sprint.
 - Clicar numa etapa abre a programação completa, com os horários no fuso de quem está vendo.
 
 <div align="center">
