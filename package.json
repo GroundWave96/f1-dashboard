@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "node scripts/flatten-prefetch.mjs",
     "start": "next start",
     "lint": "eslint",
     "check:assets": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-assets.mjs",
