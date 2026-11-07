@@ -115,8 +115,9 @@ export async function runSync(env: CacheEnv) {
       failed++;
       notes.push(`${cacheKey(candidate.req)} (${errorCode(error)})`);
     }
-    // Respeita os limites da Jolpica (4 por segundo) e do OpenF1 (3 por segundo)
-    await sleep(400);
+    // Respeita os limites da Jolpica (4 por segundo) e do OpenF1 gratuito (3 por segundo e 30 por minuto;
+    // o endereço de saída da Cloudflare é compartilhado, então folga extra)
+    await sleep(candidate.req.source === "openf1" ? 2100 : 400);
   }
   if (due.length > MAX_FETCHES) notes.push(`${due.length - MAX_FETCHES} ficaram para a próxima execução`);
 
