@@ -51,9 +51,9 @@ export async function runSync(env: CacheEnv) {
   const notes: string[] = [];
 
   // Sessões do ano, para saber quais acabaram de terminar
+  const year = new Date(startedAt).getUTCFullYear();
   let sessions: Session[] = [];
   try {
-    const year = new Date(startedAt).getUTCFullYear();
     const result = await getOrFetch(env, { source: "openf1", path: "sessions", query: `year=${year}` }, { touch: false });
     if (result.state !== "hit") fetched++;
     sessions = JSON.parse(result.body) as Session[];
@@ -73,15 +73,20 @@ export async function runSync(env: CacheEnv) {
     return end + 35 * MINUTE < startedAt && startedAt < end + 3 * DAY;
   });
 
-  const candidates: Candidate[] = [
-    ...SEEDS.map((req) => ({ req })),
-    ...(openF1Blocked ? [] : recent).flatMap((session) =>
-      SESSION_ENDPOINTS.map((path) => ({
-        req: { source: "openf1", path, query: `session_key=${session.session_key}` } as CacheRequest,
-        sessionEnd: Date.parse(session.date_end),
-      })),
-    ),
-  ];
+  // OpenF1 primeiro: no plano gratuito ele só fica aberto entre uma sessão e outra do fim de semana,
+  // e o que ficar guardado aparece no site durante o próximo bloqueio
+  const openF1: Candidate[] = openF1Blocked
+    ? []
+    : [
+        ...recent.flatMap((session) =>
+          SESSION_ENDPOINTS.map((path) => ({
+            req: { source: "openf1", path, query: `session_key=${session.session_key}` } as CacheRequest,
+            sessionEnd: Date.parse(session.date_end),
+          })),
+        ),
+        { req: { source: "openf1", path: "meetings", query: `year=${year}` } },
+      ];
+  const candidates: Candidate[] = [...openF1, ...SEEDS.map((req) => ({ req }))];
 
   // Quais candidatos faltam no banco ou já venceram (uma consulta só)
   const keys = candidates.map((candidate) => cacheKey(candidate.req));
