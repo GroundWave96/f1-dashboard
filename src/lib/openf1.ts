@@ -167,6 +167,9 @@ export interface DriverSummary {
   topSpeed: number | null;
   compound: string | null;
   qualifying: (number | null)[] | null;
+  // Qualificação: o Q que definiu a posição (0 = Q1, 1 = Q2, 2 = Q3) e o tempo nele
+  qualiStage: number | null;
+  qualiTime: number | null;
   raceTime: number | null;
   raceGap: number | string | null;
   status: "dnf" | "dns" | "dsq" | null;
@@ -208,6 +211,11 @@ export async function loadSessionData(sessionKey: number): Promise<SessionData> 
       min(own.map((lap) => lap.duration_sector_3)),
     ];
     const result = resultBy.get(driver.driver_number);
+    const qualifying = Array.isArray(result?.duration) ? result.duration : null;
+    let qualiStage: number | null = null;
+    qualifying?.forEach((time, stage) => {
+      if (time != null) qualiStage = stage;
+    });
     const driverStints = stints.filter((s) => s.driver_number === driver.driver_number);
     // Pneu da melhor volta (treinos/quali) ou do último stint (corrida)
     const stint = best
@@ -225,7 +233,9 @@ export async function loadSessionData(sessionKey: number): Promise<SessionData> 
       theoretical: sectors.every((s) => s !== null) ? sectors.reduce((a, b) => a! + b!, 0) : null,
       topSpeed: Math.max(0, ...own.map((lap) => lap.st_speed ?? 0)) || null,
       compound: stint?.compound ?? null,
-      qualifying: Array.isArray(result?.duration) ? result.duration : null,
+      qualifying,
+      qualiStage,
+      qualiTime: qualiStage === null ? null : (qualifying?.[qualiStage] ?? null),
       raceTime: typeof result?.duration === "number" ? result.duration : null,
       raceGap: Array.isArray(result?.gap_to_leader) ? null : (result?.gap_to_leader ?? null),
       status: result?.dsq ? "dsq" : result?.dns ? "dns" : result?.dnf ? "dnf" : null,
@@ -249,6 +259,20 @@ export async function loadSessionData(sessionKey: number): Promise<SessionData> 
     theoretical: bestSectors.every(Boolean) ? bestSectors.reduce((sum, s) => sum + s!.time, 0) : null,
     hasData: laps.length > 0 || results.length > 0,
   };
+}
+
+/**
+ * Diferença para o pole na qualificação. Só faz sentido entre pilotos do mesmo Q (a pista melhora
+ * de um Q para o outro); para quem caiu antes, null.
+ */
+export function qualiGap(row: DriverSummary, pole: DriverSummary) {
+  if (row.qualiStage === null || row.qualiStage !== pole.qualiStage || row.qualiTime === null || pole.qualiTime === null) return null;
+  return row.qualiTime - pole.qualiTime;
+}
+
+/** Melhor tempo de cada Q (para destacar em roxo). */
+export function qualiStageBests(rows: DriverSummary[]) {
+  return [0, 1, 2].map((stage) => min(rows.map((row) => row.qualifying?.[stage] ?? null)));
 }
 
 /** 71.622 → "1:11.622"; 18.315 → "18.315" */

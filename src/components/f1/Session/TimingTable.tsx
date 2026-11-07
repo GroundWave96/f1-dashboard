@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useLanguage } from "../../../i18n/LanguageContext";
-import { type DriverSummary, formatLap, formatRaceTime, isQualifyingKind, isRaceKind, type SessionKind } from "../../../lib/openf1";
+import { type DriverSummary, formatLap, formatRaceTime, isQualifyingKind, isRaceKind, qualiGap, qualiStageBests, type SessionKind } from "../../../lib/openf1";
 import TyreBadge from "./TyreBadge";
 
 interface TimingTableProps {
@@ -22,8 +22,9 @@ export default function TimingTable({ rows, kind, fastestLap }: TimingTableProps
   const race = isRaceKind(kind);
   const leader = rows[0];
 
-  // Melhor tempo de cada piloto na qualificação = o último Q que ele disputou
-  const qualiBest = (row: DriverSummary) => [...(row.qualifying ?? [])].reverse().find((v) => v != null) ?? row.bestLap;
+  // Tempo de cada piloto na qualificação = o do último Q que ele disputou
+  const qualiBest = (row: DriverSummary) => row.qualiTime ?? row.bestLap;
+  const stageBests = quali ? qualiStageBests(rows) : [];
 
   const gapText = (row: DriverSummary) => {
     if (row.status) return t.status[row.status];
@@ -31,10 +32,15 @@ export default function TimingTable({ rows, kind, fastestLap }: TimingTableProps
       if (row === leader) return row.raceTime ? formatRaceTime(row.raceTime) : "";
       return typeof row.raceGap === "number" ? `+${row.raceGap.toFixed(3)}` : (row.raceGap ?? "");
     }
-    const mine = quali ? qualiBest(row) : row.bestLap;
-    const best = quali ? qualiBest(leader) : leader.bestLap;
-    if (row === leader || mine == null || best == null) return "";
-    return `+${(mine - best).toFixed(3)}`;
+    if (row === leader) return "";
+    if (quali && leader.qualiTime !== null) {
+      // Quem caiu antes do Q3 mostra em qual Q parou (tempos de Qs diferentes não se comparam)
+      const gap = qualiGap(row, leader);
+      if (gap !== null) return `+${gap.toFixed(3)}`;
+      return row.qualiStage !== null ? `Q${row.qualiStage + 1}` : "";
+    }
+    if (row.bestLap == null || leader.bestLap == null) return "";
+    return `+${(row.bestLap - leader.bestLap).toFixed(3)}`;
   };
 
   // Colunas: pos | piloto | (Q1 Q2 Q3 | melhor volta) | diferença | voltas | pneu
@@ -97,11 +103,17 @@ export default function TimingTable({ rows, kind, fastestLap }: TimingTableProps
 
                 {quali ? (
                   <>
-                    {[0, 1, 2].map((q) => (
-                      <span key={q} role="cell" className="hidden @2xl:block text-right font-mono text-xs tabular-nums text-zinc-200">
-                        {formatLap(row.qualifying?.[q] ?? null)}
-                      </span>
-                    ))}
+                    {[0, 1, 2].map((q) => {
+                      const time = row.qualifying?.[q] ?? null;
+                      const best = time !== null && time === stageBests[q];
+                      return (
+                        <span key={q} role="cell" className="hidden @2xl:block text-right">
+                          <span className={`inline-block rounded-md px-1.5 py-0.5 font-mono text-xs tabular-nums ${best ? "bg-purple-500/20 font-bold text-purple-300" : time === null ? "text-muted" : "text-zinc-200"}`}>
+                            {formatLap(time)}
+                          </span>
+                        </span>
+                      );
+                    })}
                     <span role="cell" className="@2xl:hidden text-right font-mono text-xs tabular-nums text-white">{formatLap(qualiBest(row))}</span>
                   </>
                 ) : race ? (

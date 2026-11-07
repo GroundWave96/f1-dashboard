@@ -23,7 +23,8 @@ export default function TopSpeed({ rows }: { rows: DriverSummary[] }) {
         </div>
         <span className="font-mono text-[10px] text-muted">KM/H</span>
       </div>
-      <ol className="flex flex-col gap-1">
+      {/* Ao lado da tabela (telas largas), as linhas se espalham pela altura dela */}
+      <ol className="flex flex-1 flex-col justify-between gap-1">
         {ranked.map((row, index) => (
           <li key={row.driver.driver_number} className="grid grid-cols-[1.25rem_2.75rem_minmax(0,1fr)_2.5rem_2rem] items-center gap-2 text-sm">
             <span className="text-right text-xs tabular-nums text-muted">{index + 1}</span>
@@ -35,7 +36,7 @@ export default function TopSpeed({ rows }: { rows: DriverSummary[] }) {
               />
             </span>
             <span className="text-right font-mono font-bold tabular-nums text-white">{row.topSpeed}</span>
-            <span className="text-right font-mono text-[11px] tabular-nums text-muted">{index === 0 ? "" : `−${max - row.topSpeed!}`}</span>
+            <span className="text-right font-mono text-[11px] tabular-nums text-muted">{row.topSpeed === max ? "" : `−${max - row.topSpeed!}`}</span>
           </li>
         ))}
       </ol>

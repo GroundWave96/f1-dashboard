@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { type DriverSummary, formatLap, formatRaceTime, headshot, isRaceKind, type SessionKind } from "../../../lib/openf1";
+import { type DriverSummary, formatLap, formatRaceTime, headshot, isQualifyingKind, isRaceKind, qualiGap, type SessionKind } from "../../../lib/openf1";
 
 interface SessionPodiumProps {
   rows: DriverSummary[];
@@ -19,6 +19,10 @@ export default function SessionPodium({ rows, kind }: SessionPodiumProps) {
     if (isRaceKind(kind)) {
       if (row === leader) return row.raceTime ? formatRaceTime(row.raceTime) : "";
       return typeof row.raceGap === "number" ? `+${row.raceGap.toFixed(3)}s` : (row.raceGap ?? "");
+    }
+    if (isQualifyingKind(kind) && leader.qualiTime !== null) {
+      const gap = qualiGap(row, leader);
+      return row === leader || gap === null ? formatLap(row.qualiTime) : `+${gap.toFixed(3)}s`;
     }
     if (row === leader || !row.bestLap || !leader.bestLap) return formatLap(row.bestLap);
     return `+${(row.bestLap - leader.bestLap).toFixed(3)}s`;
@@ -42,7 +46,7 @@ export default function SessionPodium({ rows, kind }: SessionPodiumProps) {
             <span aria-hidden="true" className="absolute -right-1 top-0 font-black italic leading-none text-white/15 text-[clamp(4rem,14vw,9rem)]">
               {row.position}
             </span>
-            <div className={`relative ${isFirst ? "aspect-[4/4.6]" : "aspect-[4/4]"} flex items-end justify-center`}>
+            <div className={`relative ${isFirst ? "aspect-[4/4.6] max-h-[min(46svh,22rem)]" : "aspect-[4/4] max-h-[min(40svh,19rem)]"} flex items-end justify-center`}>
               {photo && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={photo} alt="" className="h-[92%] w-auto object-contain object-bottom drop-shadow-[0_8px_20px_rgba(0,0,0,0.5)]" loading="lazy" />
