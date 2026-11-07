@@ -1,0 +1,20 @@
+# Worker de sincronização do F1 Dashboard (publicar com: npm run worker:deploy)
+name = "f1dash-sync"
+main = "src/index.ts"
+compatibility_date = "2026-11-01"
+
+# Sem endereço público: ele só roda pelo agendamento abaixo
+workers_dev = false
+preview_urls = false
+
+[triggers]
+crons = ["*/10 * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "f1dash-db"
+database_id = "d0693d4f-6017-4bc8-924d-21ba8113441e"
+migrations_dir = "../migrations"
+
+[observability]
+enabled = true
