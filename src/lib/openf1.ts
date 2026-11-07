@@ -80,6 +80,21 @@ export interface OF1Result {
   dsq?: boolean;
 }
 
+/** A fonte recusou os dados. status 401 = plano gratuito bloqueado durante uma sessão ao vivo. */
+export class OpenF1Unavailable extends Error {
+  constructor(
+    public status: number,
+    path: string,
+  ) {
+    super(`OpenF1 indisponível (${status}) para ${path}`);
+  }
+
+  // Também acontece quando a sessão atrasa ou tem bandeira vermelha e passa do horário previsto
+  get liveLock() {
+    return this.status === 401;
+  }
+}
+
 async function openF1<T>(endpoint: string, query: string): Promise<T> {
   const path = `${endpoint}?${query}`;
   try {
@@ -88,14 +103,17 @@ async function openF1<T>(endpoint: string, query: string): Promise<T> {
     if (res.ok && isJson) return (await res.json()) as T;
     // A API do site respondeu, mas a fonte está indisponível (ex.: sessão ao vivo no plano gratuito):
     // ir direto ao OpenF1 daria o mesmo resultado
-    if (isJson) throw new Error(`OpenF1 indisponível (${res.status}) para ${path}`);
+    if (isJson) {
+      const body = (await res.json().catch(() => null)) as { status?: number } | null;
+      throw new OpenF1Unavailable(body?.status ?? res.status, path);
+    }
   } catch (error) {
-    if (error instanceof Error && error.message.startsWith("OpenF1 indisponível")) throw error;
+    if (error instanceof OpenF1Unavailable) throw error;
     // API do site inexistente (ex.: next dev): segue direto para o OpenF1
   }
   const res = await fetch(`${OPENF1}${path}`);
   if (res.status === 404) return [] as T;
-  if (!res.ok) throw new Error(`OpenF1 respondeu ${res.status} para ${path}`);
+  if (!res.ok) throw new OpenF1Unavailable(res.status, path);
   return (await res.json()) as T;
 }
 

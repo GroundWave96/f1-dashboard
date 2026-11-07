@@ -6,6 +6,7 @@ import { useLanguage } from "../../../i18n/LanguageContext";
 import { useAsyncData, useNow } from "../../../lib/hooks";
 import {
   loadSeasonSessions,
+  OpenF1Unavailable,
   loadSessionData,
   type OF1Session,
   sessionDataReady,
@@ -46,6 +47,9 @@ export default function SessionPage() {
     loadSessionData(selected!.session_key),
   );
 
+  // O OpenF1 gratuito bloqueia tudo durante uma sessão ao vivo, inclusive quando ela atrasa e passa do horário previsto
+  const isLiveLock = (error: unknown) => error instanceof OpenF1Unavailable && error.liveLock;
+
   const select = (sessionKey: number) => router.replace(`/sessao?s=${sessionKey}`, { scroll: false });
 
   const sessionLabel = (session: OF1Session) => {
@@ -68,7 +72,7 @@ export default function SessionPage() {
   if (season.error || !selected) {
     return (
       <div className="shell min-h-[60svh] flex flex-col items-center justify-center gap-3 text-center">
-        <span className="text-sm text-zinc-300">{season.error ? t.unavailable : t.noSessions}</span>
+        <span className="text-sm text-zinc-300">{isLiveLock(season.error) ? t.locked : season.error ? t.unavailable : t.noSessions}</span>
         {Boolean(season.error) && (
           <button type="button" onClick={season.reload} className="tap rounded-full bg-white/10 px-4 py-2 text-sm font-bold hover:bg-white/15">
             {dict.errors.tryAgain}
@@ -150,7 +154,7 @@ export default function SessionPage() {
         </div>
       ) : data.error || !data.data ? (
         <div className="glass rounded-2xl px-4 py-6 flex flex-col items-center gap-3 text-center">
-          <span className="text-sm text-zinc-300">{t.unavailable}</span>
+          <span className="max-w-xl text-sm text-zinc-300">{isLiveLock(data.error) ? t.locked : t.unavailable}</span>
           <button type="button" onClick={data.reload} className="tap rounded-full bg-white/10 px-4 py-2 text-sm font-bold hover:bg-white/15">
             {dict.errors.tryAgain}
           </button>
