@@ -3,7 +3,7 @@
 import React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "../../../i18n/LanguageContext";
-import { useAsyncData, useNow } from "../../../lib/hooks";
+import { useAsyncData, useNow, useRetryEvery } from "../../../lib/hooks";
 import {
   loadSeasonSessions,
   OpenF1Unavailable,
@@ -50,6 +50,10 @@ export default function SessionPage() {
 
   // O OpenF1 gratuito bloqueia tudo durante uma sessão ao vivo, inclusive quando ela atrasa e passa do horário previsto
   const isLiveLock = (error: unknown) => error instanceof OpenF1Unavailable && error.liveLock;
+  // Outras falhas costumam ser passageiras (ex.: limite de pedidos logo depois de uma sessão): tenta de novo sozinho
+  const transient = (error: unknown) => Boolean(error) && !isLiveLock(error);
+  useRetryEvery(30_000, season.retrySilently, transient(season.error));
+  useRetryEvery(30_000, data.retrySilently, transient(data.error));
 
   const select = (sessionKey: number) => router.replace(`/sessao?s=${sessionKey}`, { scroll: false });
 

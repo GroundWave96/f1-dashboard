@@ -60,6 +60,23 @@ export function useAsyncData<T>(key: string | null, load: () => Promise<T>) {
   };
 }
 
+/** Chama `retry` a cada `ms` enquanto `active` for true (e só com a aba visível). */
+export function useRetryEvery(ms: number, retry: () => void, active: boolean) {
+  const retryRef = useRef(retry);
+
+  useEffect(() => {
+    retryRef.current = retry;
+  });
+
+  useEffect(() => {
+    if (!active) return;
+    const id = setInterval(() => {
+      if (!document.hidden) retryRef.current();
+    }, ms);
+    return () => clearInterval(id);
+  }, [ms, active]);
+}
+
 /** Largura de um elemento, atualizada quando ele é redimensionado. */
 export function useElementWidth<T extends HTMLElement>() {
   const [node, setNode] = useState<T | null>(null);

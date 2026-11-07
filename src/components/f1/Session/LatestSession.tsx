@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useLanguage } from "../../../i18n/LanguageContext";
-import { useAsyncData } from "../../../lib/hooks";
+import { useAsyncData, useRetryEvery } from "../../../lib/hooks";
 import { loadSeasonSessions, loadSessionData, sessionDataReady, sessionKind } from "../../../lib/openf1";
 import SectionHeader from "../../ui/SectionHeader";
 import SessionPodium from "./SessionPodium";
@@ -23,8 +23,10 @@ async function loadLatest() {
 /** Bloco do Início com os três primeiros da última sessão disputada (treino, qualificação ou corrida). */
 export default function LatestSession() {
   const { dict } = useLanguage();
-  const { data } = useAsyncData("of1:latest", loadLatest);
-  // Sem dados (OpenF1 fora do ar, início de temporada): o bloco simplesmente não aparece
+  const { data, error, retrySilently } = useAsyncData("of1:latest", loadLatest);
+  // Sem dados (OpenF1 bloqueado ou fora do ar, início de temporada): o bloco não aparece e
+  // surge sozinho quando os dados chegam
+  useRetryEvery(60_000, retrySilently, Boolean(error));
   if (!data || data.data.rows.length < 3) return null;
 
   const kind = sessionKind(data.session);

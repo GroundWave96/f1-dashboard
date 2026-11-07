@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import Link from "next/link";
 import { useLanguage } from "../../../i18n/LanguageContext";
 import { loadCalendar } from "../../../lib/api";
-import { useAsyncData, useNow } from "../../../lib/hooks";
+import { useAsyncData, useNow, useRetryEvery } from "../../../lib/hooks";
 import { getRaceSessions, type SessionKey } from "../../../lib/sessions";
 
 const RETRY_MS = 60_000;
@@ -41,16 +41,7 @@ export default function SessionLocked({ onRetry, onRetryNow }: SessionLockedProp
   const t = dict.session;
   const recent = useRecentSession();
 
-  const retry = useRef(onRetry);
-  useEffect(() => {
-    retry.current = onRetry;
-  });
-  useEffect(() => {
-    const id = setInterval(() => {
-      if (!document.hidden) retry.current();
-    }, RETRY_MS);
-    return () => clearInterval(id);
-  }, []);
+  useRetryEvery(RETRY_MS, onRetry, true);
 
   const shortcuts = [
     { href: "/resultados", label: dict.nav.results },
