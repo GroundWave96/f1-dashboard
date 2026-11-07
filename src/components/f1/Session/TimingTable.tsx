@@ -63,7 +63,7 @@ export default function TimingTable({ rows, kind, fastestLap }: TimingTableProps
               {header.map((q) => (
                 <span key={q} role="columnheader" className="hidden @2xl:block text-right">{q}</span>
               ))}
-              <span role="columnheader" className="@2xl:hidden text-right">{t.bestLap}</span>
+              <span role="columnheader" className="@2xl:hidden text-right">{t.time}</span>
             </>
           ) : race ? (
             <>
