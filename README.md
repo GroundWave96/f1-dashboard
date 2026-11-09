@@ -34,7 +34,7 @@ O ponto de entrada do usuário. Traz informações críticas sobre o próximo ev
 - Contagem regressiva para a **próxima sessão** (TL1, Qualificação, Sprint, Corrida), com estado **AO VIVO** durante as sessões e "bandeira quadriculada" após a corrida. Assim que o fim de semana termina, passa sozinha para a próxima etapa.
 - Programação completa do fim de semana, com sessões concluídas, ao vivo e a próxima destacadas.
 - Previsão do tempo para os dias do GP (Open-Meteo) e os últimos vencedores no circuito — também no celular.
-- **Sobre o circuito** (em telas com altura sobrando): GPs disputados ali, ano do primeiro GP, número de voltas e melhor volta da última edição.
+- **Sobre o circuito:** GPs disputados ali, ano do primeiro GP, número de voltas e melhor volta da última edição (no celular, numa grade 2×2).
 - Layout dinâmico do traçado do circuito em formato SVG com animação de trajeto (com um traçado genérico caso o SVG ainda não exista).
 - Fora de temporada: mostra os campeões e, quando o calendário seguinte sair, a contagem para a primeira corrida.
 
@@ -47,19 +47,29 @@ O ponto de entrada do usuário. Traz informações críticas sobre o próximo ev
 Cada treino, qualificação e corrida desde 2023, com escolha da etapa e da sessão (a escolha fica no endereço, para compartilhar).
 - **Os três primeiros** em cards com a foto do piloto na cor da equipe.
 - **Classificação no estilo da transmissão:** sigla de 3 letras com a barra da cor da equipe no celular e nome completo no computador; melhor volta (a mais rápida em roxo), diferença, voltas e pneu. Na qualificação, Q1/Q2/Q3 com o melhor tempo de cada Q em roxo e a diferença para a pole só entre quem chegou ao mesmo Q (quem caiu antes mostra "Q1" ou "Q2"); na corrida, tempo, diferença e abandonos.
+- **Grid de largada:** onde cada piloto largou de fato. Na qualificação, o aviso "Punições no grid" (ex.: Russell 2º → 7º) e o selo "Larga em 7º" no pódio; na corrida, quantas posições cada um ganhou ou perdeu.
 - **Velocidade máxima** de cada piloto no ponto de medição, em barras na cor da equipe.
+- **Pneus e paradas:** a estratégia de cada piloto numa régua das voltas, pintada com a cor de cada pneu (listrado = pneu usado). Tocar num piloto mostra cada pneu e cada parada (tempo parado e no pit lane).
+- **Linha do tempo:** as mensagens da direção de prova traduzidas e resumidas — punições, investigações, safety car, bandeira vermelha, advertências — com o clima da sessão e as voltas anuladas de cada piloto.
+- **Posições volta a volta** (corrida e Sprint): uma linha por piloto, com safety car e paradas marcados; de início só o vencedor, quem mais subiu e quem mais caiu ficam coloridos, e tocar nas siglas destaca outros.
+- **Comparar voltas:** a melhor volta de dois pilotos, ponto a ponto — mapa da pista pintado com quem foi mais rápido em cada trecho, gráfico de velocidade e, em "mais detalhes", acelerador e freio.
 - **Setores:** volta mais rápida × volta teórica (soma dos melhores setores) e a classificação de cada setor.
+- Cada bloco abre com uma frase de resumo em português comum e tem um ⓘ que explica o que está na tela. Tudo que aparece no computador aparece também no celular.
 - Durante uma sessão ao vivo a aba ganha um ponto vermelho piscando. O plano gratuito do OpenF1 fecha os dados durante as sessões e só libera ~30 min depois do fim: nesse meio-tempo o site mostra o que já tem guardado no banco; se ainda não tiver nada, aparece um aviso com a sessão em andamento, que tenta de novo sozinho a cada minuto e se preenche quando os dados chegam.
 
 <div align="center">
    <img src="docs/sessao-openf1.png" alt="Página Sessão no computador" width="600">
    <img src="docs/sessao-celular.png" alt="Página Sessão no celular" width="180">
+   <br><br>
+   <img src="docs/sessao-corrida.png" alt="Linha do tempo e posições volta a volta" width="600">
+   <br><br>
+   <img src="docs/sessao-comparar.png" alt="Comparação de voltas" width="600">
 </div>
 
 ### 3. Destaques (Highlights)
 - **Pódio do último GP**, com pole, volta mais rápida e o piloto que mais ganhou posições.
 - **Disputa pelo título:** calcula, com o calendário restante, quem ainda tem chance matemática de ser campeão (pilotos e equipes) e avisa quando o título está decidido.
-- **A temporada em números:** vencedores diferentes, abandonos e quem lidera em vitórias, poles, pódios e voltas mais rápidas — em telas grandes, os 3 primeiros de cada categoria, com barras.
+- **A temporada em números:** vencedores diferentes, abandonos e os 3 primeiros em vitórias, poles, pódios e voltas mais rápidas (nas telas grandes, com barras).
 - No computador os três cards ficam lado a lado; no celular viram um carrossel.
 
 <div align="center">
@@ -94,7 +104,7 @@ Uma visão completa e dividida da tabela de pontos atualizada, renderizada com a
 ### 6. Resultados da Temporada (Last Races)
 Um arquivo histórico navegável de todas as corridas que já ocorreram no ano.
 - Navegação rápida entre as etapas usando botões e selects integrados.
-- Abas de **Corrida, Sprint e Qualificação** (Q1, Q2, Q3 e diferença para a pole).
+- Abas de **Corrida, Sprint e Qualificação** (Q1, Q2, Q3, diferença para a pole e onde cada um largou de fato, depois das punições de grid).
 - Destaque visual automático para a "Volta Mais Rápida" (Purple Lap).
 - **Detalhes de cada resultado:** ao clicar em um piloto, uma janela mostra posição de largada, posições ganhas/perdidas, tempo total, pontos e a melhor volta com velocidade média.
 
