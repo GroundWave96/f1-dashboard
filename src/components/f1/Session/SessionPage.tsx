@@ -6,7 +6,9 @@ import { useLanguage } from "../../../i18n/LanguageContext";
 import { useAsyncData, useNow, useRetryEvery } from "../../../lib/hooks";
 import {
   gridSessionFor,
+  isRaceKind,
   loadSeasonSessions,
+  loadSessionExtras,
   OpenF1Unavailable,
   loadSessionData,
   type OF1Session,
@@ -23,6 +25,10 @@ import TopSpeed from "./TopSpeed";
 import SectorBoard from "./SectorBoard";
 import SessionLocked from "./SessionLocked";
 import { GridPenalties } from "./GridInfo";
+import StrategyBoard from "./StrategyBoard";
+import RaceTimeline from "./RaceTimeline";
+import PositionChart from "./PositionChart";
+import LapCompare from "./LapCompare";
 
 /**
  * Página "Sessão": classificação, velocidade máxima e setores de cada treino, qualificação e corrida
@@ -50,12 +56,17 @@ export default function SessionPage() {
     loadSessionData(selected!.session_key, gridSessionFor(selected!, sessions)),
   );
 
+  // Paradas, direção de prova, clima e posições: depois da tabela, para não atrasar a página
+  const selectedRace = selected ? isRaceKind(sessionKind(selected)) : false;
+  const extras = useAsyncData(selected && data.data ? `of1:extras:${selected.session_key}` : null, () => loadSessionExtras(selected!.session_key, selectedRace));
+
   // O OpenF1 gratuito bloqueia tudo durante uma sessão ao vivo, inclusive quando ela atrasa e passa do horário previsto
   const isLiveLock = (error: unknown) => error instanceof OpenF1Unavailable && error.liveLock;
   // Outras falhas costumam ser passageiras (ex.: limite de pedidos logo depois de uma sessão): tenta de novo sozinho
   const transient = (error: unknown) => Boolean(error) && !isLiveLock(error);
   useRetryEvery(30_000, season.retrySilently, transient(season.error));
   useRetryEvery(30_000, data.retrySilently, transient(data.error));
+  useRetryEvery(30_000, extras.retrySilently, Boolean(extras.error));
 
   const select = (sessionKey: number) => router.replace(`/sessao?s=${sessionKey}`, { scroll: false });
 
@@ -186,6 +197,18 @@ export default function SessionPage() {
             <TimingTable rows={data.data.rows} kind={kind} fastestLap={data.data.fastest?.lap ?? null} hasGrid={data.data.hasGrid} />
             <TopSpeed rows={data.data.rows} />
           </div>
+          {/* Mesma ordem em qualquer tela, cada bloco na largura toda (sem pares de alturas diferentes):
+              pneus → o que aconteceu → posições (corrida) → comparação de voltas → setores */}
+          {extras.data && (
+            <>
+              <StrategyBoard data={data.data} pits={extras.data.pits} kind={kind} className="swap-in" />
+              <RaceTimeline rows={data.data.rows} raceControl={extras.data.raceControl} weather={extras.data.weather} kind={kind} className="swap-in" />
+              {isRaceKind(kind) && (
+                <PositionChart rows={data.data.rows} laps={data.data.laps} positions={extras.data.positions} pits={extras.data.pits} raceControl={extras.data.raceControl} kind={kind} className="swap-in" />
+              )}
+            </>
+          )}
+          <LapCompare rows={data.data.rows} sessionKey={selected.session_key} />
           <SectorBoard data={data.data} />
         </div>
       )}
