@@ -1,7 +1,9 @@
 "use client";
 
 import React from "react";
-import { type DriverSummary, formatLap, formatRaceTime, headshot, isQualifyingKind, isRaceKind, qualiGap, type SessionKind } from "../../../lib/openf1";
+import { useLanguage } from "../../../i18n/LanguageContext";
+import { type DriverSummary, formatLap, formatRaceTime, gridChange, headshot, isQualifyingKind, isRaceKind, qualiGap, type SessionKind } from "../../../lib/openf1";
+import { usePlace } from "./GridInfo";
 
 interface SessionPodiumProps {
   rows: DriverSummary[];
@@ -10,6 +12,8 @@ interface SessionPodiumProps {
 
 /** Os três primeiros da sessão em cards com a foto do piloto na cor da equipe (2º | 1º | 3º). */
 export default function SessionPodium({ rows, kind }: SessionPodiumProps) {
+  const { dict } = useLanguage();
+  const place = usePlace();
   const top = rows.slice(0, 3);
   if (top.length < 3) return null;
   const leader = top[0];
@@ -28,19 +32,33 @@ export default function SessionPodium({ rows, kind }: SessionPodiumProps) {
     return `+${(row.bestLap - leader.bestLap).toFixed(3)}s`;
   };
 
+  // Largada diferente da posição: punição na qualificação ("Larga em 7º") ou corrida de recuperação ("Largou em 21º")
+  const gridLabel = (row: DriverSummary) => {
+    const change = gridChange(row, kind);
+    if (!change || row.grid === null) return null;
+    const prefix = isQualifyingKind(kind) ? dict.session.startsFrom : dict.session.startedFrom;
+    return { text: `${prefix} ${place(row.grid)}`, penalty: isQualifyingKind(kind) && change < 0 };
+  };
+
   return (
     <div className="grid grid-cols-3 items-end gap-2 sm:gap-4">
       {order.map((row, index) => {
         const isFirst = row === leader;
         const photo = headshot(row.driver);
+        const grid = gridLabel(row);
         return (
           <div
             key={row.driver.driver_number}
             className={`rise relative overflow-hidden rounded-2xl sm:rounded-3xl border ${isFirst ? "border-red-500/60" : "border-white/10"}`}
             style={{ "--i": index === 1 ? 2 : index === 0 ? 1 : 0, background: `linear-gradient(165deg, ${row.color} 0%, ${row.color}66 45%, #0b0b0e 100%)` } as React.CSSProperties}
           >
-            <span className="absolute left-2.5 top-2.5 sm:left-4 sm:top-4 z-10 rounded-md bg-black/55 px-1.5 py-0.5 text-[10px] sm:text-xs font-black text-white">
-              P{row.position}
+            <span className="absolute left-2.5 top-2.5 sm:left-4 sm:top-4 z-10 flex flex-col items-start gap-1">
+              <span className="rounded-md bg-black/55 px-1.5 py-0.5 text-[10px] sm:text-xs font-black text-white">P{row.position}</span>
+              {grid && (
+                <span className={`rounded-md px-1.5 py-0.5 text-[9px] sm:text-[11px] font-bold uppercase tracking-wide whitespace-nowrap ${grid.penalty ? "bg-red-600/90 text-white" : "bg-black/55 text-zinc-200"}`}>
+                  {grid.text}
+                </span>
+              )}
             </span>
             {/* Número da posição gigante, como marca d'água */}
             <span aria-hidden="true" className="absolute -right-1 top-0 font-black italic leading-none text-white/15 text-[clamp(4rem,14vw,9rem)]">

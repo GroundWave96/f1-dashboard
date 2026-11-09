@@ -80,6 +80,11 @@ export interface OF1Result {
   dsq?: boolean;
 }
 
+export interface OF1Grid {
+  driver_number: number;
+  position: number | null;
+}
+
 /** A fonte recusou os dados. status 401 = plano gratuito bloqueado durante uma sessão ao vivo. */
 export class OpenF1Unavailable extends Error {
   constructor(
@@ -135,6 +140,17 @@ export function sessionKind(session: Pick<OF1Session, "session_name">): SessionK
 export const isQualifyingKind = (kind: SessionKind | null) => kind === "qualifying" || kind === "sprintQualifying";
 export const isRaceKind = (kind: SessionKind | null) => kind === "race" || kind === "sprint";
 
+/**
+ * Sessão de onde vem o grid de largada (o OpenF1 guarda o grid junto da qualificação):
+ * a própria qualificação, ou a qualificação da etapa quando a sessão é a corrida (Sprint: a Qualificação Sprint).
+ */
+export function gridSessionFor(session: OF1Session, sessions: OF1Session[]): number | null {
+  const kind = sessionKind(session);
+  const target = kind === "qualifying" || kind === "race" ? "qualifying" : kind === "sprintQualifying" || kind === "sprint" ? "sprintQualifying" : null;
+  if (!target) return null;
+  return sessions.find((s) => s.meeting_key === session.meeting_key && sessionKind(s) === target)?.session_key ?? null;
+}
+
 // No plano gratuito os dados ficam bloqueados de 30 min antes a 30 min depois de cada sessão
 export const DATA_DELAY_MS = 35 * 60_000;
 export const sessionDataReady = (session: OF1Session, now: number) => Date.parse(session.date_end) + DATA_DELAY_MS < now;
@@ -173,6 +189,8 @@ export interface DriverSummary {
   raceTime: number | null;
   raceGap: number | string | null;
   status: "dnf" | "dns" | "dsq" | null;
+  // Posição no grid de largada (depois das punições); null quando o grid não está disponível
+  grid: number | null;
 }
 
 export interface SessionData {
@@ -181,6 +199,7 @@ export interface SessionData {
   bestSectors: ({ time: number; driver: OF1Driver } | null)[];
   theoretical: number | null;
   hasData: boolean;
+  hasGrid: boolean;
 }
 
 const min = (values: (number | null)[]) => {
@@ -190,16 +209,19 @@ const min = (values: (number | null)[]) => {
 
 export const teamColor = (driver: OF1Driver) => (driver.team_colour ? `#${driver.team_colour.replace(/^#/, "")}` : "#71717a");
 
-export async function loadSessionData(sessionKey: number): Promise<SessionData> {
+export async function loadSessionData(sessionKey: number, gridSessionKey: number | null = null): Promise<SessionData> {
   const query = `session_key=${sessionKey}`;
-  const [drivers, laps, stints, results] = await Promise.all([
+  const [drivers, laps, stints, results, grid] = await Promise.all([
     openF1<OF1Driver[]>("drivers", query),
     openF1<OF1Lap[]>("laps", query),
     openF1<OF1Stint[]>("stints", query),
     openF1<OF1Result[]>("session_result", query),
+    // O grid só sai perto da corrida; se falhar, a página aparece sem ele
+    gridSessionKey ? openF1<OF1Grid[]>("starting_grid", `session_key=${gridSessionKey}`).catch(() => [] as OF1Grid[]) : Promise.resolve([] as OF1Grid[]),
   ]);
 
   const resultBy = new Map(results.map((r) => [r.driver_number, r]));
+  const gridBy = new Map(grid.map((g) => [g.driver_number, g.position]));
 
   const rows = drivers.map((driver): DriverSummary => {
     const own = laps.filter((lap) => lap.driver_number === driver.driver_number);
@@ -239,6 +261,7 @@ export async function loadSessionData(sessionKey: number): Promise<SessionData> 
       raceTime: typeof result?.duration === "number" ? result.duration : null,
       raceGap: Array.isArray(result?.gap_to_leader) ? null : (result?.gap_to_leader ?? null),
       status: result?.dsq ? "dsq" : result?.dns ? "dns" : result?.dnf ? "dnf" : null,
+      grid: gridBy.get(driver.driver_number) ?? null,
     };
   });
 
@@ -258,7 +281,19 @@ export async function loadSessionData(sessionKey: number): Promise<SessionData> 
     bestSectors,
     theoretical: bestSectors.every(Boolean) ? bestSectors.reduce((sum, s) => sum + s!.time, 0) : null,
     hasData: laps.length > 0 || results.length > 0,
+    hasGrid: rows.some((row) => row.grid !== null),
   };
+}
+
+/**
+ * Mudança de posição ligada ao grid (positivo = subiu). Na qualificação: do resultado para a largada
+ * (negativo = punição); na corrida: da largada para a chegada (posições ganhas).
+ */
+export function gridChange(row: DriverSummary, kind: SessionKind | null): number | null {
+  if (row.grid === null || row.position >= 99) return null;
+  if (isQualifyingKind(kind)) return row.position - row.grid;
+  if (isRaceKind(kind)) return row.status ? null : row.grid - row.position;
+  return null;
 }
 
 /**

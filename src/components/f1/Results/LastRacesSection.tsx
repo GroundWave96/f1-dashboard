@@ -132,7 +132,9 @@ export default function LastRacesSection() {
                     </div>
                 );
             }
-            return <QualifyingList results={qualiRace.QualifyingResults} />;
+            // Grid de largada da corrida (depois das punições), para comparar com a classificação
+            const grid = Object.fromEntries((currentRace.Results ?? []).map((result) => [result.Driver.driverId, Number(result.grid)]));
+            return <QualifyingList results={qualiRace.QualifyingResults} grid={currentRace.Results?.length ? grid : undefined} />;
         }
         return <ResultsList results={currentRace.Results ?? []} raceName={currentRace.raceName} />;
     };

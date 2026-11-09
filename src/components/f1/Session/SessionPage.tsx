@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "../../../i18n/LanguageContext";
 import { useAsyncData, useNow, useRetryEvery } from "../../../lib/hooks";
 import {
+  gridSessionFor,
   loadSeasonSessions,
   OpenF1Unavailable,
   loadSessionData,
@@ -21,6 +22,7 @@ import TimingTable from "./TimingTable";
 import TopSpeed from "./TopSpeed";
 import SectorBoard from "./SectorBoard";
 import SessionLocked from "./SessionLocked";
+import { GridPenalties } from "./GridInfo";
 
 /**
  * Página "Sessão": classificação, velocidade máxima e setores de cada treino, qualificação e corrida
@@ -45,7 +47,7 @@ export default function SessionPage() {
   const selectedReady = selected ? sessionDataReady(selected, now) : false;
 
   const data = useAsyncData(selected && selectedReady ? `of1:session:${selected.session_key}` : null, () =>
-    loadSessionData(selected!.session_key),
+    loadSessionData(selected!.session_key, gridSessionFor(selected!, sessions)),
   );
 
   // O OpenF1 gratuito bloqueia tudo durante uma sessão ao vivo, inclusive quando ela atrasa e passa do horário previsto
@@ -179,8 +181,9 @@ export default function SessionPage() {
       ) : (
         <div key={selected.session_key} className="swap-in flex flex-col gap-4 sm:gap-5">
           <SessionPodium rows={data.data.rows} kind={kind} />
+          <GridPenalties rows={data.data.rows} kind={kind} />
           <div className="grid items-start gap-4 sm:gap-5 xl:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
-            <TimingTable rows={data.data.rows} kind={kind} fastestLap={data.data.fastest?.lap ?? null} />
+            <TimingTable rows={data.data.rows} kind={kind} fastestLap={data.data.fastest?.lap ?? null} hasGrid={data.data.hasGrid} />
             <TopSpeed rows={data.data.rows} />
           </div>
           <SectorBoard data={data.data} />

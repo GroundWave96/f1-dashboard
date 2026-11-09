@@ -2,24 +2,39 @@
 
 import React from "react";
 import { useLanguage } from "../../../i18n/LanguageContext";
-import { type DriverSummary, formatLap, formatRaceTime, isQualifyingKind, isRaceKind, qualiGap, qualiStageBests, type SessionKind } from "../../../lib/openf1";
+import {
+  type DriverSummary,
+  formatLap,
+  formatRaceTime,
+  gridChange,
+  isQualifyingKind,
+  isRaceKind,
+  qualiGap,
+  qualiStageBests,
+  type SessionKind,
+} from "../../../lib/openf1";
+import { GridDelta } from "./GridInfo";
 import TyreBadge from "./TyreBadge";
 
 interface TimingTableProps {
   rows: DriverSummary[];
   kind: SessionKind | null;
   fastestLap: number | null;
+  // Grid de largada disponível (qualificação e corrida)
+  hasGrid?: boolean;
 }
 
 /**
  * Classificação da sessão no estilo da transmissão/jogo de F1: sigla de 3 letras com a barra na cor
  * da equipe no celular, nome completo quando a tabela é larga; volta mais rápida em roxo.
+ * Na qualificação e na corrida mostra também a posição no grid de largada (depois das punições).
  */
-export default function TimingTable({ rows, kind, fastestLap }: TimingTableProps) {
+export default function TimingTable({ rows, kind, fastestLap, hasGrid = false }: TimingTableProps) {
   const { dict } = useLanguage();
   const t = dict.session;
   const quali = isQualifyingKind(kind);
   const race = isRaceKind(kind);
+  const showGrid = hasGrid && (quali || race);
   const leader = rows[0];
 
   // Tempo de cada piloto na qualificação = o do último Q que ele disputou
@@ -43,13 +58,21 @@ export default function TimingTable({ rows, kind, fastestLap }: TimingTableProps
     return `+${(row.bestLap - leader.bestLap).toFixed(3)}`;
   };
 
-  // Colunas: pos | piloto | (Q1 Q2 Q3 | melhor volta) | diferença | voltas | pneu
+  // Colunas: pos | piloto | (Q1 Q2 Q3 | melhor volta) | diferença | largada | voltas | pneu.
+  // Com o grid, no celular a largada entra no lugar das voltas. Em tabelas muito estreitas (celular de 320 px)
+  // sai mais uma coluna: a diferença na qualificação com grid, as voltas nos outros casos.
   const columns = quali
-    ? "grid-cols-[1.75rem_minmax(0,1fr)_5rem_4.25rem_2rem] @2xl:grid-cols-[2rem_minmax(0,1fr)_5.25rem_5.25rem_5.25rem_4.5rem_2.5rem]"
+    ? showGrid
+      ? "grid-cols-[1.75rem_minmax(0,1fr)_5rem_4.25rem_3.25rem] @max-[18rem]:grid-cols-[1.5rem_minmax(0,1fr)_4.5rem_3.25rem] @2xl:grid-cols-[2rem_minmax(0,1fr)_5.25rem_5.25rem_5.25rem_4.5rem_3.75rem_2.5rem]"
+      : "grid-cols-[1.75rem_minmax(0,1fr)_5rem_4.25rem_2rem] @max-[18rem]:grid-cols-[1.5rem_minmax(0,1fr)_4.5rem_3.75rem] @2xl:grid-cols-[2rem_minmax(0,1fr)_5.25rem_5.25rem_5.25rem_4.5rem_2.5rem]"
     : race
-      ? "grid-cols-[1.75rem_minmax(0,1fr)_5.5rem_2.25rem_1.75rem] @2xl:grid-cols-[2rem_minmax(0,1fr)_6.5rem_5.5rem_2.5rem_2rem]"
-      : "grid-cols-[1.75rem_minmax(0,1fr)_5.25rem_4.25rem_2.25rem_1.75rem] @2xl:grid-cols-[2rem_minmax(0,1fr)_6rem_5rem_3rem_2rem]";
+      ? showGrid
+        ? "grid-cols-[1.75rem_minmax(0,1fr)_5.5rem_3.25rem_1.75rem] @max-[18rem]:grid-cols-[1.5rem_minmax(0,1fr)_5rem_3rem_1.5rem] @2xl:grid-cols-[2rem_minmax(0,1fr)_6.5rem_5.5rem_3.75rem_2.5rem_2rem]"
+        : "grid-cols-[1.75rem_minmax(0,1fr)_5.5rem_2.25rem_1.75rem] @2xl:grid-cols-[2rem_minmax(0,1fr)_6.5rem_5.5rem_2.5rem_2rem]"
+      : "grid-cols-[1.75rem_minmax(0,1fr)_5.25rem_4.25rem_2.25rem_1.75rem] @max-[18rem]:grid-cols-[1.5rem_minmax(0,1fr)_4.75rem_3.75rem_1.5rem] @2xl:grid-cols-[2rem_minmax(0,1fr)_6rem_5rem_3rem_2rem]";
 
+  const lapsClass = showGrid ? "hidden @2xl:block" : race ? "" : "@max-[18rem]:hidden";
+  const gapClass = quali && showGrid ? "@max-[18rem]:hidden" : "";
   const header = quali ? ["Q1", "Q2", "Q3"] : [];
 
   return (
@@ -73,8 +96,9 @@ export default function TimingTable({ rows, kind, fastestLap }: TimingTableProps
           ) : (
             <span role="columnheader" className="text-right">{t.bestLap}</span>
           )}
-          {!race && <span role="columnheader" className="text-right">{t.gap}</span>}
-          <span role="columnheader" className="text-right">{t.laps}</span>
+          {!race && <span role="columnheader" className={`text-right ${gapClass}`}>{t.gap}</span>}
+          {showGrid && <span role="columnheader" className="text-right">{t.grid}</span>}
+          <span role="columnheader" className={`text-right ${lapsClass}`}>{t.laps}</span>
           {!quali && <span role="columnheader" className="text-center">{t.tyre}</span>}
         </div>
 
@@ -129,8 +153,14 @@ export default function TimingTable({ rows, kind, fastestLap }: TimingTableProps
                   </span>
                 )}
 
-                {!race && <span role="cell" className="text-right font-mono text-xs tabular-nums text-zinc-300">{gapText(row)}</span>}
-                <span role="cell" className="text-right font-mono text-xs tabular-nums text-zinc-400">{row.laps || ""}</span>
+                {!race && <span role="cell" className={`text-right font-mono text-xs tabular-nums text-zinc-300 ${gapClass}`}>{gapText(row)}</span>}
+                {showGrid && (
+                  <span role="cell" className="flex items-baseline justify-end gap-1 font-mono text-xs tabular-nums text-zinc-200">
+                    {row.grid ?? "—"}
+                    <GridDelta change={gridChange(row, kind)} />
+                  </span>
+                )}
+                <span role="cell" className={`text-right font-mono text-xs tabular-nums text-zinc-400 ${lapsClass}`}>{row.laps || ""}</span>
                 {!quali && (
                   <span role="cell" className="flex justify-center">
                     <TyreBadge compound={row.compound} className="w-6 h-6" />

@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useLanguage } from "../../../i18n/LanguageContext";
 import { useAsyncData, useRetryEvery } from "../../../lib/hooks";
-import { loadSeasonSessions, loadSessionData, sessionDataReady, sessionKind } from "../../../lib/openf1";
+import { gridSessionFor, loadSeasonSessions, loadSessionData, sessionDataReady, sessionKind } from "../../../lib/openf1";
 import SectionHeader from "../../ui/SectionHeader";
 import SessionPodium from "./SessionPodium";
 
@@ -16,7 +16,7 @@ async function loadLatest() {
     .sort((a, b) => Date.parse(a.date_start) - Date.parse(b.date_start))
     .at(-1);
   if (!latest) return null;
-  const data = await loadSessionData(latest.session_key);
+  const data = await loadSessionData(latest.session_key, gridSessionFor(latest, sessions));
   return { session: latest, meeting: meetings.find((m) => m.meeting_key === latest.meeting_key), data };
 }
 

@@ -7,15 +7,19 @@ import { getConstructorLogo, getPositionStyle, nationalityToISO } from "../../..
 import { parseLapTime } from "../../../lib/championship";
 import { useLanguage } from "../../../i18n/LanguageContext";
 import RankFrame from "../../ui/RankFrame";
+import { GridDelta, usePlace } from "../Session/GridInfo";
 
 const SEGMENTS = ["Q1", "Q2", "Q3"] as const;
 
 /**
  * Qualificação. Em colunas largas mostra Q1/Q2/Q3 (melhor tempo de cada fase em roxo);
  * em colunas estreitas, só o melhor tempo e a diferença para a pole (container query).
+ * Com o grid da corrida (`grid`: piloto → posição de largada, 0 = pit lane), mostra também onde
+ * cada um largou: punições tiram pilotos da posição conquistada no treino.
  */
-export default function QualifyingList({ results }: { results: QualifyingResult[] }) {
+export default function QualifyingList({ results, grid }: { results: QualifyingResult[]; grid?: Record<string, number> }) {
   const { dict } = useLanguage();
+  const place = usePlace();
 
   const bestTime = (r: QualifyingResult) => r.Q3 || r.Q2 || r.Q1;
   const poleMs = parseLapTime(bestTime(results[0]));
@@ -36,47 +40,72 @@ export default function QualifyingList({ results }: { results: QualifyingResult[
 
   return (
     <RankFrame count={results.length} ariaLabel={dict.results.qualiSession}>
-      {results.map((row) => (
-        <li key={`${row.position}-${row.Driver.driverId}`} className="@container min-w-0">
-          <div className="h-full grid grid-cols-[2.25rem_minmax(0,1fr)_auto] items-center gap-3 rounded-lg px-2.5 sm:px-3 py-[clamp(0.3rem,0.95vh,0.8rem)] hover:bg-zinc-800/40 transition-colors">
-            <span className={`text-center ${getPositionStyle(row.position)}`}>{row.position}º</span>
-            <span className="flex items-center gap-3 min-w-0">
-              <Image src={getConstructorLogo(row.Constructor.constructorId)} alt="" width={28} height={28} className="w-7 h-7 object-contain shrink-0 brightness-110" />
-              <span className="flex flex-col min-w-0 leading-tight">
-                <span className="text-sm sm:text-[15px] text-zinc-200 truncate">
-                  <span className="hidden @xl:inline">{row.Driver.givenName} </span>
-                  <span className="font-bold uppercase text-white">{row.Driver.familyName}</span>
-                </span>
-                <span className="rank-sub flex items-center gap-1.5 text-[11px] text-muted truncate">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={`https://flagcdn.com/w40/${nationalityToISO(row.Driver.nationality)}.png`} alt="" className="w-3.5 h-auto rounded-[2px] shrink-0" loading="lazy" />
-                  <span className="truncate">{row.Constructor.name}</span>
-                </span>
-              </span>
+      {results.map((row) => {
+        const start = grid?.[row.Driver.driverId];
+        // Largada (0 = pit lane) com a seta de quantas posições mudou em relação à classificação
+        const startValue =
+          start === undefined ? null : start === 0 ? (
+            <span className="font-mono font-bold text-red-400">{dict.results.pitLane}</span>
+          ) : (
+            <span className="inline-flex items-baseline gap-1 font-mono text-zinc-200">
+              {place(start)}
+              <GridDelta change={Number(row.position) - start} />
             </span>
-
-            <span className="flex items-center gap-3">
-              {/* Colunas Q1/Q2/Q3: só quando a linha é larga o bastante */}
-              {SEGMENTS.map((segment) => {
-                const isFastest = row[segment] && parseLapTime(row[segment]) === fastestBySegment[segment];
-                return (
-                  <span
-                    key={segment}
-                    className={`hidden @lg:flex flex-col items-end font-mono text-xs w-16 ${isFastest ? "text-purple-400 font-bold" : row[segment] ? "text-zinc-300" : "text-zinc-700"}`}
-                  >
-                    <span className="text-[9px] font-sans font-bold text-muted">{segment}</span>
-                    {row[segment] || "—"}
+          );
+        return (
+          <li key={`${row.position}-${row.Driver.driverId}`} className="@container min-w-0">
+            <div className="h-full grid grid-cols-[2.25rem_minmax(0,1fr)_auto] items-center gap-3 rounded-lg px-2.5 sm:px-3 py-[clamp(0.3rem,0.95vh,0.8rem)] hover:bg-zinc-800/40 transition-colors">
+              <span className={`text-center ${getPositionStyle(row.position)}`}>{row.position}º</span>
+              <span className="flex items-center gap-3 min-w-0">
+                <Image src={getConstructorLogo(row.Constructor.constructorId)} alt="" width={28} height={28} className="w-7 h-7 object-contain shrink-0 brightness-110" />
+                <span className="flex flex-col min-w-0 leading-tight">
+                  <span className="text-sm sm:text-[15px] text-zinc-200 truncate">
+                    <span className={`hidden ${grid ? "@3xl:inline" : "@xl:inline"}`}>{row.Driver.givenName} </span>
+                    <span className="font-bold uppercase text-white">{row.Driver.familyName}</span>
                   </span>
-                );
-              })}
-              <span className="flex flex-col items-end leading-tight min-w-[4.25rem]">
-                <span className="@lg:hidden font-mono text-xs text-zinc-200">{bestTime(row) || "—"}</span>
-                <span className={`font-mono text-[11px] ${formatGap(row) === "Pole" ? "text-yellow-400 font-bold" : "text-muted"}`}>{formatGap(row)}</span>
+                  <span className="rank-sub flex items-center gap-1.5 text-[11px] text-muted truncate">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={`https://flagcdn.com/w40/${nationalityToISO(row.Driver.nationality)}.png`} alt="" className={`w-3.5 h-auto rounded-[2px] shrink-0 ${startValue ? "hidden @min-[20rem]:block" : ""}`} loading="lazy" />
+                    {/* Linha muito estreita: a largada entra no lugar do nome da equipe (o logo já mostra a equipe) */}
+                    <span className={`truncate ${startValue ? "hidden @min-[20rem]:inline" : ""}`}>{row.Constructor.name}</span>
+                    {startValue && (
+                      <span className="@min-[20rem]:hidden inline-flex items-baseline gap-1 whitespace-nowrap">
+                        {dict.results.start} {startValue}
+                      </span>
+                    )}
+                  </span>
+                </span>
               </span>
-            </span>
-          </div>
-        </li>
-      ))}
+
+              <span className={`flex items-center ${grid ? "gap-2 @md:gap-3" : "gap-3"}`}>
+                {/* Colunas Q1/Q2/Q3: só quando a linha é larga o bastante */}
+                {SEGMENTS.map((segment) => {
+                  const isFastest = row[segment] && parseLapTime(row[segment]) === fastestBySegment[segment];
+                  return (
+                    <span
+                      key={segment}
+                      className={`hidden @lg:flex flex-col items-end font-mono text-xs w-16 ${isFastest ? "text-purple-400 font-bold" : row[segment] ? "text-zinc-300" : "text-zinc-700"}`}
+                    >
+                      <span className="text-[9px] font-sans font-bold text-muted">{segment}</span>
+                      {row[segment] || "—"}
+                    </span>
+                  );
+                })}
+                <span className={`flex flex-col items-end leading-tight ${grid ? "min-w-[3.75rem]" : "min-w-[4.25rem]"}`}>
+                  <span className="@lg:hidden font-mono text-xs text-zinc-200">{bestTime(row) || "—"}</span>
+                  <span className={`font-mono text-[11px] ${formatGap(row) === "Pole" ? "text-yellow-400 font-bold" : "text-muted"}`}>{formatGap(row)}</span>
+                </span>
+                {startValue && (
+                  <span className="hidden @min-[20rem]:flex flex-col items-end leading-tight w-12 @md:w-14 text-xs">
+                    <span className="text-[9px] font-sans font-bold uppercase text-muted">{dict.results.start}</span>
+                    {startValue}
+                  </span>
+                )}
+              </span>
+            </div>
+          </li>
+        );
+      })}
     </RankFrame>
   );
 }
