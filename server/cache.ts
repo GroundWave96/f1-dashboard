@@ -205,6 +205,10 @@ async function policyFor(env: CacheEnv, req: CacheRequest, body: string, now: nu
 
 const inFlight = new Map<string, Promise<CachedResponse>>();
 
+// Visitante pedindo um dado que venceu há menos disso: recebe na hora e o banco atualiza em segundo plano
+// (sem isso, quem abre uma aba depois de alguns minutos sem visitas espera a Jolpica, ~10 s)
+const STALE_WHILE_REVALIDATE = DAY;
+
 interface FetchOptions {
   // Ignora o dado guardado mesmo que ainda esteja válido
   force?: boolean;
@@ -237,6 +241,11 @@ export async function getOrFetch(env: CacheEnv, req: CacheRequest, options: Fetc
   if (!pending) {
     pending = refresh(env, req, row, { ...options, touch }).finally(() => inFlight.delete(key));
     inFlight.set(key, pending);
+  }
+
+  if (row && !force && defer && now - row.expires_at < STALE_WHILE_REVALIDATE) {
+    defer(pending.catch(() => null));
+    return { body: row.body, state: "stale", expiresAt: row.expires_at, immutable: false };
   }
   return pending;
 }
