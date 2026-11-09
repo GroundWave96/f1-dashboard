@@ -49,6 +49,7 @@ export interface OF1Driver {
 export interface OF1Lap {
   driver_number: number;
   lap_number: number;
+  date_start: string | null;
   lap_duration: number | null;
   duration_sector_1: number | null;
   duration_sector_2: number | null;
@@ -83,6 +84,52 @@ export interface OF1Result {
 export interface OF1Grid {
   driver_number: number;
   position: number | null;
+}
+
+export interface OF1Pit {
+  driver_number: number;
+  lap_number: number;
+  date: string;
+  // Tempo com o carro parado / tempo total no pit lane
+  stop_duration: number | null;
+  lane_duration: number | null;
+}
+
+export interface OF1RaceControl {
+  date: string;
+  lap_number: number | null;
+  category: string;
+  flag: string | null;
+  driver_number: number | null;
+  qualifying_phase: number | null;
+  message: string;
+}
+
+export interface OF1Position {
+  date: string;
+  driver_number: number;
+  position: number;
+}
+
+export interface OF1Weather {
+  date: string;
+  air_temperature: number | null;
+  track_temperature: number | null;
+  rainfall: number | null;
+}
+
+export interface OF1CarData {
+  date: string;
+  speed: number;
+  throttle: number;
+  brake: number;
+  n_gear: number;
+}
+
+export interface OF1Location {
+  date: string;
+  x: number;
+  y: number;
 }
 
 /** A fonte recusou os dados. status 401 = plano gratuito bloqueado durante uma sessão ao vivo. */
@@ -178,6 +225,9 @@ export interface DriverSummary {
   laps: number;
   bestLap: number | null;
   bestLapNumber: number | null;
+  // Início e setores da melhor volta (para a comparação de telemetria)
+  bestLapStart: string | null;
+  bestLapSectors: (number | null)[];
   sectors: (number | null)[];
   theoretical: number | null;
   topSpeed: number | null;
@@ -200,6 +250,8 @@ export interface SessionData {
   theoretical: number | null;
   hasData: boolean;
   hasGrid: boolean;
+  laps: OF1Lap[];
+  stints: OF1Stint[];
 }
 
 const min = (values: (number | null)[]) => {
@@ -251,6 +303,8 @@ export async function loadSessionData(sessionKey: number, gridSessionKey: number
       laps: result?.number_of_laps ?? own.length,
       bestLap: best?.lap_duration ?? null,
       bestLapNumber: best?.lap_number ?? null,
+      bestLapStart: best?.date_start ?? null,
+      bestLapSectors: best ? [best.duration_sector_1, best.duration_sector_2, best.duration_sector_3] : [null, null, null],
       sectors,
       theoretical: sectors.every((s) => s !== null) ? sectors.reduce((a, b) => a! + b!, 0) : null,
       topSpeed: Math.max(0, ...own.map((lap) => lap.st_speed ?? 0)) || null,
@@ -282,7 +336,46 @@ export async function loadSessionData(sessionKey: number, gridSessionKey: number
     theoretical: bestSectors.every(Boolean) ? bestSectors.reduce((sum, s) => sum + s!.time, 0) : null,
     hasData: laps.length > 0 || results.length > 0,
     hasGrid: rows.some((row) => row.grid !== null),
+    laps,
+    stints,
   };
+}
+
+export interface SessionExtras {
+  pits: OF1Pit[];
+  raceControl: OF1RaceControl[];
+  positions: OF1Position[];
+  weather: OF1Weather[];
+}
+
+/**
+ * Dados complementares da sessão (paradas, mensagens da direção de prova, clima e, na corrida,
+ * as mudanças de posição). Carregados depois da tabela, para não atrasar a página.
+ */
+export async function loadSessionExtras(sessionKey: number, race: boolean): Promise<SessionExtras> {
+  const query = `session_key=${sessionKey}`;
+  const [pits, raceControl, positions, weather] = await Promise.all([
+    openF1<OF1Pit[]>("pit", query),
+    openF1<OF1RaceControl[]>("race_control", query),
+    race ? openF1<OF1Position[]>("position", query) : Promise.resolve([] as OF1Position[]),
+    openF1<OF1Weather[]>("weather", query),
+  ]);
+  return { pits, raceControl, positions, weather };
+}
+
+// Horário em UTC sem fuso e sem frações ("2026-11-07T20:17:25"), no formato dos filtros do OpenF1
+const filterTime = (ms: number) => new Date(ms).toISOString().slice(0, 19);
+
+/** Telemetria (velocidade, acelerador, freio, marcha) e, se pedido, posição na pista de uma volta. */
+export async function loadLapTelemetry(sessionKey: number, driverNumber: number, lapStart: string, lapDuration: number, withLocation: boolean) {
+  const start = Date.parse(lapStart);
+  const range = `date>=${filterTime(start)}&date<${filterTime(start + (lapDuration + 1) * 1000)}`;
+  const query = `session_key=${sessionKey}&driver_number=${driverNumber}&${range}`;
+  const [car, location] = await Promise.all([
+    openF1<OF1CarData[]>("car_data", query),
+    withLocation ? openF1<OF1Location[]>("location", query) : Promise.resolve([] as OF1Location[]),
+  ]);
+  return { start, car, location };
 }
 
 /**

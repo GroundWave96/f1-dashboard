@@ -4,7 +4,7 @@ import React from "react";
 import { useLanguage } from "../../../i18n/LanguageContext";
 
 // Cores oficiais dos compostos (macio vermelho, médio amarelo, duro branco, intermediário verde, chuva azul)
-const TYRES: Record<string, { letter: string; color: string }> = {
+export const TYRES: Record<string, { letter: string; color: string }> = {
   SOFT: { letter: "S", color: "#ef4444" },
   MEDIUM: { letter: "M", color: "#facc15" },
   HARD: { letter: "H", color: "#f4f4f5" },

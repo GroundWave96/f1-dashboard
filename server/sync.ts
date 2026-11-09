@@ -30,7 +30,10 @@ const SEEDS: CacheRequest[] = [
 // O que guardar de cada sessão encerrada (o grid de largada fica junto da qualificação)
 const SESSION_ENDPOINTS = ["drivers", "session_result", "laps", "stints", "pit", "weather", "race_control"];
 const QUALIFYING_ENDPOINTS = [...SESSION_ENDPOINTS, "starting_grid"];
+// Corrida e Sprint: também as mudanças de posição (gráfico de posições volta a volta)
+const RACE_ENDPOINTS = [...SESSION_ENDPOINTS, "position"];
 const isQualifying = (name: string) => /^(qualifying|sprint qualifying|sprint shootout)$/i.test(name);
+const isRace = (name: string) => /^(race|sprint)$/i.test(name);
 
 interface Session {
   session_key: number;
@@ -83,7 +86,7 @@ export async function runSync(env: CacheEnv) {
     ? []
     : [
         ...recent.flatMap((session) =>
-          (isQualifying(session.session_name) ? QUALIFYING_ENDPOINTS : SESSION_ENDPOINTS).map((path) => ({
+          (isQualifying(session.session_name) ? QUALIFYING_ENDPOINTS : isRace(session.session_name) ? RACE_ENDPOINTS : SESSION_ENDPOINTS).map((path) => ({
             req: { source: "openf1", path, query: `session_key=${session.session_key}` } as CacheRequest,
             sessionEnd: Date.parse(session.date_end),
           })),
