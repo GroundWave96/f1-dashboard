@@ -50,6 +50,13 @@ const UPSTREAM: Record<Source, string> = {
 // O D1 aceita no máximo 2 MB por linha; respostas maiores passam direto, sem guardar
 const MAX_BODY_BYTES = 1_900_000;
 
+/**
+ * Resultado, grid de largada e mensagens da direção de prova mudam com decisões dos comissários,
+ * que saem horas (às vezes dias) depois da sessão: continuam sendo renovados até RULINGS_SETTLE depois do fim.
+ */
+export const RULINGS_ENDPOINTS = new Set(["session_result", "starting_grid", "race_control"]);
+export const RULINGS_SETTLE = 4 * DAY;
+
 const OPENF1_ENDPOINTS = new Set([
   "car_data", "championship_drivers", "championship_teams", "drivers", "intervals", "laps", "location",
   "meetings", "overtakes", "pit", "position", "race_control", "sessions", "session_result",
@@ -174,7 +181,7 @@ async function policyFor(env: CacheEnv, req: CacheRequest, body: string, now: nu
     return { ttl: req.query.includes("latest") ? 3 * MINUTE : HOUR, immutable: false };
   }
 
-  // Dados de uma sessão: depois de 1h30 do fim o OpenF1 já consolidou tudo
+  // Dados de uma sessão: o que vale é o fim dela
   let end = sessionEnd;
   if (end === undefined) {
     const sessionKey = params.get("session_key");
@@ -186,7 +193,13 @@ async function policyFor(env: CacheEnv, req: CacheRequest, body: string, now: nu
       if (ends.length) end = Math.max(...ends);
     }
   }
-  if (end !== undefined && end + 90 * MINUTE < now) return done;
+  if (end !== undefined && RULINGS_ENDPOINTS.has(req.path)) {
+    if (end + RULINGS_SETTLE < now) return done;
+    if (end + 90 * MINUTE < now) return { ttl: HOUR, immutable: false };
+  } else if (end !== undefined && end + 90 * MINUTE < now) {
+    // Voltas, pneus, paradas etc.: depois de 1h30 do fim o OpenF1 já consolidou tudo
+    return done;
+  }
   return { ttl: (req.query.includes("latest") ? 3 : 10) * MINUTE, immutable: false };
 }
 

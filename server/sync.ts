@@ -9,7 +9,7 @@
  * O plano gratuito limita cada execução a ~50 consultas ao banco e requisições externas,
  * então cada rodada busca no máximo MAX_FETCHES itens; o resto fica para a próxima.
  */
-import { type CacheEnv, type CacheRequest, cacheKey, DAY, getOrFetch, MINUTE, requestFromKey, UpstreamError } from "./cache";
+import { type CacheEnv, type CacheRequest, cacheKey, DAY, getOrFetch, MINUTE, requestFromKey, RULINGS_SETTLE, UpstreamError } from "./cache";
 
 const errorCode = (error: unknown) => (error instanceof UpstreamError ? error.status : "erro");
 
@@ -27,11 +27,14 @@ const SEEDS: CacheRequest[] = [
   jolpica("current/qualifying.json", "limit=100&offset=0"),
 ];
 
-// O que guardar de cada sessão encerrada
+// O que guardar de cada sessão encerrada (o grid de largada fica junto da qualificação)
 const SESSION_ENDPOINTS = ["drivers", "session_result", "laps", "stints", "pit", "weather", "race_control"];
+const QUALIFYING_ENDPOINTS = [...SESSION_ENDPOINTS, "starting_grid"];
+const isQualifying = (name: string) => /^(qualifying|sprint qualifying|sprint shootout)$/i.test(name);
 
 interface Session {
   session_key: number;
+  session_name: string;
   date_start: string;
   date_end: string;
 }
@@ -68,9 +71,10 @@ export async function runSync(env: CacheEnv) {
   );
   if (openF1Blocked) notes.push("OpenF1 bloqueado (sessão ao vivo)");
 
+  // Sessões encerradas cujos dados ainda podem mudar (punições): os já consolidados ficam válidos e não voltam à fila
   const recent = sessions.filter((session) => {
     const end = Date.parse(session.date_end);
-    return end + 35 * MINUTE < startedAt && startedAt < end + 3 * DAY;
+    return end + 35 * MINUTE < startedAt && startedAt < end + RULINGS_SETTLE;
   });
 
   // OpenF1 primeiro: no plano gratuito ele só fica aberto entre uma sessão e outra do fim de semana,
@@ -79,7 +83,7 @@ export async function runSync(env: CacheEnv) {
     ? []
     : [
         ...recent.flatMap((session) =>
-          SESSION_ENDPOINTS.map((path) => ({
+          (isQualifying(session.session_name) ? QUALIFYING_ENDPOINTS : SESSION_ENDPOINTS).map((path) => ({
             req: { source: "openf1", path, query: `session_key=${session.session_key}` } as CacheRequest,
             sessionEnd: Date.parse(session.date_end),
           })),
