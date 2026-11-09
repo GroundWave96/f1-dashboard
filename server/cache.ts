@@ -51,10 +51,11 @@ const UPSTREAM: Record<Source, string> = {
 const MAX_BODY_BYTES = 1_900_000;
 
 /**
- * Resultado, grid de largada e mensagens da direção de prova mudam com decisões dos comissários,
- * que saem horas (às vezes dias) depois da sessão: continuam sendo renovados até RULINGS_SETTLE depois do fim.
+ * Dados que ainda mudam depois da sessão: resultado, grid e mensagens da direção de prova (decisões dos
+ * comissários saem horas ou dias depois) e as paradas (o OpenF1 completa o tempo com o carro parado
+ * horas depois). Continuam sendo renovados até RULINGS_SETTLE depois do fim.
  */
-export const RULINGS_ENDPOINTS = new Set(["session_result", "starting_grid", "race_control"]);
+export const RULINGS_ENDPOINTS = new Set(["session_result", "starting_grid", "race_control", "pit"]);
 export const RULINGS_SETTLE = 4 * DAY;
 
 const OPENF1_ENDPOINTS = new Set([
