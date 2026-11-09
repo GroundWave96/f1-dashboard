@@ -53,9 +53,9 @@ export default function SeasonStats({ races, totalRounds }: SeasonStatsProps) {
         </div>
       </div>
 
-      {/* Telas comuns: só o líder de cada categoria, uma linha por categoria */}
+      {/* Telas comuns: o líder de cada categoria e, numa linha discreta, o 2º e o 3º (os mesmos dados das telas grandes) */}
       <ul className="flex flex-col gap-[clamp(0.35rem,1.2vh,0.75rem)] flex-1 justify-center @2xl:grid @2xl:grid-cols-2 @2xl:gap-x-8 @2xl:content-center desk-tall:hidden tall-portrait:hidden">
-        {leaders.map(({ label, top: [leader], accent }) =>
+        {leaders.map(({ label, top: [leader, ...rest], accent }) =>
           leader ? (
             // Cada linha mede a própria largura: estreita = título em cima e piloto embaixo; larga = tudo numa linha
             <li key={label} className="@container min-w-0">
@@ -70,6 +70,16 @@ export default function SeasonStats({ races, totalRounds }: SeasonStatsProps) {
                 </div>
                 <span className="font-mono text-xs font-bold text-zinc-200 bg-zinc-800 rounded px-1.5 py-0.5 shrink-0">{leader.count}</span>
               </div>
+              {rest.length > 0 && (
+                <p className="mt-0.5 pl-[1.125rem] text-[11px] text-muted truncate">
+                  {rest.map((entry, index) => (
+                    <span key={entry.driver.driverId}>
+                      {index > 0 && " · "}
+                      {index + 2}º <span className="uppercase text-zinc-400">{entry.driver.familyName}</span> <span className="font-mono">{entry.count}</span>
+                    </span>
+                  ))}
+                </p>
+              )}
             </li>
           ) : null
         )}

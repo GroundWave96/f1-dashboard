@@ -148,9 +148,11 @@ export default function NextRace() {
           <SessionStatus state={state} now={now} />
           <div className="w-full flex flex-col items-center landscape:items-start gap-[clamp(0.6rem,2vh,1.6rem)]">
             <WeekendSchedule sessions={sessions} now={now} />
+            {/* Celular (em pé ou deitado) e telas altas: sempre aparece. Tablet em pé e notebook baixo: o card ocupa
+                exatamente a tela e o mapa é que encolheria, então só quando a altura sobra */}
             <CircuitFacts
               circuitId={race.Circuit.circuitId}
-              className="hidden [@media(orientation:landscape)_and_(min-height:760px)]:flex [@media(orientation:portrait)_and_(min-height:1200px)]:flex"
+              className="hidden [@media(orientation:portrait)_and_(max-width:719px)]:flex [@media(orientation:portrait)_and_(min-height:1200px)]:flex [@media(orientation:landscape)_and_(min-height:760px)]:flex [@media(orientation:landscape)_and_(max-height:599px)]:flex"
             />
           </div>
         </div>

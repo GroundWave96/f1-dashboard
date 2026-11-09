@@ -10,7 +10,7 @@ interface CircuitFactsProps {
   className?: string;
 }
 
-/** "Sobre o circuito": números do histórico da pista, mostrados quando a tela tem altura sobrando. */
+/** "Sobre o circuito": números do histórico da pista. Em telas estreitas os quatro números viram uma grade 2×2. */
 export default function CircuitFacts({ circuitId, className = "" }: CircuitFactsProps) {
   const { dict } = useLanguage();
   const { data } = useAsyncData(`circuit:${circuitId}`, () => loadCircuitHistory(circuitId));
@@ -27,9 +27,9 @@ export default function CircuitFacts({ circuitId, className = "" }: CircuitFacts
   ].filter(Boolean) as { label: string; value?: string; detail?: string }[];
 
   return (
-    <div className={`w-full max-w-xl lg:max-w-2xl flex-col gap-2 ${className}`}>
+    <div className={`@container w-full max-w-xl lg:max-w-2xl flex-col gap-2 ${className}`}>
       <span className="text-[10px] font-bold text-muted uppercase tracking-widest">{dict.nextRace.circuitFacts}</span>
-      <dl className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${facts.length}, minmax(0, 1fr))` }}>
+      <dl className={`grid gap-1.5 ${facts.length === 4 ? "grid-cols-2 @min-[28rem]:grid-cols-4" : facts.length === 3 ? "grid-cols-3" : "grid-cols-2"}`}>
         {facts.map((fact) => (
           <div key={fact.label} className="rounded-md border border-zinc-800/40 bg-zinc-950/30 px-2.5 py-2 desk-tall:min-h-[4.25rem] flex flex-col justify-center min-w-0">
             <dt className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-muted truncate">{fact.label}</dt>
