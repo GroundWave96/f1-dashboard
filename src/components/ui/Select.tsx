@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useId, useRef, useState } from "react";
+import React, { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 
 export interface SelectOption {
   value: string;
@@ -83,6 +83,20 @@ export default function Select({ value, options, onChange, ariaLabel, align = "l
     };
   }, [isOpen, selectedIndex]);
 
+  // Mantém a lista dentro da tela: no celular o botão pode estar perto de qualquer borda
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    const button = buttonRef.current;
+    if (!isOpen || !list || !button) return;
+    const gutter = 8;
+    const viewport = document.documentElement.clientWidth;
+    const anchor = button.getBoundingClientRect();
+    const width = list.offsetWidth;
+    const natural = align === "right" ? anchor.right - width : anchor.left;
+    const left = Math.max(gutter, Math.min(natural, viewport - gutter - width));
+    list.style.translate = `${Math.round(left - natural)}px 0`;
+  }, [isOpen, align]);
+
   const handleButtonKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       e.preventDefault();
@@ -158,7 +172,7 @@ export default function Select({ value, options, onChange, ariaLabel, align = "l
           aria-label={ariaLabel}
           aria-activedescendant={`${listId}-${activeIndex}`}
           onKeyDown={handleListKeyDown}
-          className={`absolute top-full mt-2 z-40 min-w-44 w-max max-h-64 overflow-y-auto overscroll-contain p-1 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl outline-none animate-in fade-in motion-safe:zoom-in-95 motion-safe:slide-in-from-top-1 duration-150 [scrollbar-width:thin] [scrollbar-color:#3f3f46_transparent] ${
+          className={`absolute top-full mt-2 z-40 min-w-44 w-max max-w-[calc(100vw-1rem)] max-h-64 overflow-y-auto overscroll-contain p-1 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl outline-none animate-in fade-in motion-safe:zoom-in-95 motion-safe:slide-in-from-top-1 duration-150 [scrollbar-width:thin] [scrollbar-color:#3f3f46_transparent] ${
             align === "right" ? "right-0 origin-top-right" : "left-0 origin-top-left"
           }`}
         >
