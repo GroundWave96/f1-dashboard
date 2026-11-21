@@ -32,6 +32,8 @@ export const metadata: Metadata = {
   },
   description: "Próxima corrida de Fórmula 1 no seu horário, tempos de cada sessão, campeonato, calendário e resultados da temporada.",
   applicationName: "F1 Dashboard",
+  // Google Search Console (prova de que o site é do dono da conta)
+  verification: { google: "I0KpUkbQZ1ltBc3rVDJRD59i4VDYAl2zvMG3X3-W4DE" },
   authors: [{ name: "Gabriel Pimentel", url: "https://gabrielpimentel.pages.dev/" }],
 
   appleWebApp: {
