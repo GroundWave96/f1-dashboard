@@ -3,10 +3,11 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "../i18n/LanguageContext";
 import AppShell from "../components/layout/AppShell";
+import { jsonLdHtml, websiteJsonLd } from "../lib/seo";
 
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  weight: ["300", "400", "500", "600", "700", "900"],
   variable: "--font-poppins",
 });
 
@@ -25,10 +26,12 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://f1dash.pages.dev/"),
 
   title: {
-    default: "F1 Dashboard | Temporada Atual",
+    default: "F1 Dashboard | Fórmula 1 em tempo real",
     template: "%s | F1 Dashboard",
   },
-  description: "Acompanhe as próximas corridas, classificação de pilotos e resultados da Fórmula 1 em tempo real.",
+  description: "Próxima corrida de Fórmula 1 no seu horário, tempos de cada sessão, campeonato, calendário e resultados da temporada.",
+  applicationName: "F1 Dashboard",
+  authors: [{ name: "Gabriel Pimentel", url: "https://gabrielpimentel.pages.dev/" }],
 
   appleWebApp: {
     capable: true,
@@ -42,8 +45,8 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: "F1 Dashboard | Temporada Atual",
-    description: "Acompanhe as próximas corridas, classificação de pilotos e resultados da Fórmula 1.",
+    title: "F1 Dashboard | Fórmula 1 em tempo real",
+    description: "Próxima corrida de Fórmula 1 no seu horário, tempos de cada sessão, campeonato, calendário e resultados da temporada.",
     type: "website",
     locale: "pt_BR",
     url: "https://f1dash.pages.dev/",
@@ -60,8 +63,8 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "F1 Dashboard | Temporada Atual",
-    description: "Tudo sobre a temporada atual da F1 em um só lugar.",
+    title: "F1 Dashboard | Fórmula 1 em tempo real",
+    description: "Próxima corrida de Fórmula 1 no seu horário, tempos de cada sessão, campeonato, calendário e resultados da temporada.",
     images: ["/opengraph-image.png"],
   },
 };
@@ -77,6 +80,7 @@ export default function RootLayout({
       className={`${poppins.variable} h-full antialiased`}
     >
       <body className={`${poppins.className} min-h-full bg-[#09090B] text-slate-100`}>
+        <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdHtml(websiteJsonLd)} />
         <LanguageProvider>
           <AppShell>{children}</AppShell>
         </LanguageProvider>

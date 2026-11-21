@@ -1,0 +1,15 @@
+# F1 Dashboard
+
+> Site gratuito, em português e inglês, para acompanhar a temporada de Fórmula 1: contagem para a próxima corrida no fuso de quem acessa, tempos de cada treino, classificação e corrida (desde 2023), campeonato de pilotos e construtores, calendário e resultados. Funciona no navegador e pode ser instalado como app. Projeto independente de fã, sem ligação com a Fórmula 1.
+
+Dados: Jolpica F1 (calendário, resultados e campeonato) e OpenF1 (tempos, pneus, punições e telemetria de cada sessão).
+
+## Páginas
+
+- [Início](https://f1dash.pages.dev/): próxima corrida com contagem regressiva, programação do fim de semana, dados do circuito, previsão do tempo, última sessão e resumo da temporada
+- [Sessão](https://f1dash.pages.dev/sessao): classificação de cada sessão com grid de largada e punições, velocidade máxima, estratégia de pneus e paradas, linha do tempo da direção de prova, posições volta a volta, comparação de voltas (telemetria) e setores
+- [Campeonato](https://f1dash.pages.dev/campeonato): classificação de pilotos e de equipes e evolução dos pontos rodada a rodada
+- [Calendário](https://f1dash.pages.dev/calendario): todas as etapas da temporada, com horários no fuso local e vencedores
+- [Resultados](https://f1dash.pages.dev/resultados): corrida, sprint e qualificação de cada GP, inclusive de temporadas anteriores
+- [Perguntas frequentes](https://f1dash.pages.dev/perguntas): horário das corridas, grid de largada e punições, volta anulada, safety car, cores dos pneus, como instalar o app
+- [Sobre e contato](https://f1dash.pages.dev/sobre): autor, fontes dos dados, aviso de marca, privacidade e contato
