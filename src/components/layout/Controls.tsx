@@ -3,8 +3,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
+import Link from "next/link";
 import { useLanguage } from "../../i18n/LanguageContext";
 import { useMediaQuery } from "../../lib/hooks";
+import { AUTHOR_URL, mailto } from "../../lib/site";
+import { InstallRow } from "./InstallApp";
 
 const TECH = ["Next.js", "React", "TypeScript", "Tailwind CSS", "Cloudflare"];
 
@@ -103,7 +106,7 @@ function AboutPanel({ panelRef, className, onClose }: AboutPanelProps) {
       </div>
       <p className="text-zinc-300 text-xs leading-relaxed mb-4">
         {dict.about.desc1}
-        <a href="https://gabrielpimentel.pages.dev/" target="_blank" rel="noopener noreferrer" className="text-red-400 hover:text-red-300 font-bold transition-colors">
+        <a href={AUTHOR_URL} target="_blank" rel="noopener noreferrer" className="text-red-400 hover:text-red-300 font-bold transition-colors">
           Gabriel Pimentel
         </a>
         {dict.about.desc2}
@@ -116,7 +119,52 @@ function AboutPanel({ panelRef, className, onClose }: AboutPanelProps) {
           </span>
         ))}
       </div>
+      {/* Atalhos para as páginas que não cabem nas abas: perguntas, sobre/contato, sugestão e instalar */}
+      <ul className="mt-4 flex flex-col gap-1 border-t border-white/10 pt-3">
+        <li>
+          <Link href="/perguntas" onClick={onClose} className={ROW}>
+            <RowIcon d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5M12 17.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+            <span className="flex-1">{dict.about.faq}</span>
+            <Chevron />
+          </Link>
+        </li>
+        <li>
+          <Link href="/sobre" onClick={onClose} className={ROW}>
+            <RowIcon d="M15.75 7.5a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0zM4.5 20.1a7.5 7.5 0 0 1 15 0" />
+            <span className="flex-1">{dict.about.aboutContact}</span>
+            <Chevron />
+          </Link>
+        </li>
+        <li>
+          <a href={mailto(dict.about.suggestSubject)} className={ROW}>
+            <RowIcon d="M3.75 6.75h16.5v10.5H3.75zM3.75 7.5 12 13l8.25-5.5" />
+            <span className="flex-1">{dict.about.suggest}</span>
+            <Chevron />
+          </a>
+        </li>
+        <InstallRow className={ROW} onDone={onClose} />
+      </ul>
     </div>
+  );
+}
+
+// Linha do menu Sobre: ícone vermelho, texto e seta
+const ROW =
+  "tap flex w-full items-center gap-3 rounded-xl px-2.5 py-2.5 text-[13px] font-semibold text-zinc-200 transition-colors duration-150 hover:bg-white/5 hover:text-white";
+
+function RowIcon({ d }: { d: string }) {
+  return (
+    <svg className="h-4.5 w-4.5 shrink-0 text-red-400" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+      <path d={d} />
+    </svg>
+  );
+}
+
+function Chevron() {
+  return (
+    <svg className="h-4 w-4 shrink-0 text-muted" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m9 6 6 6-6 6" />
+    </svg>
   );
 }
 

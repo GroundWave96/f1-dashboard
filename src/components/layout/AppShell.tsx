@@ -2,7 +2,12 @@
 
 import React, { createContext, useCallback, useContext, useState, useSyncExternalStore } from "react";
 import Preloader from "../ui/Preloader/Preloader";
+import { startInstallWatch } from "../../lib/install";
+import { InstallHelpHost } from "./InstallApp";
 import { Rail, TabBar, TopBar } from "./Navigation";
+
+// O navegador avisa cedo que o site pode ser instalado: começa a escutar assim que o código carrega
+if (typeof window !== "undefined") startInstallWatch();
 
 const INTRO_KEY = "f1dash-intro-seen";
 const noopSubscribe = () => () => {};
@@ -54,6 +59,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         </div>
         <TabBar />
       </div>
+      <InstallHelpHost />
     </ReadyContext.Provider>
   );
 }

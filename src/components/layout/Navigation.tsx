@@ -9,6 +9,7 @@ import { loadCalendar } from "../../lib/api";
 import { useAsyncData, useNow } from "../../lib/hooks";
 import { getRaceSessions } from "../../lib/sessions";
 import { AboutButton, LanguageToggle } from "./Controls";
+import { InstallButton } from "./InstallApp";
 
 type NavKey = "home" | "session" | "standings" | "calendar" | "results";
 
@@ -158,7 +159,8 @@ export function Rail() {
         })}
       </ul>
 
-      <div className="flex flex-col items-center gap-3">
+      <div className="flex flex-col items-center gap-3 [@media(max-height:520px)]:gap-2">
+        <InstallButton />
         <AboutButton placement="side" />
         <div className="[@media(max-height:520px)]:hidden">
           <LanguageToggle />
@@ -177,7 +179,8 @@ export function TopBar() {
         <Link href="/" aria-label={dict.nav.home} className="tap block w-20">
           <Image src="/teams/f1.svg" alt="F1" width={96} height={24} className="w-full h-auto" priority />
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
+          <InstallButton />
           <AboutButton />
           <LanguageToggle />
         </div>
