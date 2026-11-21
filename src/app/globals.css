@@ -352,6 +352,13 @@ html {
   to { clip-path: inset(-20% 0 -20% 0); filter: blur(0); opacity: 1; }
 }
 
+/* Bandeiras (flagcdn): espaço reservado antes de a imagem chegar, para nada "pular" quando ela carrega
+   (o Lighthouse contava a linha dos últimos vencedores crescendo). 3:2 é a proporção da maioria das bandeiras */
+img[src^="https://flagcdn.com"] {
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+
 /* ---------- Animações ---------- */
 
 @keyframes reveal-up {
