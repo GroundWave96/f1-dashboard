@@ -17,7 +17,9 @@ export default function HomePage() {
   return (
     <>
       <PageTitle pt="F1 Dashboard: próxima corrida, sessões e campeonato de Fórmula 1" en="F1 Dashboard: next race, sessions and Formula 1 standings" />
-      <Reveal hero className="screen-fill">
+      {/* Sem "hero" aqui: o mapa da pista é elástico e encolheria à vista quando o tempo e os vencedores
+          chegam (o Lighthouse conta como conteúdo pulando); o cartão aparece pronto, depois da abertura */}
+      <Reveal className="screen-fill">
         <NextRace />
       </Reveal>
       <Reveal>
