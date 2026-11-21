@@ -145,7 +145,8 @@ export default function Select({ value, options, onChange, ariaLabel, align = "l
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-controls={listId}
-        aria-label={ariaLabel}
+        // O nome falado inclui o texto visível (ex.: "Escolher etapa: São Paulo Grand Prix")
+        aria-label={selected ? `${ariaLabel}: ${selected.label}` : ariaLabel}
         onClick={() => (isOpen ? close() : open())}
         onKeyDown={handleButtonKeyDown}
         className={`flex items-center gap-1.5 h-9 whitespace-nowrap bg-zinc-800 text-white text-xs font-bold py-1 pl-3 pr-2 rounded-full border outline-none cursor-pointer transition-colors hover:bg-zinc-700 focus-visible:border-red-500 ${

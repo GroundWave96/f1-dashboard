@@ -3,6 +3,7 @@
 import React from "react";
 import { useLanguage } from "../../../i18n/LanguageContext";
 import type { DriverSummary } from "../../../lib/openf1";
+import { readableText } from "../../../lib/color";
 
 /** Velocidade máxima de cada piloto no ponto de medição, em barras na cor da equipe. */
 export default function TopSpeed({ rows }: { rows: DriverSummary[] }) {
@@ -28,7 +29,7 @@ export default function TopSpeed({ rows }: { rows: DriverSummary[] }) {
         {ranked.map((row, index) => (
           <li key={row.driver.driver_number} className="grid grid-cols-[1.25rem_2.75rem_minmax(0,1fr)_2.5rem_2rem] items-center gap-2 text-sm">
             <span className="text-right text-xs tabular-nums text-muted">{index + 1}</span>
-            <span className="font-black tracking-wide" style={{ color: row.color }}>{row.driver.name_acronym}</span>
+            <span className="font-black tracking-wide" style={{ color: readableText(row.color) }}>{row.driver.name_acronym}</span>
             <span className="h-2.5 rounded-full bg-white/5 overflow-hidden" aria-hidden="true">
               <span
                 className="grow-x block h-full rounded-full"

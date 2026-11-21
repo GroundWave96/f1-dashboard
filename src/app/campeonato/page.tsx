@@ -12,7 +12,7 @@ export const metadata = pageMetadata({
 
 export default function StandingsPage() {
   return (
-    <Reveal className="screen-fill">
+    <Reveal hero className="screen-fill">
       <PageTitle pt="Campeonato de pilotos e construtores da Fórmula 1" en="Formula 1 drivers' and constructors' standings" />
       <StandingsSection />
     </Reveal>

@@ -379,6 +379,16 @@ html {
   to { opacity: 1; transform: none; }
 }
 
+@keyframes reveal-up-soft {
+  from { transform: translateY(12px); filter: blur(4px); }
+  to { transform: none; filter: none; }
+}
+
+@keyframes rise-soft {
+  from { transform: translateY(24px); }
+  to { transform: none; }
+}
+
 @keyframes draw-line {
   from { stroke-dashoffset: 1; }
   to { stroke-dashoffset: 0; }
@@ -421,6 +431,24 @@ html {
   section[data-inview="true"] .draw-on-view {
     animation: draw-line 1600ms var(--ease-swift) 150ms backwards;
   }
+  /* Primeira tela de cada página: nada começa invisível. Na primeira visita ela já está pintada por baixo
+     da abertura (que a cobre inteira), então o conteúdo principal "aparece" para o navegador, o Google e o
+     Lighthouse assim que os dados chegam; a entrada vira só o deslize e o desfoque saindo */
+  section[data-hero][data-inview="false"] .reveal {
+    opacity: 1;
+    transform: translateY(12px);
+    filter: blur(4px);
+  }
+  section[data-hero][data-inview="false"] .rise {
+    opacity: 1;
+    transform: translateY(24px);
+  }
+  section[data-hero][data-inview="true"] .reveal {
+    animation-name: reveal-up-soft;
+  }
+  section[data-hero][data-inview="true"] .rise {
+    animation-name: rise-soft;
+  }
   /* Troca de conteúdo em abas: rápida, porque acontece muitas vezes */
   .swap-in {
     animation: swap-in 200ms var(--ease-fluid) backwards;
@@ -431,5 +459,10 @@ html {
   section[data-inview="true"] .reveal,
   section[data-inview="true"] .rise {
     animation: fade-in 250ms ease backwards;
+  }
+  /* A primeira tela já está visível: sem esmaecer de novo */
+  section[data-hero][data-inview="true"] .reveal,
+  section[data-hero][data-inview="true"] .rise {
+    animation: none;
   }
 }

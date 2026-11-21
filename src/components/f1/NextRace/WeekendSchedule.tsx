@@ -37,7 +37,8 @@ export default function WeekendSchedule({ sessions, now }: WeekendScheduleProps)
             : isNext
               ? "border-red-500/40 bg-zinc-950/50"
               : isDone
-                ? "border-zinc-800/30 bg-zinc-950/20 opacity-45"
+                ? // Já aconteceu: cinza claro (sem opacidade, para o texto pequeno continuar legível) e o ✓
+                  "border-zinc-800/30 bg-transparent"
                 : "border-zinc-800/40 bg-zinc-950/30";
 
           return (
@@ -46,7 +47,7 @@ export default function WeekendSchedule({ sessions, now }: WeekendScheduleProps)
               className={`rounded-md border px-0.5 sm:px-1 py-[clamp(0.3rem,0.9vh,0.6rem)] desk-tall:min-h-[4.25rem] flex flex-col items-center justify-center text-center transition-colors ${style}`}
               aria-current={isLive || isNext ? "true" : undefined}
             >
-              <span className={`flex items-center gap-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-normal sm:tracking-wide truncate max-w-full ${isLive || isNext ? "text-red-400" : isRace ? "text-zinc-300" : "text-muted"}`}>
+              <span className={`flex items-center gap-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-normal sm:tracking-wide truncate max-w-full ${isLive || isNext ? "text-red-400" : isDone ? "text-zinc-400" : isRace ? "text-zinc-300" : "text-muted"}`}>
                 {isLive && <span className="w-1.5 h-1.5 rounded-full bg-red-500 motion-safe:animate-pulse shrink-0" />}
                 {isDone && (
                   <svg className="w-2.5 h-2.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -56,7 +57,7 @@ export default function WeekendSchedule({ sessions, now }: WeekendScheduleProps)
                 {dict.sessionsShort[session.key]}
               </span>
               <span className="text-[10px] sm:text-[11px] text-zinc-400 capitalize leading-tight mt-0.5">{weekday}</span>
-              <span className={`font-mono text-[11px] sm:text-xs leading-tight whitespace-nowrap ${isRace ? "text-white font-bold" : "text-zinc-200"}`}>{time}</span>
+              <span className={`font-mono text-[11px] sm:text-xs leading-tight whitespace-nowrap ${isDone ? "text-zinc-400" : isRace ? "text-white font-bold" : "text-zinc-200"}`}>{time}</span>
             </li>
           );
         })}

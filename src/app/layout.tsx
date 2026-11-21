@@ -4,6 +4,7 @@ import "./globals.css";
 import { LanguageProvider } from "../i18n/LanguageContext";
 import AppShell from "../components/layout/AppShell";
 import { jsonLdHtml, websiteJsonLd } from "../lib/seo";
+import PreloadResources from "../components/layout/PreloadResources";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -81,6 +82,7 @@ export default function RootLayout({
     >
       <body className={`${poppins.className} min-h-full bg-[#09090B] text-slate-100`}>
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdHtml(websiteJsonLd)} />
+        <PreloadResources />
         <LanguageProvider>
           <AppShell>{children}</AppShell>
         </LanguageProvider>

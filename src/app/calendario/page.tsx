@@ -12,7 +12,7 @@ export const metadata = pageMetadata({
 
 export default function CalendarPage() {
   return (
-    <Reveal className="screen-fill">
+    <Reveal hero className="screen-fill">
       <PageTitle pt="Calendário da temporada de Fórmula 1" en="Formula 1 season calendar" />
       <CalendarSection />
     </Reveal>

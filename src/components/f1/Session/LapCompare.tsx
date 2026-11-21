@@ -7,6 +7,7 @@ import { useAsyncData, useElementSize } from "../../../lib/hooks";
 import { type DriverSummary, loadLapTelemetry } from "../../../lib/openf1";
 import { atFraction, buildTrace, colorDistance, type LapTrace, type MapPoint, MINI_SECTORS, miniSectors, trackPath } from "../../../lib/telemetry";
 import Select from "../../ui/Select";
+import { readableText } from "../../../lib/color";
 import Spinner from "../../ui/Spinner";
 import BlockCard from "./BlockCard";
 
@@ -133,7 +134,7 @@ export default function LapCompare({ rows, sessionKey }: { rows: DriverSummary[]
                   </span>
                   {winner ? (
                     <span className="flex items-baseline gap-1.5">
-                      <span className="text-xs font-black" style={{ color: winner === a ? colorA : colorB }}>
+                      <span className="text-xs font-black" style={{ color: readableText(winner === a ? colorA : colorB) }}>
                         {winner.driver.name_acronym}
                       </span>
                       <span className="font-mono text-[11px] tabular-nums text-zinc-300">−{decimal(Math.abs(delta!), lang, 3)}</span>

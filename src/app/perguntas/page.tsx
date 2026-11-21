@@ -26,7 +26,7 @@ export default function FaqRoute() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdHtml(faqJsonLd)} />
-      <Reveal>
+      <Reveal hero>
         <FaqPage />
       </Reveal>
       <Footer />

@@ -12,7 +12,7 @@ export const metadata = pageMetadata({
 
 export default function ResultsPage() {
   return (
-    <Reveal className="screen-fill">
+    <Reveal hero className="screen-fill">
       <PageTitle pt="Resultados da temporada de Fórmula 1" en="Formula 1 season results" />
       <LastRacesSection />
     </Reveal>

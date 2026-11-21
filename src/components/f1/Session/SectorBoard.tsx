@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useLanguage } from "../../../i18n/LanguageContext";
 import { type DriverSummary, formatLap, type SessionData } from "../../../lib/openf1";
 import SegmentedControl from "../../ui/SegmentedControl";
+import { readableText } from "../../../lib/color";
 
 // Cor de cada setor (mesma lógica das transmissões: roxo, vermelho, amarelo)
 const SECTOR_TINT = ["#a855f7", "#ef4444", "#eab308"];
@@ -32,7 +33,7 @@ export default function SectorBoard({ data }: { data: SessionData }) {
           <span className="text-[10px] font-bold uppercase tracking-widest text-purple-300">{t.fastestLap}</span>
           <div className="flex items-baseline gap-3">
             <span className="font-mono text-2xl sm:text-3xl font-bold tabular-nums text-white">{formatLap(data.fastest.lap)}</span>
-            <span className="font-black" style={{ color: fastestRow?.color }}>{data.fastest.driver.name_acronym}</span>
+            <span className="font-black" style={{ color: fastestRow ? readableText(fastestRow.color) : undefined }}>{data.fastest.driver.name_acronym}</span>
           </div>
         </div>
         <div className="rounded-2xl border border-red-500/40 bg-red-500/10 p-3 sm:p-4">

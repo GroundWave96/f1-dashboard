@@ -13,7 +13,7 @@ export const metadata = pageMetadata({
 
 export default function SessionRoute() {
   return (
-    <Reveal>
+    <Reveal hero>
       <PageTitle pt="Sessão: tempos, pneus e telemetria de cada treino, classificação e corrida da F1" en="Session: timing, tyres and telemetry for every F1 practice, qualifying and race" />
       {/* A sessão escolhida fica no endereço (?s=...), lido só no navegador */}
       <Suspense>

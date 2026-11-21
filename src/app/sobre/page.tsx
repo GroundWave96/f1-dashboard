@@ -13,7 +13,7 @@ export const metadata = pageMetadata({
 export default function AboutRoute() {
   return (
     <>
-      <Reveal>
+      <Reveal hero>
         <AboutPage />
       </Reveal>
       <Footer />
