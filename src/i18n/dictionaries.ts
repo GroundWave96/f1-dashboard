@@ -388,6 +388,11 @@ export const dictionaries = {
       install: "Instalar o app",
       suggestSubject: "Sugestão para o F1 Dashboard"
     },
+    update: {
+      message: "Saiu uma nova versão do F1 Dashboard.",
+      reload: "Atualizar",
+      later: "Depois",
+    },
     install: {
       button: "Instalar o app",
       iosTitle: "Instalar o F1 Dashboard",
@@ -904,6 +909,11 @@ export const dictionaries = {
       suggest: "Send a suggestion",
       install: "Install the app",
       suggestSubject: "Suggestion for F1 Dashboard"
+    },
+    update: {
+      message: "A new version of F1 Dashboard is out.",
+      reload: "Update",
+      later: "Later",
     },
     install: {
       button: "Install the app",

@@ -4,6 +4,7 @@ import React, { createContext, useCallback, useContext, useState, useSyncExterna
 import Preloader from "../ui/Preloader/Preloader";
 import { startInstallWatch } from "../../lib/install";
 import { InstallHelpHost } from "./InstallApp";
+import UpdateNotice from "./UpdateNotice";
 import { Rail, TabBar, TopBar } from "./Navigation";
 
 // O navegador avisa cedo que o site pode ser instalado: começa a escutar assim que o código carrega
@@ -60,6 +61,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <TabBar />
       </div>
       <InstallHelpHost />
+      <UpdateNotice />
     </ReadyContext.Provider>
   );
 }
