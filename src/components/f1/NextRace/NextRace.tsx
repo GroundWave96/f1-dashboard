@@ -98,7 +98,9 @@ export default function NextRace() {
   const race = upcoming ?? nextSeason.data ?? null;
 
   const renderStatus = (content: React.ReactNode) => (
-    <div className="shell h-full min-h-[60svh] flex flex-col py-4 sm:py-6">
+    // Ocupa a tela inteira enquanto carrega (como o cartão pronto): o que vem abaixo fica fora da tela e não
+    // "pula" quando os dados chegam
+    <div className="shell h-full min-h-[calc(100svh-var(--chrome-top)-var(--chrome-bottom))] flex flex-col py-4 sm:py-6">
       <div className="flex-1 min-h-0 flex flex-col items-center justify-center gap-2">
         {content}
       </div>
